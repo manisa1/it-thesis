@@ -41,8 +41,13 @@ class ExperimentConfig:
     
     # Noise parameters
     noise_level: float = 0.0
-    noise_schedule: str = "static"  # "static" or "ramp"
+    noise_schedule: str = "static"  # "static", "ramp", "burst", or "shift"
     noise_ramp_epochs: int = 10
+    
+    # Additional noise parameters for burst and shift patterns
+    burst_start: Optional[int] = None
+    burst_end: Optional[int] = None
+    shift_epoch: Optional[int] = None
     
     # Reweighting parameters (static confidence denoiser + DRO)
     use_reweighting: bool = False

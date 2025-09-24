@@ -218,11 +218,23 @@ class DCCFTrainer:
             if len(user_pos_items) == 0:
                 continue
             
+            # Ensure user ID is within bounds
+            if user >= self.model.n_users:
+                continue
+                
             # Sample positive item
             pos_item = rng.choice(list(user_pos_items))
             
+            # Ensure item ID is within bounds
+            if pos_item >= self.model.n_items:
+                continue
+            
             # Sample negative item (not in user's positive items)
             neg_item = self._sample_negative_item(user_pos_items, dataset.n_items, rng)
+            
+            # Ensure negative item is within bounds
+            if neg_item >= self.model.n_items:
+                continue
             
             batch_users.append(user)
             batch_pos_items.append(pos_item)
