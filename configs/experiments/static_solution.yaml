@@ -1,0 +1,17 @@
+# Static Solution Experiment
+# Our solution under static noise conditions (control experiment)
+
+# Inherit from base config
+base_config: "../base_config.yaml"
+
+# Experiment-specific parameters
+output_dir: "runs/static_sol"
+
+# Noise parameters - no noise for static condition
+noise_level: 0.0
+noise_schedule: "static"
+
+# Reweighting parameters - enable our solution
+use_reweighting: true
+reweight_alpha: 0.5
+reweight_warmup_epochs: 10

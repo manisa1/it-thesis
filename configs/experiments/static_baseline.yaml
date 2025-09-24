@@ -1,0 +1,15 @@
+# Static Baseline Experiment
+# DCCF under ideal static noise conditions (no noise, no reweighting)
+
+# Inherit from base config
+base_config: "../base_config.yaml"
+
+# Experiment-specific parameters
+output_dir: "runs/static_base"
+
+# Noise parameters - no noise for baseline
+noise_level: 0.0
+noise_schedule: "static"
+
+# Reweighting parameters - no reweighting for baseline
+use_reweighting: false

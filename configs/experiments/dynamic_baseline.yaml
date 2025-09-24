@@ -1,0 +1,16 @@
+# Dynamic Baseline Experiment
+# DCCF under realistic dynamic noise (demonstrates weakness)
+
+# Inherit from base config
+base_config: "../base_config.yaml"
+
+# Experiment-specific parameters
+output_dir: "runs/dyn_base"
+
+# Noise parameters - dynamic noise with ramp schedule
+noise_level: 0.3
+noise_schedule: "ramp"
+noise_ramp_epochs: 10
+
+# Reweighting parameters - no reweighting for baseline
+use_reweighting: false
