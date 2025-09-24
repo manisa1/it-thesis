@@ -380,11 +380,10 @@ python analyze_results.py
 
 ## 📚 Citation
 
-If you use this work for academic purposes, please cite:
-```
-[Your Name] (2024). "A Study on Robust Recommender System using 
+
+Group 6 (2025). "A Study on Robust Recommender System using 
 Disentangled Contrastive Collaborative Filtering (DCCF)." 
-IT Thesis, [Your University].
+IT Thesis, [Charles Darwin University].
 ```
 
 ## 📧 Contact
