@@ -44,10 +44,11 @@ class ExperimentConfig:
     noise_schedule: str = "static"  # "static" or "ramp"
     noise_ramp_epochs: int = 10
     
-    # Reweighting parameters
+    # Reweighting parameters (static confidence denoiser + DRO)
     use_reweighting: bool = False
     reweight_alpha: float = 0.5
-    reweight_warmup_epochs: int = 10
+    reweight_burnin_epochs: int = 10  # Burn-in terminology from interim report
+    confidence_min: float = 0.1       # c_min for static confidence denoiser
     
     # Output parameters
     output_dir: str = "runs/experiment"
@@ -74,8 +75,8 @@ class ExperimentConfig:
         if not 0.0 <= self.noise_level <= 1.0:
             raise ValueError("noise_level must be between 0.0 and 1.0")
         
-        if self.noise_schedule not in ["static", "ramp"]:
-            raise ValueError("noise_schedule must be 'static' or 'ramp'")
+        if self.noise_schedule not in ["static", "ramp", "burst", "shift"]:
+            raise ValueError("noise_schedule must be 'static', 'ramp', 'burst', or 'shift'")
         
         if self.embedding_dim <= 0:
             raise ValueError("embedding_dim must be positive")

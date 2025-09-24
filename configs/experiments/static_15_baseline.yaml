@@ -1,0 +1,15 @@
+# Static 15% Noise Baseline Experiment
+# DCCF under 15% static noise (as mentioned in interim report)
+
+# Inherit from base config
+base_config: "../base_config.yaml"
+
+# Experiment-specific parameters
+output_dir: "runs/static_15_base"
+
+# Noise parameters - 15% static noise
+noise_level: 0.15
+noise_schedule: "static"
+
+# Reweighting parameters - no reweighting for baseline
+use_reweighting: false

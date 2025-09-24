@@ -24,10 +24,11 @@ noise_level: 0.0
 noise_schedule: "static"
 noise_ramp_epochs: 10
 
-# Reweighting parameters (will be overridden in specific experiments)
+# Reweighting parameters (static confidence denoiser + DRO from interim report)
 use_reweighting: false
 reweight_alpha: 0.5
-reweight_warmup_epochs: 10
+reweight_burnin_epochs: 10  # Burn-in terminology from interim report
+confidence_min: 0.1         # c_min for static confidence denoiser
 
 # Output parameters
 output_dir: "runs/base_experiment"

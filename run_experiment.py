@@ -106,9 +106,15 @@ def run_experiment(config: ExperimentConfig) -> dict:
         # Initialize noise generator
         noise_generator = NoiseGenerator(seed=config.random_seed)
         
-        # Compute popularity weights if reweighting is enabled
+        # Compute weights if reweighting is enabled
         item_weights = None
+        confidence_weights = None
         if config.use_reweighting:
+            logger.logger.info("Computing static confidence denoiser weights...")
+            confidence_weights = trainer.compute_static_confidence_weights(
+                train_dataset, 
+                c_min=config.confidence_min
+            )
             logger.logger.info("Computing popularity-based item weights...")
             item_weights = trainer.compute_popularity_weights(
                 train_dataset, 
@@ -138,12 +144,15 @@ def run_experiment(config: ExperimentConfig) -> dict:
             # Create noisy training dataset
             noisy_train_dataset = RecommenderDataset(noisy_train_df)
             
-            # Apply reweighting warm-up if enabled
+            # Apply reweighting burn-in if enabled
             epoch_item_weights = None
             if item_weights is not None:
-                epoch_item_weights = trainer.apply_reweight_warmup(
-                    item_weights, epoch, config.reweight_warmup_epochs
+                epoch_item_weights = trainer.apply_reweight_burnin(
+                    item_weights, epoch, config.reweight_burnin_epochs
                 )
+            
+            # Use confidence weights if available (static confidence denoiser)
+            final_weights = confidence_weights if confidence_weights is not None else epoch_item_weights
             
             # Train for one epoch
             train_loss = trainer.train_epoch(
@@ -165,7 +174,7 @@ def run_experiment(config: ExperimentConfig) -> dict:
             
             additional_info = {
                 'noise_ratio': f"{noise_info['actual_noise_ratio']:.3f}",
-                'warmup_progress': f"{min(1.0, epoch / config.reweight_warmup_epochs):.2f}" if config.use_reweighting else "N/A"
+                'burnin_progress': f"{min(1.0, epoch / config.reweight_burnin_epochs):.2f}" if config.use_reweighting else "N/A"
             }
             
             logger.log_epoch(

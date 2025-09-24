@@ -224,12 +224,21 @@ def main():
     
     args = parser.parse_args()
     
-    # Experiment configurations
+    # Core experiment configurations (matches interim report)
     experiments = [
         "configs/experiments/static_baseline.yaml",
         "configs/experiments/static_solution.yaml", 
         "configs/experiments/dynamic_baseline.yaml",
         "configs/experiments/dynamic_solution.yaml"
+    ]
+    
+    # Additional experiments for comprehensive analysis
+    additional_experiments = [
+        "configs/experiments/static_05_baseline.yaml",
+        "configs/experiments/static_15_baseline.yaml", 
+        "configs/experiments/static_20_baseline.yaml",
+        "configs/experiments/burst_baseline.yaml",
+        "configs/experiments/shift_baseline.yaml"
     ]
     
     if not args.skip_experiments:
@@ -249,8 +258,10 @@ def main():
         start_time = time.time()
         failed_experiments = []
         
+        # Run core experiments first
+        print(f"\n🎯 Running Core Experiments (4/4):")
         for i, config_path in enumerate(experiments, 1):
-            print(f"\n🔬 Experiment {i}/4: {config_path}")
+            print(f"\n🔬 Core Experiment {i}/4: {config_path}")
             
             success = run_single_experiment(config_path, verbose=args.verbose)
             
@@ -259,6 +270,20 @@ def main():
             else:
                 print(f"❌ Failed: {config_path}")
                 failed_experiments.append(config_path)
+        
+        # Optionally run additional experiments
+        if not args.quick:
+            print(f"\n📊 Running Additional Analysis Experiments ({len(additional_experiments)}):")
+            for i, config_path in enumerate(additional_experiments, 1):
+                print(f"\n🔬 Additional Experiment {i}/{len(additional_experiments)}: {config_path}")
+                
+                success = run_single_experiment(config_path, verbose=args.verbose)
+                
+                if success:
+                    print(f"✅ Completed: {config_path}")
+                else:
+                    print(f"❌ Failed: {config_path}")
+                    failed_experiments.append(config_path)
         
         # Report experiment completion
         elapsed_time = time.time() - start_time

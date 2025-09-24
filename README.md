@@ -2,7 +2,9 @@
 
 **IT Thesis Project - Data Science**
 
-This thesis investigates the robustness of **Disentangled Contrastive Collaborative Filtering (DCCF)** under dynamic noise conditions. While DCCF was designed to handle noise in recommendation systems, it assumes noise patterns remain static during training. Our research explores how DCCF performs when noise distributions change dynamically over time and proposes a **popularity-aware reweighting strategy with warm-up scheduling** to improve robustness.
+This thesis investigates the robustness of **Disentangled Contrastive Collaborative Filtering (DCCF)** under dynamic noise conditions. While DCCF was designed to handle noise in recommendation systems, it assumes noise patterns remain static during training. Our research explores how DCCF performs when noise distributions change dynamically over time and proposes a **static confidence denoiser with burn-in scheduling** to improve robustness.
+
+**Implementation Note**: This project uses a custom PyTorch framework designed specifically for this robustness study, providing full control over the experimental design and transparent implementation of DCCF concepts without relying on external frameworks.
 
 ## 📋 Table of Contents
 
@@ -35,10 +37,10 @@ Real-world recommendation systems face **dynamic noise** in user feedback data:
 We hypothesize that DCCF's performance degrades significantly under dynamic noise, and that our proposed **popularity-aware reweighting with warm-up scheduling** can mitigate this degradation while maintaining performance under static conditions.
 
 ### Our Solution
-**Popularity-Aware Reweighting with Warm-up**:
-- **Reweighting**: Adjusts training loss so over-exposed popular items don't dominate learning
-- **Warm-up Schedule**: Gradually introduces reweighting over initial epochs for training stability
-- **Dynamic Adaptation**: Maintains robustness as noise patterns change over time
+**Static Confidence Denoiser with Burn-in**:
+- **Static Confidence Denoiser**: Down-weights likely noisy/over-exposed interactions using item popularity proxy
+- **Burn-in Schedule**: Gradually introduces denoising over initial epochs for training stability  
+- **Dynamic Adaptation**: Maintains robustness as noise patterns change over time (ramp-up, burst, shift)
 
 ## 🚀 Installation
 

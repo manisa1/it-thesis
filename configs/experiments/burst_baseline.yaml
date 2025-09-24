@@ -1,0 +1,17 @@
+# Burst Baseline Experiment
+# DCCF under burst noise pattern (sudden spikes)
+
+# Inherit from base config
+base_config: "../base_config.yaml"
+
+# Experiment-specific parameters
+output_dir: "runs/burst_base"
+
+# Noise parameters - burst noise pattern
+noise_level: 0.10
+noise_schedule: "burst"
+burst_start: 5   # Start burst at epoch 5
+burst_end: 8     # End burst at epoch 8
+
+# Reweighting parameters - no reweighting for baseline
+use_reweighting: false

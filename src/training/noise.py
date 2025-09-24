@@ -36,7 +36,10 @@ class NoiseGenerator:
                           noise_level: float,
                           schedule: str = 'static',
                           epoch: Optional[int] = None,
-                          max_epochs: Optional[int] = None) -> pd.DataFrame:
+                          max_epochs: Optional[int] = None,
+                          burst_start: Optional[int] = None,
+                          burst_end: Optional[int] = None,
+                          shift_epoch: Optional[int] = None) -> pd.DataFrame:
         """
         Add exposure bias noise to training data.
         
@@ -58,15 +61,15 @@ class NoiseGenerator:
         if not 0.0 <= noise_level <= 1.0:
             raise ValueError("noise_level must be between 0.0 and 1.0")
         
-        if schedule not in ['static', 'ramp']:
-            raise ValueError("schedule must be 'static' or 'ramp'")
+        if schedule not in ['static', 'ramp', 'burst', 'shift']:
+            raise ValueError("schedule must be 'static', 'ramp', 'burst', or 'shift'")
         
         if schedule == 'ramp' and (epoch is None or max_epochs is None):
             raise ValueError("epoch and max_epochs required for 'ramp' schedule")
         
         # Calculate actual noise level based on schedule
         actual_noise_level = self._calculate_noise_level(
-            noise_level, schedule, epoch, max_epochs
+            noise_level, schedule, epoch, max_epochs, burst_start, burst_end, shift_epoch
         )
         
         if actual_noise_level <= 0:
@@ -90,7 +93,10 @@ class NoiseGenerator:
                               base_noise: float, 
                               schedule: str,
                               epoch: Optional[int] = None,
-                              max_epochs: Optional[int] = None) -> float:
+                              max_epochs: Optional[int] = None,
+                              burst_start: Optional[int] = None,
+                              burst_end: Optional[int] = None,
+                              shift_epoch: Optional[int] = None) -> float:
         """
         Calculate actual noise level based on schedule.
         
@@ -106,10 +112,29 @@ class NoiseGenerator:
         if schedule == 'static':
             return base_noise
         elif schedule == 'ramp':
-            # Gradually increase noise from 0 to base_noise over epochs
+            # Ramp-up: Gradually increase noise from 0 to base_noise over epochs
             ramp_epochs = min(max_epochs, 10)  # Ramp over first 10 epochs
             progress = min(1.0, epoch / ramp_epochs)
             return base_noise * progress
+        elif schedule == 'burst':
+            # Burst: Sudden spike of noise for a short window
+            if burst_start is None or burst_end is None:
+                burst_start = max_epochs // 3  # Default: start at 1/3 of training
+                burst_end = burst_start + 3    # Default: 3-epoch burst
+            
+            if burst_start <= epoch <= burst_end:
+                return base_noise * 2.0  # Double noise during burst
+            else:
+                return base_noise * 0.1  # Low noise outside burst
+        elif schedule == 'shift':
+            # Shift: Change corruption type/focus during training
+            if shift_epoch is None:
+                shift_epoch = max_epochs // 2  # Default: shift at halfway point
+            
+            if epoch < shift_epoch:
+                return base_noise * 0.5  # Lower noise in first half
+            else:
+                return base_noise * 1.5  # Higher noise in second half
         else:
             return base_noise
     

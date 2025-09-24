@@ -8,7 +8,7 @@ base_config: "../base_config.yaml"
 output_dir: "runs/dyn_base"
 
 # Noise parameters - dynamic noise with ramp schedule
-noise_level: 0.3
+noise_level: 0.10  # 10% noise as mentioned in interim report
 noise_schedule: "ramp"
 noise_ramp_epochs: 10
 

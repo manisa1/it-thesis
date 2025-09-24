@@ -14,4 +14,4 @@ noise_schedule: "static"
 # Reweighting parameters - enable our solution
 use_reweighting: true
 reweight_alpha: 0.5
-reweight_warmup_epochs: 10
+reweight_burnin_epochs: 10

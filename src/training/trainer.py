@@ -55,6 +55,39 @@ class DCCFTrainer:
         # Training history
         self.training_history = []
     
+    def compute_static_confidence_weights(self, 
+                                        dataset: RecommenderDataset,
+                                        c_min: float = 0.1,
+                                        eps: float = 1e-6) -> np.ndarray:
+        """
+        Compute static confidence denoiser weights (matches interim report terminology).
+        
+        Args:
+            dataset (RecommenderDataset): Training dataset
+            c_min (float): Minimum confidence value
+            eps (float): Small constant to avoid division by zero
+            
+        Returns:
+            np.ndarray: Static confidence weights array
+        """
+        # Count item popularity
+        item_counts = np.bincount(
+            dataset.df['i'].values, 
+            minlength=dataset.n_items
+        ).astype(float)
+        
+        # Normalize popularity to [0, 1]
+        max_pop = item_counts.max()
+        if max_pop > 0:
+            pop_normalized = item_counts / max_pop
+        else:
+            pop_normalized = np.zeros_like(item_counts)
+        
+        # Static confidence: c_u,i = max(c_min, 1 - pop(i))
+        confidence_weights = np.maximum(c_min, 1.0 - pop_normalized)
+        
+        return confidence_weights
+    
     def compute_popularity_weights(self, 
                                  dataset: RecommenderDataset,
                                  alpha: float = 0.5,
@@ -228,31 +261,31 @@ class DCCFTrainer:
             # Edge case: return random item
             return rng.integers(0, n_items)
     
-    def apply_reweight_warmup(self, 
+    def apply_reweight_burnin(self, 
                             base_weights: np.ndarray,
                             epoch: int,
-                            warmup_epochs: int) -> np.ndarray:
+                            burnin_epochs: int) -> np.ndarray:
         """
-        Apply warm-up scheduling to reweighting.
+        Apply burn-in scheduling to reweighting (matches interim report terminology).
         
         Args:
             base_weights (np.ndarray): Base item weights
             epoch (int): Current epoch (1-indexed)
-            warmup_epochs (int): Number of warm-up epochs
+            burnin_epochs (int): Number of burn-in epochs
             
         Returns:
-            np.ndarray: Weights with warm-up applied
+            np.ndarray: Weights with burn-in applied
         """
-        if warmup_epochs <= 0:
+        if burnin_epochs <= 0:
             return base_weights
         
-        # Calculate warm-up progress (0 to 1)
-        warmup_progress = min(1.0, epoch / warmup_epochs)
+        # Calculate burn-in progress (0 to 1)
+        burnin_progress = min(1.0, epoch / burnin_epochs)
         
         # Gradually introduce reweighting: 1.0 + (weights - 1.0) * progress
-        warmed_weights = 1.0 + (base_weights - 1.0) * warmup_progress
+        burnin_weights = 1.0 + (base_weights - 1.0) * burnin_progress
         
-        return warmed_weights
+        return burnin_weights
     
     def get_training_history(self) -> list:
         """

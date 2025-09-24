@@ -8,11 +8,11 @@ base_config: "../base_config.yaml"
 output_dir: "runs/dyn_sol"
 
 # Noise parameters - dynamic noise with ramp schedule
-noise_level: 0.3
+noise_level: 0.10  # 10% noise as mentioned in interim report
 noise_schedule: "ramp"
 noise_ramp_epochs: 10
 
 # Reweighting parameters - enable our solution
 use_reweighting: true
 reweight_alpha: 0.5
-reweight_warmup_epochs: 10
+reweight_burnin_epochs: 10
