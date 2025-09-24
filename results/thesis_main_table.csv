@@ -1,0 +1,5 @@
+Experimental Condition,Recall@20,NDCG@20
+Static Baseline (DCCF under ideal conditions),0.2024,0.0690
+Static Solution (Our approach under ideal conditions),0.2014,0.0691
+Dynamic Baseline (DCCF under dynamic noise),0.1734,0.0586
+Dynamic Solution (Our approach under dynamic noise),0.1764,0.0586

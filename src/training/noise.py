@@ -184,7 +184,7 @@ class NoiseGenerator:
             user_id = rng.integers(0, n_users)
             
             # Popularity-biased item selection
-            item_id = rng.choice(n_items, p=item_probs)
+            item_id = rng.choice(len(item_probs), p=item_probs)
             
             noise_interactions.append((user_id, item_id))
         

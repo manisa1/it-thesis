@@ -113,6 +113,16 @@ class ExperimentConfig:
         """
         with open(yaml_path, 'r') as f:
             config_dict = yaml.safe_load(f)
+        
+        # Handle base_config inheritance (simple approach)
+        if 'base_config' in config_dict:
+            base_path = os.path.join(os.path.dirname(yaml_path), config_dict.pop('base_config'))
+            with open(base_path, 'r') as f:
+                base_config = yaml.safe_load(f)
+            # Merge configs (experiment overrides base)
+            base_config.update(config_dict)
+            config_dict = base_config
+            
         return cls.from_dict(config_dict)
     
     @classmethod
