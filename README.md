@@ -31,10 +31,10 @@ Real-world recommendation systems face **dynamic noise** in user feedback data:
 
 ### Research Questions
 1. **How does DCCF perform when noise distributions are dynamic rather than static?**
-2. **Can a popularity-aware reweighting strategy with warm-up improve robustness under dynamic noise conditions?**
+2. **Can a static confidence denoiser with burn-in scheduling improve robustness under dynamic noise conditions?**
 
 ### Hypothesis
-We hypothesize that DCCF's performance degrades significantly under dynamic noise, and that our proposed **popularity-aware reweighting with warm-up scheduling** can mitigate this degradation while maintaining performance under static conditions.
+We hypothesize that DCCF's performance degrades significantly under dynamic noise, and that our proposed **static confidence denoiser with burn-in scheduling** can mitigate this degradation while maintaining performance under static conditions.
 
 ### Our Solution
 **Static Confidence Denoiser with Burn-in**:
@@ -107,36 +107,50 @@ recsys/
 # Generate data (if not already done)
 python make_data.py
 
-# Run all four experimental conditions
-python train.py --model_dir runs/static_base --epochs 15
-python train.py --model_dir runs/static_sol --reweight_type popularity --reweight_alpha 0.5 --epochs 15
-python train.py --model_dir runs/dyn_base --noise_exposure_bias 0.3 --noise_schedule ramp --epochs 15
-python train.py --model_dir runs/dyn_sol --noise_exposure_bias 0.3 --noise_schedule ramp --reweight_type popularity --reweight_alpha 0.5 --epochs 15
+# Option 1: Run core 4 experiments only (faster)
+python run_all_experiments.py --quick
 
-# Analyze results
-python analyze_results.py
+# Option 2: Run all experiments including additional analysis
+python run_all_experiments.py
+
+# Generate comprehensive analysis
+python analyze_thesis_results.py
 ```
 
 ### Individual Experiment Commands
 
-#### 1. Clean Baseline (No noise, no reweighting)
+#### 1. Static Baseline (No noise, no denoising)
 ```bash
-python train.py --model_dir runs/static_base --epochs 15
+python run_experiment.py --config configs/experiments/static_baseline.yaml
 ```
 
-#### 2. Clean + Solution (No noise, with reweighting)
+#### 2. Static Solution (No noise, with denoising)
 ```bash
-python train.py --model_dir runs/static_sol --reweight_type popularity --reweight_alpha 0.5 --epochs 15
+python run_experiment.py --config configs/experiments/static_solution.yaml
 ```
 
-#### 3. Noisy Baseline (With exposure noise, no reweighting)
+#### 3. Dynamic Baseline (With dynamic noise, no denoising)
 ```bash
-python train.py --model_dir runs/dyn_base --noise_exposure_bias 0.3 --noise_schedule ramp --epochs 15
+python run_experiment.py --config configs/experiments/dynamic_baseline.yaml
 ```
 
-#### 4. Noisy + Solution (With exposure noise and reweighting)
+#### 4. Dynamic Solution (With dynamic noise and denoising)
 ```bash
-python train.py --model_dir runs/dyn_sol --noise_exposure_bias 0.3 --noise_schedule ramp --reweight_type popularity --reweight_alpha 0.5 --epochs 15
+python run_experiment.py --config configs/experiments/dynamic_solution.yaml
+```
+
+#### 5. Additional Noise Pattern Analysis
+```bash
+# Burst noise pattern
+python run_experiment.py --config configs/experiments/burst_baseline.yaml
+
+# Shift noise pattern  
+python run_experiment.py --config configs/experiments/shift_baseline.yaml
+
+# Different static noise levels
+python run_experiment.py --config configs/experiments/static_05_baseline.yaml
+python run_experiment.py --config configs/experiments/static_15_baseline.yaml
+python run_experiment.py --config configs/experiments/static_20_baseline.yaml
 ```
 
 ### Command Line Arguments
@@ -162,23 +176,36 @@ Our experimental design tests two factors: **noise type** (static vs. dynamic) a
 
 #### 1. **Static Baseline** (`static_base`)
 - **Noise**: Static (fixed throughout training)
-- **Strategy**: Standard DCCF training (no reweighting)
+- **Strategy**: Standard DCCF training (no denoising)
 - **Purpose**: Baseline performance under DCCF's assumed conditions
 
 #### 2. **Static Solution** (`static_sol`)
 - **Noise**: Static (fixed throughout training)  
-- **Strategy**: DCCF + popularity-aware reweighting with warm-up
+- **Strategy**: DCCF + static confidence denoiser with burn-in
 - **Purpose**: Verify our solution doesn't harm performance under ideal conditions
 
 #### 3. **Dynamic Baseline** (`dyn_base`)
 - **Noise**: Dynamic (increases over training epochs using ramp schedule)
-- **Strategy**: Standard DCCF training (no reweighting)
+- **Strategy**: Standard DCCF training (no denoising)
 - **Purpose**: Demonstrate DCCF's weakness under realistic dynamic noise
 
 #### 4. **Dynamic Solution** (`dyn_sol`)
 - **Noise**: Dynamic (increases over training epochs using ramp schedule)
-- **Strategy**: DCCF + popularity-aware reweighting with warm-up
+- **Strategy**: DCCF + static confidence denoiser with burn-in
 - **Purpose**: Test our solution's effectiveness under dynamic noise conditions
+
+### Additional Experiments
+
+Beyond the core 4 experiments, we include comprehensive analysis with:
+
+#### **Static Noise Analysis**
+- **5%, 10%, 15%, 20% static noise** - Testing different corruption levels
+- Matches the noise rates mentioned in academic literature
+
+#### **Dynamic Noise Patterns**
+- **Ramp-up**: Gradual noise increase over training epochs
+- **Burst**: Sudden noise spikes during specific training windows  
+- **Shift**: Corruption type changes mid-training (e.g., head→tail item focus)
 
 ### Evaluation Metrics
 
@@ -208,7 +235,7 @@ Dynamic noise significantly degrades DCCF performance:
 - **NDCG@20**: 15.0% performance drop (0.069 → 0.059)
 
 #### 2. **Solution Effectiveness Under Dynamic Conditions** ✅ *Hypothesis Supported*
-Our popularity-aware reweighting with warm-up provides measurable improvements:
+Our static confidence denoiser with burn-in provides measurable improvements:
 - **Recall@20**: Improves from 0.173 to 0.176 under dynamic noise
 - **Robustness**: Reduces performance drop from 14.3% to 12.9%
 
@@ -229,9 +256,10 @@ From `runs/robustness.csv`:
 ### Thesis Contributions
 
 1. **Identified DCCF's limitation**: Demonstrated significant performance degradation under dynamic noise
-2. **Proposed practical solution**: Popularity-aware reweighting with warm-up scheduling
+2. **Proposed practical solution**: Static confidence denoiser with burn-in scheduling  
 3. **Empirical validation**: Showed measurable robustness improvements without harming static performance
 4. **Real-world relevance**: Addressed the gap between DCCF's assumptions and realistic noise patterns
+5. **Comprehensive analysis**: Multiple noise patterns (ramp-up, burst, shift) and corruption levels (5%-20%)
 
 ## 🔍 Understanding the Implementation
 
