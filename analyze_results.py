@@ -6,6 +6,10 @@ runs = {
     "static_sol":  "runs/static_sol/metrics.csv",
     "dyn_base":    "runs/dyn_base/metrics.csv",
     "dyn_sol":     "runs/dyn_sol/metrics.csv",
+    "burst_base":  "runs/burst_base/metrics.csv",
+    "burst_sol":   "runs/burst_sol/metrics.csv",
+    "shift_base":  "runs/shift_base/metrics.csv",
+    "shift_sol":   "runs/shift_sol/metrics.csv",
 }
 
 rows = []
@@ -19,7 +23,7 @@ for name, path in runs.items():
     rows.append({"run": name, "Recall@20": r, "NDCG@20": n})
 
 summary = pd.DataFrame(rows).set_index("run").loc[
-    ["static_base", "static_sol", "dyn_base", "dyn_sol"]
+    ["static_base", "static_sol", "dyn_base", "dyn_sol", "burst_base", "burst_sol", "shift_base", "shift_sol"]
 ]
 
 # Robustness Drop = (clean - noisy) / clean
