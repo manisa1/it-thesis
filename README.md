@@ -21,26 +21,36 @@ Implementation Note: This project uses a custom PyTorch framework designed speci
 ## Thesis Overview
 
 ## Problem Statement
-Real-world recommendation systems face dynamic noise in user feedback data:
-- Seasonal trends (holiday shopping spikes)
-- Sudden popularity shifts (viral content)
-- Spam/fake interactions (bot behavior)
-- Accidental clicks (user mistakes)
 
-DCCF's Limitation: Assumes noise is static (unchanging during training), making it less robust in real-world scenarios where noise patterns evolve dynamically.
+This study investigates **robust recommendation under natural (non-adversarial) noise**, where user-item logs contain spurious positives (e.g., misclicks) and **exposure/popularity effects**. 
+
+**Specific Focus: Dynamic vs Static Natural Noise**
+- **Natural Noise**: Spurious positives from misclicks, mislabeled ratings, accidental interactions
+- **Exposure/Popularity Effects**: Popular items get artificially inflated interactions due to increased visibility
+- **Static vs Dynamic**: Traditional approaches assume noise patterns remain fixed, but real-world noise evolves over time
+
+**DCCF's Core Limitation**: DCCF assumes **static noise patterns** during training. However, real-world natural noise is **dynamic**:
+- **Temporal Drift**: User behavior patterns change over time
+- **Seasonal Effects**: Shopping campaigns, trending topics create varying noise levels  
+- **Platform Changes**: Algorithm updates affect exposure patterns
+- **Early Training Instability**: Prototype-based models suffer from unstable learning in initial epochs
+
+**Research Gap**: Current robust recommender systems lack mechanisms to handle **dynamic natural noise patterns** and **early-training instability** without architectural changes.
 
 ## Research Questions
-1. How does DCCF perform when noise distributions are dynamic rather than static?
-2. Can a static confidence denoiser with burn-in scheduling improve robustness under dynamic noise conditions?
+**From Thesis Interim Report:**
+- **RQ1**: How does DCCF's top-K accuracy change under static versus dynamic natural noise?
+- **RQ2**: Does a burn-in phase improve early-epoch stability under noise?
+- **RQ3**: Does exposure-aware DRO reduce robustness drop relative to vanilla DCCF (with burn-in)?
 
 ## Hypothesis
-We hypothesize that DCCF's performance degrades significantly under dynamic noise, and that our proposed static confidence denoiser with burn-in scheduling can mitigate this degradation while maintaining performance under static conditions.
+We hypothesize that DCCF's performance degrades significantly under **dynamic natural noise patterns**, and that our proposed training-time fixes (static confidence denoiser + burn-in scheduling) can mitigate this degradation while maintaining performance under static conditions.
 
 ## Our Solution
-Static Confidence Denoiser with Burn-in:
-- Static Confidence Denoiser: Down-weights likely noisy/over-exposed interactions using item popularity proxy
-- Burn-in Schedule: Gradually introduces denoising over initial epochs for training stability
-- Dynamic Adaptation: Maintains robustness as noise patterns change over time (ramp-up, burst, shift)
+**Training-Time Robustness Enhancement (No Architecture Changes)**:
+- **Static Confidence Denoiser**: Down-weights likely noisy/over-exposed interactions using item popularity proxy
+- **Burn-in Scheduling**: Trains in easier regime for initial epochs before enabling noise schedules and DRO
+- **Exposure-Aware DRO**: After burn-in, emphasizes hardest examples while penalizing high exposure effects
 
 ## Installation
 
@@ -311,52 +321,52 @@ python train.py --model_dir runs/shift_base --epochs 15 \
 
 ## Four Experimental Conditions
 
-Our experimental design tests two factors: noise type (static vs. dynamic) and training strategy (baseline vs. solution):
+Our experimental design tests two factors: **exposure bias noise pattern** (static vs. dynamic) and **training strategy** (baseline vs. solution):
 
 ## 1. Static Baseline (`static_base`)
-- Noise: Static (fixed throughout training)
-- Strategy: Standard DCCF training (no denoising)
-- Purpose: Baseline performance under DCCF's assumed conditions
+- **Exposure Bias**: Static exposure bias (fixed popularity-based noise throughout training)
+- **Strategy**: Standard DCCF training (no reweighting)
+- **Purpose**: Baseline performance under DCCF's assumed static exposure conditions
 
 ## 2. Static Solution (`static_sol`)
-- Noise: Static (fixed throughout training)
-- Strategy: DCCF + static confidence denoiser with burn-in
-- Purpose: Verify our solution doesn't harm performance under ideal conditions
+- **Exposure Bias**: Static exposure bias (fixed popularity-based noise throughout training)
+- **Strategy**: DCCF + popularity-aware reweighting with burn-in
+- **Purpose**: Verify our solution doesn't harm performance under ideal static conditions
 
 ## 3. Dynamic Baseline (`dyn_base`)
-- Noise: Dynamic (increases over training epochs using ramp schedule)
-- Strategy: Standard DCCF training (no denoising)
-- Purpose: Demonstrate DCCF's weakness under realistic dynamic noise
+- **Exposure Bias**: Dynamic exposure bias (changing popularity patterns over training epochs)
+- **Strategy**: Standard DCCF training (no reweighting)
+- **Purpose**: Demonstrate DCCF's weakness under realistic dynamic exposure conditions
 
 ## 4. Dynamic Solution (`dyn_sol`)
-- Noise: Dynamic (increases over training epochs using ramp schedule)
-- Strategy: DCCF + static confidence denoiser with burn-in
-- Purpose: Test our solution's effectiveness under dynamic noise conditions
+- **Exposure Bias**: Dynamic exposure bias (changing popularity patterns over training epochs)
+- **Strategy**: DCCF + popularity-aware reweighting with burn-in
+- **Purpose**: Test our solution's effectiveness under dynamic exposure bias conditions
 
 ## Additional Experiments
 
 Beyond the core 4 experiments, we include comprehensive analysis with:
 
-## Static Noise Analysis
-- 5%, 10%, 15%, 20% static noise - Testing different corruption levels
+## Static Exposure Bias Analysis
+- 5%, 10%, 15%, 20% static exposure bias levels - Testing different intensity levels
 - Matches the noise rates mentioned in academic literature
 
-## Advanced Dynamic Noise Patterns
-- Ramp-up: Gradual noise increase over training epochs (0% → base_level)
-- Burst: Sudden noise spikes during specific training windows (2-3x base level)
-- Shift: Corruption focus changes mid-training (head items → tail items or vice versa)
+## Advanced Dynamic Exposure Patterns
+- **Ramp-up**: Gradual exposure bias increase over training epochs (0% → base_level)
+- **Burst**: Sudden exposure bias spikes during specific training windows (2-3x base level)  
+- **Shift**: Exposure focus changes mid-training (head items → tail items or vice versa)
 
-Each pattern simulates real-world scenarios:
-- Ramp: Gradual system degradation or increasing bot activity
-- Burst: Viral content spikes, Black Friday shopping, coordinated attacks
-- Shift: Algorithm changes, user behavior shifts, seasonal pattern changes
+Each pattern simulates real-world **exposure bias scenarios**:
+- **Ramp**: Gradual shift in item popularity (trending topics, seasonal changes)
+- **Burst**: Sudden popularity spikes (viral content, flash sales, breaking news)
+- **Shift**: Platform algorithm changes (recommendation system updates, policy changes)
 
 ## Evaluation Metrics
 
 - Recall@20: Fraction of relevant items retrieved in top-20 recommendations
 - NDCG@20: Normalized Discounted Cumulative Gain at top-20 (considers ranking quality)
 - Robustness Drop: `(static_performance - dynamic_performance) / static_performance`
- - Lower robustness drop = better resilience to dynamic noise
+ - Lower robustness drop = better resilience to **dynamic exposure bias**
 
 ## Results & Analysis
 
