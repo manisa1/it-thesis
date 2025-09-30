@@ -50,6 +50,16 @@ Thumbs.db
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Dataset files - exclude raw datasets and large files
+# Exclude raw dataset directories
+data/Amazon_Books_Scraping/
+data/Movielens-20M/
+# Exclude large CSV files in data directory (but not subdirectories)
+data/*.csv
+# Keep processed data in subdirectories
+!data/*/ratings.csv
+!data/*/*.csv
+
 # Model files and data (you may want to customize this)
 *.pkl
 *.h5
