@@ -138,7 +138,10 @@ def run_experiment(config: ExperimentConfig) -> dict:
                 noise_level=config.noise_level,
                 schedule=config.noise_schedule,
                 epoch=epoch,
-                max_epochs=config.epochs
+                max_epochs=config.epochs,
+                burst_start=config.burst_start,
+                burst_end=config.burst_end,
+                shift_epoch=config.shift_epoch
             )
             
             # Create noisy training dataset

@@ -1,17 +1,21 @@
-# Burst Baseline Experiment
+# Burst Baseline Experiment - Direct train.py parameters
 # DCCF under burst noise pattern (sudden spikes)
 
-# Inherit from base config
-base_config: "../base_config.yaml"
-
-# Experiment-specific parameters
-output_dir: "runs/burst_base"
+# Training parameters for train.py
+data_path: "data/ratings.csv"
+model_dir: "runs/burst_base"
+epochs: 15
+k: 64
+k_eval: 20
+lr: 0.01
 
 # Noise parameters - burst noise pattern
-noise_level: 0.10
+noise_exposure_bias: 0.10
 noise_schedule: "burst"
-burst_start: 5   # Start burst at epoch 5
-burst_end: 8     # End burst at epoch 8
+noise_burst_start: 5    # Start burst at epoch 5
+noise_burst_len: 3      # Burst lasts 3 epochs (5-7)
+noise_burst_scale: 2.0  # 2x noise during burst
 
 # Reweighting parameters - no reweighting for baseline
-use_reweighting: false
+reweight_type: "none"
+reweight_alpha: 0.0

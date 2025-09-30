@@ -1,0 +1,26 @@
+# Gowalla Dataset Configuration
+# Location-based social network dataset
+
+# Data parameters
+data_path: "data/gowalla/ratings.csv"
+dataset_name: "gowalla"
+rating_threshold: 1.0  # Gowalla uses implicit feedback (check-ins)
+val_fraction: 0.1
+test_fraction: 0.1
+
+# Dataset-specific parameters
+n_users: 196591
+n_items: 950327
+n_interactions: 6442890
+
+# Model parameters (may need adjustment for larger dataset)
+embedding_dim: 64
+learning_rate: 0.01
+weight_decay: 0.000001
+
+# Training parameters
+epochs: 15
+batch_size: 4096  # Larger batch size for bigger dataset
+
+# Evaluation parameters
+k_eval: 20

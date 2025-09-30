@@ -1,0 +1,26 @@
+# Amazon-book Dataset Configuration
+# Book recommendation dataset
+
+# Data parameters
+data_path: "data/amazon-book/ratings.csv"
+dataset_name: "amazon-book"
+rating_threshold: 4.0  # Amazon uses explicit ratings (1-5 stars)
+val_fraction: 0.1
+test_fraction: 0.1
+
+# Dataset-specific parameters
+n_users: 603668
+n_items: 367982
+n_interactions: 8898041
+
+# Model parameters (may need adjustment for larger dataset)
+embedding_dim: 64
+learning_rate: 0.01
+weight_decay: 0.000001
+
+# Training parameters
+epochs: 15
+batch_size: 4096  # Larger batch size for bigger dataset
+
+# Evaluation parameters
+k_eval: 20

@@ -83,39 +83,103 @@ This creates a synthetic MovieLens-like dataset with 3,000 users and 1,500 items
 
 ```
 recsys/
-├── README.md                 # This file
-├── requirements.txt          # Python dependencies
-├── .gitignore               # Git ignore rules
+├── README.md                           # This file
+├── requirements.txt                    # Python dependencies
+├── .gitignore                         # Git ignore rules
+├── THESIS_PRESENTATION_GUIDE.md       # Comprehensive thesis guide
 ├── data/
-│   └── ratings.csv          # Synthetic dataset (generated)
-├── runs/                    # Experimental results
-│   ├── static_base/         # Clean baseline results
-│   ├── static_sol/          # Clean with reweighting results
-│   ├── dyn_base/           # Noisy baseline results
-│   ├── dyn_sol/            # Noisy with reweighting results
-│   ├── summary.csv         # Aggregated results
-│   └── robustness.csv      # Robustness analysis
-├── train.py                # Main training script
-├── analyze_results.py      # Results analysis script
-└── make_data.py           # Dataset generation script
+│   ├── ratings.csv                    # Synthetic dataset (generated)
+│   ├── gowalla/                       # Gowalla dataset (optional)
+│   └── amazon-book/                   # Amazon-book dataset (optional)
+├── configs/
+│   ├── experiments/                   # Experiment configurations
+│   │   ├── static_baseline.yaml      # Static noise experiments
+│   │   ├── dynamic_baseline.yaml     # Dynamic noise experiments
+│   │   ├── burst_baseline.yaml       # Burst noise experiments
+│   │   ├── shift_baseline.yaml       # Shift noise experiments
+│   │   └── *_solution.yaml           # Corresponding solution experiments
+│   └── datasets/                      # Dataset configurations
+│       ├── gowalla_config.yaml       # Gowalla dataset config
+│       └── amazon_book_config.yaml   # Amazon-book dataset config
+├── runs/                              # Experimental results
+│   ├── static_base/                   # Static baseline results
+│   ├── static_sol/                    # Static solution results
+│   ├── dyn_base/                      # Dynamic baseline results
+│   ├── dyn_sol/                       # Dynamic solution results
+│   ├── burst_base/                    # Burst baseline results
+│   ├── burst_sol/                     # Burst solution results
+│   ├── shift_base/                    # Shift baseline results
+│   ├── shift_sol/                     # Shift solution results
+│   ├── comprehensive_summary.csv      # All experiment results
+│   └── comprehensive_robustness.csv   # Robustness analysis
+├── src/                               # Modular source code
+│   ├── models/                        # Model implementations
+│   ├── training/                      # Training and noise modules
+│   ├── evaluation/                    # Metrics and evaluation
+│   ├── data/                          # Data processing
+│   └── utils/                         # Configuration and logging
+├── train.py                           # Enhanced training script (burst/shift support)
+├── run_train_experiments.py           # Automated experiment runner
+├── run_all_experiments.py             # Original modular experiment runner
+├── analyze_comprehensive_results.py   # Enhanced results analysis
+├── prepare_datasets.py                # Dataset preparation script
+├── test_new_experiments.py            # Validation script
+└── make_data.py                       # Synthetic dataset generation
 ```
 
 ## 🔧 Usage
 
 ### Quick Start - Run All Experiments
+
+#### Option 1: Enhanced Training Script (Recommended)
 ```bash
 # Generate data (if not already done)
 python make_data.py
 
-# Option 1: Run core 4 experiments only (faster)
+# Run all 8 experiments with enhanced burst/shift support
+python run_train_experiments.py
+
+# Analyze comprehensive results
+python analyze_comprehensive_results.py
+```
+
+#### Option 2: Original Modular System
+```bash
+# Generate data (if not already done)
+python make_data.py
+
+# Run core 4 experiments only (faster)
 python run_all_experiments.py --quick
 
-# Option 2: Run all experiments including additional analysis
+# Run all experiments including additional analysis
 python run_all_experiments.py
 
 # Generate comprehensive analysis
 python analyze_thesis_results.py
 ```
+
+### Results Location
+
+All experimental results are saved in the `runs/` directory:
+
+```
+runs/
+├── static_base/metrics.csv     # Static baseline results
+├── static_sol/metrics.csv      # Static solution results  
+├── dyn_base/metrics.csv        # Dynamic baseline results
+├── dyn_sol/metrics.csv         # Dynamic solution results
+├── burst_base/metrics.csv      # Burst baseline results
+├── burst_sol/metrics.csv       # Burst solution results
+├── shift_base/metrics.csv      # Shift baseline results
+├── shift_sol/metrics.csv       # Shift solution results
+├── comprehensive_summary.csv   # All results combined
+└── comprehensive_robustness.csv # Robustness analysis
+```
+
+Each `metrics.csv` contains:
+- **Recall@K**: Recall at K (default K=20)
+- **NDCG@K**: NDCG at K (default K=20)  
+- **K**: The K value used for evaluation
 
 ### Individual Experiment Commands
 
@@ -153,6 +217,27 @@ python run_experiment.py --config configs/experiments/static_15_baseline.yaml
 python run_experiment.py --config configs/experiments/static_20_baseline.yaml
 ```
 
+### Updated Training Script with Burst and Shift Support
+
+We've enhanced the training script to support advanced noise patterns:
+
+```bash
+# Run all experiments with the new enhanced script
+python run_train_experiments.py
+
+# Or run individual experiments with train.py directly:
+
+# Burst noise experiment
+python train.py --model_dir runs/burst_base --epochs 15 \
+  --noise_exposure_bias 0.10 --noise_schedule burst \
+  --noise_burst_start 5 --noise_burst_len 3 --noise_burst_scale 2.0
+
+# Shift noise experiment  
+python train.py --model_dir runs/shift_base --epochs 15 \
+  --noise_exposure_bias 0.10 --noise_schedule shift \
+  --noise_shift_epoch 8 --noise_shift_mode head2tail
+```
+
 ### Command Line Arguments
 
 | Argument | Default | Description |
@@ -163,10 +248,21 @@ python run_experiment.py --config configs/experiments/static_20_baseline.yaml
 | `--k` | `64` | Embedding dimension |
 | `--k_eval` | `20` | Top-K for evaluation metrics |
 | `--lr` | `0.01` | Learning rate |
-| `--noise_exposure_bias` | `0.0` | Exposure bias noise level (0.0-1.0) |
-| `--noise_schedule` | `none` | Noise schedule: `none` or `ramp` |
+| **Noise Parameters** | | |
+| `--noise_exposure_bias` | `0.0` | Base exposure bias noise level (0.0-1.0) |
+| `--noise_schedule` | `none` | Noise schedule: `none`, `ramp`, `burst`, `shift` |
+| `--noise_schedule_epochs` | `10` | Epochs for ramp schedule |
+| **Burst Noise Parameters** | | |
+| `--noise_burst_start` | `4` | Epoch to start burst (1-based) |
+| `--noise_burst_len` | `2` | Duration of burst in epochs |
+| `--noise_burst_scale` | `2.0` | Noise multiplier during burst |
+| **Shift Noise Parameters** | | |
+| `--noise_shift_epoch` | `5` | Epoch where focus shifts (1-based) |
+| `--noise_shift_mode` | `head2tail` | Shift direction: `head2tail` or `tail2head` |
+| **Reweighting Parameters** | | |
 | `--reweight_type` | `none` | Reweighting strategy: `none` or `popularity` |
 | `--reweight_alpha` | `0.0` | Popularity reweighting strength |
+| `--reweight_ramp_epochs` | `10` | Burn-in epochs for gradual reweighting |
 
 ## 🧪 Experimental Design
 
@@ -202,10 +298,15 @@ Beyond the core 4 experiments, we include comprehensive analysis with:
 - **5%, 10%, 15%, 20% static noise** - Testing different corruption levels
 - Matches the noise rates mentioned in academic literature
 
-#### **Dynamic Noise Patterns**
-- **Ramp-up**: Gradual noise increase over training epochs
-- **Burst**: Sudden noise spikes during specific training windows  
-- **Shift**: Corruption type changes mid-training (e.g., head→tail item focus)
+#### **Advanced Dynamic Noise Patterns**
+- **Ramp-up**: Gradual noise increase over training epochs (0% → base_level)
+- **Burst**: Sudden noise spikes during specific training windows (2-3x base level)
+- **Shift**: Corruption focus changes mid-training (head items → tail items or vice versa)
+
+Each pattern simulates real-world scenarios:
+- **Ramp**: Gradual system degradation or increasing bot activity
+- **Burst**: Viral content spikes, Black Friday shopping, coordinated attacks
+- **Shift**: Algorithm changes, user behavior shifts, seasonal pattern changes
 
 ### Evaluation Metrics
 
@@ -277,15 +378,26 @@ class MF_BPR(nn.Module):
 - Represents the collaborative filtering component of DCCF
 - Uses Bayesian Personalized Ranking (BPR) loss for implicit feedback
 
-#### 2. **Dynamic Noise Simulation**
+#### 2. **Enhanced Dynamic Noise Simulation**
 ```python
-def add_dynamic_exposure_noise(train_df, n_users, n_items, p, seed=42):
-    # Simulates realistic dynamic noise patterns
-    # - p: noise intensity (increases over time in dynamic conditions)
+def add_dynamic_exposure_noise(train_df, n_users, n_items, p, focus=None, seed=42):
+    # Simulates realistic dynamic noise patterns with focus control
+    # - p: noise intensity (varies by schedule)
+    # - focus: 'head', 'tail', or None (for shift patterns)
     # - Adds popularity-biased fake interactions
+    
+    if focus == "head":
+        probs = probs ** 2  # Emphasize popular items even more
+    elif focus == "tail":
+        inv = 1.0 / (pop + 1e-8)  # Target long-tail items
+        probs = inv / inv.sum()
 ```
-- **Static noise**: Fixed noise level throughout training
-- **Dynamic noise**: Noise intensity increases using ramp schedule (0 → 30% over epochs)
+
+**Noise Schedule Implementation**:
+- **Static**: Fixed noise level throughout training
+- **Ramp**: Gradual increase (0 → base_level over first 10 epochs)
+- **Burst**: Spike during specific epochs (base_level → scale*base_level)
+- **Shift**: Focus changes (head items → tail items at specified epoch)
 
 #### 3. **Our Solution: Popularity-Aware Reweighting**
 ```python

@@ -56,22 +56,38 @@ def ndcg_at_k(ranked, positives, k=20):
 # ---------------------------
 # Noise (train-only)
 # ---------------------------
-def add_dynamic_exposure_noise(train_df, n_users, n_items, p, seed=42):
-    """Add p*|train| extra 'positive' clicks sampled by popularity (exposure bias)."""
-    if p <= 0: return train_df
-    rng = np.random.default_rng(seed + int(time.time())%100000)
+def add_dynamic_exposure_noise(train_df, n_users, n_items, p, focus=None, seed=42):
+    """
+    Add p * |train_df| extra 'positive' clicks sampled by item popularity.
+    If focus == 'head', bias sampling toward head items even more.
+    If focus == 'tail', invert popularity to target long-tail items.
+    """
+    if p <= 0:
+        return train_df
+    rng = np.random.default_rng(seed + int(time.time()) % 100000)
     m = len(train_df)
-    add_n = int(p * m)
-    # popularity from current train
+    add_n = int(max(0, p) * m)
+    if add_n == 0:
+        return train_df
+
     pop = np.bincount(train_df["i"].values, minlength=n_items).astype(float)
-    if pop.sum() == 0: return train_df
+    if pop.sum() == 0:
+        return train_df
+
     probs = pop / pop.sum()
-    extra = []
+    if focus == "head":
+        probs = probs ** 2
+        probs = probs / probs.sum()
+    elif focus == "tail":
+        inv = 1.0 / (pop + 1e-8)
+        probs = inv / inv.sum()
+
+    extras = []
     for _ in range(add_n):
         u = rng.integers(0, n_users)
         i = rng.choice(n_items, p=probs)
-        extra.append((u,i))
-    df_extra = pd.DataFrame(extra, columns=["u","i"])
+        extras.append((u, i))
+    df_extra = pd.DataFrame(extras, columns=["u", "i"])
     return pd.concat([train_df, df_extra], ignore_index=True)
 
 # ---------------------------
@@ -149,6 +165,30 @@ def build_pop_weights(train_df, n_items, alpha=0.5, eps=1e-6):
     w = w * (len(w) / (w.sum() + 1e-12))  # normalize to mean ~1
     return w
 
+def noise_scale_for_epoch(epoch, args):
+    """Return a multiplier for the base noise_exposure_bias depending on schedule."""
+    if args.noise_schedule == "none":
+        return 1.0
+    if args.noise_schedule == "ramp":
+        if args.noise_schedule_epochs <= 0: return 1.0
+        return min(1.0, epoch / max(1, args.noise_schedule_epochs))
+    if args.noise_schedule == "burst":
+        in_burst = (epoch >= args.noise_burst_start) and (epoch < args.noise_burst_start + args.noise_burst_len)
+        return args.noise_burst_scale if in_burst else 1.0
+    if args.noise_schedule == "shift":
+        # scale is constant; shift affects which items are targeted (head vs tail)
+        return 1.0
+    return 1.0
+
+def focus_for_epoch(epoch, args):
+    """Return None (default), 'head', or 'tail' for shift schedule."""
+    if args.noise_schedule != "shift":
+        return None
+    if args.noise_shift_mode == "head2tail":
+        return "head" if epoch < args.noise_shift_epoch else "tail"
+    else:  # tail2head
+        return "tail" if epoch < args.noise_shift_epoch else "head"
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data_path", type=str, default="data/ratings.csv")
@@ -157,10 +197,22 @@ def main():
     ap.add_argument("--k", type=int, default=64)
     ap.add_argument("--k_eval", type=int, default=20)
     ap.add_argument("--lr", type=float, default=0.01)
+
     # noise / schedule
     ap.add_argument("--noise_exposure_bias", type=float, default=0.0)
-    ap.add_argument("--noise_schedule", type=str, default="none", choices=["none","ramp"])
-    ap.add_argument("--noise_schedule_epochs", type=int, default=10)
+    ap.add_argument("--noise_schedule", type=str, default="none",
+                choices=["none", "ramp", "burst", "shift"])
+    ap.add_argument("--noise_schedule_epochs", type=int, default=10)   # used for ramp (0 -> 1 across this many epochs)
+
+    # burst params
+    ap.add_argument("--noise_burst_start", type=int, default=4, help="epoch (1-based) to start burst")
+    ap.add_argument("--noise_burst_len", type=int, default=2, help="how many epochs the burst lasts")
+    ap.add_argument("--noise_burst_scale", type=float, default=2.0, help="multiply base noise by this during burst")
+
+    # shift params
+    ap.add_argument("--noise_shift_epoch", type=int, default=5, help="epoch (1-based) where focus shifts")
+    ap.add_argument("--noise_shift_mode", type=str, default="head2tail", choices=["head2tail", "tail2head"])
+
     # popularity reweight (solution)
     ap.add_argument("--reweight_type", type=str, default="none", choices=["none","popularity"])
     ap.add_argument("--reweight_alpha", type=float, default=0.0)
@@ -188,18 +240,15 @@ def main():
 
     best = {"recall": -1.0, "epoch": -1}
     for epoch in range(1, args.epochs+1):
-        # schedule for dynamic noise & reweight ramp
-        # noise scale goes 0->1 over noise.schedule_epochs if ramp is used
-        if args.noise_schedule == "ramp" and args.noise_schedule_epochs > 0:
-            noise_scale = min(1.0, epoch / max(1, args.noise_schedule_epochs))
-        else:
-            noise_scale = 1.0
+        # schedule + focus
+        scale = noise_scale_for_epoch(epoch, args)
+        p_actual = args.noise_exposure_bias * scale
+        focus = focus_for_epoch(epoch, args)  # None / 'head' / 'tail'
 
         # build training graph with optional extra “noisy positives”
         train_df_use = train_df.copy()
-        p_actual = args.noise_exposure_bias * (noise_scale if args.noise_schedule == "ramp" else 1.0)
         if p_actual > 0:
-            train_df_use = add_dynamic_exposure_noise(train_df_use, n_users, n_items, p_actual)
+            train_df_use = add_dynamic_exposure_noise(train_df_use, n_users, n_items, p_actual, focus=focus)
 
         # build user->positives map
         user_pos = make_user_pos(train_df_use)
@@ -214,10 +263,12 @@ def main():
         loss = train_epoch(model, opt, user_pos, n_items, item_weights=iw, device=device)
         # quick val
         r, n = evaluate(model, val_df, make_user_pos(train_df), k=args.k_eval, device=device)
+        
         if r > best["recall"]:
             best = {"recall": r, "epoch": epoch}
             torch.save(model.state_dict(), os.path.join(args.model_dir, "best.pt"))
-        print(f"Epoch {epoch}/{args.epochs}  loss={loss:.3f}  val Recall@{args.k_eval}={r:.4f}  NDCG@{args.k_eval}={n:.4f}  (noise_p={p_actual:.3f})")
+        print(f"Epoch {epoch}/{args.epochs}  loss={loss:.3f}  val Recall@{args.k_eval}={r:.4f}  NDCG@{args.k_eval}={n:.4f}  "
+              f"(noise_p={p_actual:.3f}, focus={focus})")
 
     # test with best
     model.load_state_dict(torch.load(os.path.join(args.model_dir, "best.pt"), map_location=device))

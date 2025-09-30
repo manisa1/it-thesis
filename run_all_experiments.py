@@ -80,7 +80,11 @@ def analyze_results() -> None:
         "static_base": "runs/static_base/metrics.csv",
         "static_sol": "runs/static_sol/metrics.csv", 
         "dyn_base": "runs/dyn_base/metrics.csv",
-        "dyn_sol": "runs/dyn_sol/metrics.csv"
+        "dyn_sol": "runs/dyn_sol/metrics.csv",
+        "burst_base": "runs/burst_base/metrics.csv",
+        "burst_sol": "runs/burst_sol/metrics.csv",
+        "shift_base": "runs/shift_base/metrics.csv", 
+        "shift_sol": "runs/shift_sol/metrics.csv"
     }
     
     # Collect results
@@ -238,7 +242,9 @@ def main():
         "configs/experiments/static_15_baseline.yaml", 
         "configs/experiments/static_20_baseline.yaml",
         "configs/experiments/burst_baseline.yaml",
-        "configs/experiments/shift_baseline.yaml"
+        "configs/experiments/burst_solution.yaml",
+        "configs/experiments/shift_baseline.yaml",
+        "configs/experiments/shift_solution.yaml"
     ]
     
     if not args.skip_experiments:

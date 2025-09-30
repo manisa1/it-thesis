@@ -1,0 +1,19 @@
+# Burst Solution Experiment
+# Our solution under burst noise pattern (sudden spikes)
+
+# Inherit from base config
+base_config: "../base_config.yaml"
+
+# Experiment-specific parameters
+output_dir: "runs/burst_sol"
+
+# Noise parameters - burst noise pattern
+noise_level: 0.10
+noise_schedule: "burst"
+burst_start: 5   # Start burst at epoch 5
+burst_end: 8     # End burst at epoch 8
+
+# Reweighting parameters - enable our solution
+use_reweighting: true
+reweight_alpha: 0.5
+reweight_burnin_epochs: 10

@@ -1,0 +1,18 @@
+# Shift Solution Experiment
+# Our solution under shift noise pattern (corruption type changes)
+
+# Inherit from base config
+base_config: "../base_config.yaml"
+
+# Experiment-specific parameters
+output_dir: "runs/shift_sol"
+
+# Noise parameters - shift noise pattern
+noise_level: 0.10
+noise_schedule: "shift"
+shift_epoch: 8   # Change corruption pattern at epoch 8
+
+# Reweighting parameters - enable our solution
+use_reweighting: true
+reweight_alpha: 0.5
+reweight_burnin_epochs: 10
