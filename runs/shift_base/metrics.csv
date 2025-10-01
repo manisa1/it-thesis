@@ -1,2 +1,11 @@
-Recall@K,NDCG@K,K
-0.23781708945260346,0.08451308204728582,20
+Experiment Information,Values and Explanations
+Shift Noise Experiment,
+DCCF model with changing noise focus (shift pattern),
+Tests how DCCF handles changing popularity focus,
+May show unexpected performance changes,
+,
+RESULTS:,
+Recall@20 Performance,23.8% (0.237817)
+NDCG@20 Quality Score,8.45% (0.084513)
+Performance Level,Excellent
+What This Means,Shift response: 23.8% shows how DCCF handles changing popularity focus

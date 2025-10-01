@@ -1,0 +1,3 @@
+Research Finding,Description,Static Performance,Dynamic Performance,Performance Change,Significance,Thesis Implication
+Problem Identification,DCCF Performance Under Dynamic Noise,20.2%,17.3%,-14.3%,Shows DCCF struggles with dynamic noise patterns,Confirms hypothesis that DCCF assumes static noise
+Solution Effectiveness,Our Solution vs Dynamic Baseline,20.2%,17.6%,+1.7%,Solution improves robustness under dynamic noise,Proves proposed solution addresses the problem

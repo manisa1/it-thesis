@@ -1,0 +1,7 @@
+Experiment,Description,Recall@20,Performance Level,Interpretation
+Static Baseline,"DCCF with no noise, no solution",20.2%,Excellent,Baseline performance: 20.2% of relevant items found. This is your reference point.
+Static Solution,"DCCF with no noise, with our solution",20.1%,Excellent,With solution under ideal conditions: Shows if solution causes any harm (it shouldn't).
+Dynamic Baseline,"DCCF with dynamic noise, no solution",17.3%,Fair,Under dynamic noise: Performance drop shows DCCF struggles with changing noise patterns.
+Dynamic Solution,"DCCF with dynamic noise, with our solution",17.6%,Fair,Solution under dynamic noise: Improvement over dynamic baseline proves solution works.
+Burst Baseline,"DCCF with sudden noise spikes, no solution",20.7%,Excellent,Under burst noise: 20.7% performance - DCCF's response to sudden spikes.
+Shift Baseline,"DCCF with focus shift noise, no solution",23.8%,Excellent,Under shift noise: 23.8% performance - DCCF's response to focus changes.

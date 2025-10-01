@@ -1,0 +1,4 @@
+Metric,What It Measures,Good Score,What Higher Means,Example
+Recall@20,"Out of all relevant items, how many were found in top-20 recommendations",Above 18%,Better at finding relevant items,20% = Found 2 out of 10 relevant items in top-20
+NDCG@20,Quality of ranking - considers both relevance and position,Above 6%,Better at ranking relevant items higher,7% = Good ranking quality with relevant items near top
+Performance Level,Overall assessment based on Recall@20 score,Good or Excellent,Overall better recommendation quality,Excellent = Strong performance for recommendation task

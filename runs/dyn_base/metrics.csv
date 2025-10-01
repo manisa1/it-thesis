@@ -1,2 +1,11 @@
-Recall@K,NDCG@K,K
-0.17339786381842456,0.05860416296856761,20
+Experiment Information,Values and Explanations
+Dynamic Baseline Experiment,
+DCCF model with dynamic noise and no solution,
+Shows how much dynamic noise hurts DCCF performance,
+Lower performance than static (proves the problem exists),
+,
+RESULTS:,
+Recall@20 Performance,17.3% (0.173398)
+NDCG@20 Quality Score,5.86% (0.058604)
+Performance Level,Fair
+What This Means,Problem evidence: 17.3% shows DCCF struggles with dynamic noise

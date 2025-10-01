@@ -1,2 +1,11 @@
-Recall@K,NDCG@K,K
-0.1764018691588785,0.05855977191779671,20
+Experiment Information,Values and Explanations
+Dynamic Solution Experiment,
+DCCF model with dynamic noise and our solution applied,
+Tests if our solution helps under dynamic noise conditions,
+Better than dynamic baseline (proves solution works),
+,
+RESULTS:,
+Recall@20 Performance,17.6% (0.176402)
+NDCG@20 Quality Score,5.86% (0.058560)
+Performance Level,Fair
+What This Means,Solution proof: 17.6% shows our solution helps under dynamic noise

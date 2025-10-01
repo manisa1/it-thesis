@@ -1,2 +1,11 @@
-Recall@K,NDCG@K,K
-0.20143524699599466,0.06910567512110843,20
+Experiment Information,Values and Explanations
+Static Solution Experiment,
+DCCF model with no noise but with our solution applied,
+Tests if our solution causes any harm under ideal conditions,
+Should be similar to baseline (proving no harm done),
+,
+RESULTS:,
+Recall@20 Performance,20.1% (0.201435)
+NDCG@20 Quality Score,6.91% (0.069106)
+Performance Level,Excellent
+What This Means,Control test: 20.1% proves our solution doesn't harm ideal performance

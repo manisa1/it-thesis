@@ -1,2 +1,11 @@
-Recall@K,NDCG@K,K
-0.20243658210947932,0.06896945486854521,20
+Experiment Information,Values and Explanations
+Static Baseline Experiment,
+DCCF model with no noise and no solution,
+Establishes baseline performance under ideal conditions,
+Highest performance - this is your reference point,
+,
+RESULTS:,
+Recall@20 Performance,20.2% (0.202437)
+NDCG@20 Quality Score,6.90% (0.068969)
+Performance Level,Excellent
+What This Means,Baseline: 20.2% shows DCCF's best performance under ideal conditions

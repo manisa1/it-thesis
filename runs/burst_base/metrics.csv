@@ -1,2 +1,11 @@
-Recall@K,NDCG@K,K
-0.20677570093457945,0.0692201873729788,20
+Experiment Information,Values and Explanations
+Burst Noise Experiment,
+DCCF model with sudden noise spikes (burst pattern),
+Tests how DCCF handles sudden popularity spikes,
+Variable performance - may be surprisingly good,
+,
+RESULTS:,
+Recall@20 Performance,20.7% (0.206776)
+NDCG@20 Quality Score,6.92% (0.069220)
+Performance Level,Excellent
+What This Means,Burst response: 20.7% shows how DCCF handles sudden popularity spikes
