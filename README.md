@@ -108,31 +108,42 @@ For experiments with real-world datasets, use the `prepare_datasets.py` script t
 
 ### Supported Datasets
 
-The script handles three types of datasets:
+The script handles **all 3 benchmark datasets mentioned in the interim report**:
 
 1. **Gowalla** (Location-based check-ins)
    - Format: `user_id\titem_id` (tab-separated)
    - Creates implicit feedback interactions (rating = 1.0)
+   - **Status**: ✅ Integrated and tested
 
 2. **Amazon-book** (Book ratings/metadata)
    - Format: Book catalog with metadata
    - Creates synthetic user interactions from catalog data
+   - **Status**: ✅ Integrated and tested
 
-3. **MovieLens** (Movie ratings)
-   - Format: Standard `userId,itemId,rating,timestamp`
+3. **MovieLens-20M** (Movie ratings)
+   - Format: Standard `userId,movieId,rating,timestamp`
    - Filters for high ratings (≥4.0) for implicit feedback
+   - **Status**: ✅ Integrated and tested
 
 ### Usage
 
 ```bash
-# Prepare all available datasets
+# Prepare all 3 datasets (recommended)
 python prepare_datasets.py
 
 # Individual dataset preparation (if raw files exist)
 # python prepare_gowalla.py
-# python prepare_amazon_book.py
+# python prepare_amazon_book.py  
 # python prepare_movielens20m.py
 ```
+
+### Dataset Statistics (After Processing)
+
+| Dataset | Users | Items | Interactions | Domain |
+|---------|-------|-------|--------------|--------|
+| **Gowalla** | 80,690 | 69,047 | 1.45M | Location check-ins |
+| **Amazon-book** | 10,000 | 7,882 | 100K | Book ratings |
+| **MovieLens-20M** | 136,677 | 13,680 | 9.98M | Movie ratings |
 
 ### Data Locations
 
@@ -149,48 +160,50 @@ Processed data is saved in:
 
 ```
 recsys/
- README.md # This file
- requirements.txt # Python dependencies
- .gitignore # Git ignore rules
- THESIS_PRESENTATION_GUIDE.md # Comprehensive thesis guide
- data/
- ratings.csv # Synthetic dataset (generated)
- gowalla/ # Gowalla dataset (optional)
- amazon-book/ # Amazon-book dataset (optional)
- configs/
- experiments/ # Experiment configurations
- static_baseline.yaml # Static noise experiments
- dynamic_baseline.yaml # Dynamic noise experiments
- burst_baseline.yaml # Burst noise experiments
- shift_baseline.yaml # Shift noise experiments
- *_solution.yaml # Corresponding solution experiments
- datasets/ # Dataset configurations
- gowalla_config.yaml # Gowalla dataset config
- amazon_book_config.yaml # Amazon-book dataset config
- runs/ # Experimental results
- static_base/ # Static baseline results
- static_sol/ # Static solution results
- dyn_base/ # Dynamic baseline results
- dyn_sol/ # Dynamic solution results
- burst_base/ # Burst baseline results
- burst_sol/ # Burst solution results
- shift_base/ # Shift baseline results
- shift_sol/ # Shift solution results
- comprehensive_summary.csv # All experiment results
- comprehensive_robustness.csv # Robustness analysis
- src/ # Modular source code
- models/ # Model implementations
- training/ # Training and noise modules
- evaluation/ # Metrics and evaluation
- data/ # Data processing
- utils/ # Configuration and logging
- train.py # Enhanced training script (burst/shift support)
- run_train_experiments.py # Automated experiment runner
- run_all_experiments.py # Original modular experiment runner
- analyze_comprehensive_results.py # Enhanced results analysis
- prepare_datasets.py # Dataset preparation script
- test_new_experiments.py # Validation script
- make_data.py # Synthetic dataset generation
+├── README.md # This file
+├── requirements.txt # Python dependencies
+├── .gitignore # Git ignore rules
+├── THESIS_PRESENTATION_GUIDE.md # Comprehensive thesis guide
+├── data/
+│   ├── ratings.csv # Synthetic dataset (generated)
+│   ├── gowalla/ # Gowalla dataset ✅ Integrated
+│   ├── amazon-book/ # Amazon-book dataset ✅ Integrated  
+│   └── Movielens-20M/ # MovieLens dataset ✅ Integrated
+├── configs/
+│   ├── experiments/ # Experiment configurations
+│   │   ├── static_baseline.yaml # Static noise experiments
+│   │   ├── dynamic_baseline.yaml # Dynamic noise experiments
+│   │   ├── burst_experiment.yaml # Burst noise experiments ✅ New
+│   │   ├── shift_experiment.yaml # Shift noise experiments ✅ New
+│   │   └── *_solution.yaml # Corresponding solution experiments
+│   └── datasets/ # Dataset configurations ✅ New
+│       ├── gowalla_config.yaml
+│       ├── amazon_book_config.yaml
+│       └── movielens_config.yaml
+├── runs/ # Experimental results
+│   ├── static_base/ # Static baseline results
+│   ├── static_sol/ # Static solution results
+│   ├── dyn_base/ # Dynamic baseline results
+│   ├── dyn_sol/ # Dynamic solution results
+│   ├── burst_base/ # Burst baseline results ✅ New
+│   ├── burst_sol/ # Burst solution results ✅ New
+│   ├── shift_base/ # Shift baseline results ✅ New
+│   ├── shift_sol/ # Shift solution results ✅ New
+│   ├── comprehensive_summary.csv # All experiment results
+│   └── comprehensive_robustness.csv # Robustness analysis
+├── src/ # Modular source code ✅ Enhanced
+│   ├── models/ # Model implementations (DCCF + 4 baselines)
+│   ├── training/ # Training and dynamic noise modules ✅ New
+│   ├── evaluation/ # Metrics and robustness evaluation ✅ Enhanced
+│   ├── data/ # Data processing
+│   └── utils/ # Configuration and logging
+├── train.py # Enhanced training script (burst/shift support)
+├── run_train_experiments.py # Automated experiment runner
+├── run_all_experiments.py # Original modular experiment runner
+├── analyze_comprehensive_results.py # Enhanced results analysis
+├── prepare_datasets.py # Dataset preparation script ✅ Updated
+├── demo_dynamic_noise.py # Dynamic noise demonstration ✅ New
+└── test_new_experiments.py # Validation script
 ```
 
 ## Usage
