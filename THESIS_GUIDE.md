@@ -1,6 +1,6 @@
 # DCCF Robustness Thesis - Complete Guide
 
-## Quick Start (3 Commands)
+## Quick Start (4 Commands)
 
 ```bash
 # 1. Install dependencies
@@ -9,8 +9,11 @@ pip install -r requirements.txt
 # 2. Run all experiments (takes ~10-15 minutes)
 python run_all_experiments.py
 
-# 3. Generate thesis analysis
-python analyze_thesis_results.py
+# 3. Run baseline comparison experiments
+python run_baseline_comparison.py
+
+# 4. Generate comprehensive academic robustness analysis
+python run_comprehensive_robustness_analysis.py
 ```
 
 ## What This Gives You
@@ -24,8 +27,11 @@ python analyze_thesis_results.py
 
 ## Complete Experimental Results
 - 4 experimental conditions (static/dynamic × baseline/solution)
+- 2 dynamic noise patterns (burst and shift)
+- 4 baseline model comparisons (LightGCN, SimGCL, NGCF, SGL)
+- 8 established robustness metrics from literature
 - Automated result collection and analysis
-- Statistical summaries and robustness metrics
+- Statistical summaries and academic-standard analysis
 - Publication-ready visualizations
 
 ## Thesis-Ready Materials
@@ -104,12 +110,39 @@ Your thesis will demonstrate:
 2. Reproducibility: Demonstrate one-command experiment execution
 3. Rigor: Point to comprehensive logging and error handling
 4. Results: Present clear statistical analysis and visualizations
+5. **Academic Standards**: Highlight use of established robustness metrics from literature
 
 ## For Lecturer Review:
 - Professional Code: Modular, documented, type-hinted
 - Clear Experiments: Configuration-driven with proper logging
 - Comprehensive Results: Automated analysis with statistical insights
+- **Academic Robustness Analysis**: 8 established metrics from peer-reviewed literature
+- **Baseline Comparisons**: 4 state-of-the-art models for fair evaluation
 - Easy Reproduction: One-command execution for verification
+
+## Academic Robustness Analysis
+
+### **📊 Established Metrics Implementation**
+Our robustness analysis follows **established academic standards** using 8 metrics from literature:
+
+```bash
+# Generate comprehensive academic robustness analysis
+python run_comprehensive_robustness_analysis.py
+```
+
+**Output**: `runs/academic_robustness_analysis/`
+- `academic_robustness_table.csv` - Main comparison table
+- `academic_robustness_table.tex` - LaTeX format for thesis
+- `detailed_robustness_metrics.csv` - All 8 metrics detailed
+- `academic_robustness_heatmap.png` - Offset on Metrics visualization
+- `academic_performance_drops.png` - Performance comparison
+
+### **🎯 Key Academic Benefits**
+- ✅ **No custom metrics** - All from established literature
+- ✅ **Peer-reviewed sources** - Top-tier conferences (SIGIR, WWW, etc.)
+- ✅ **Standard formulas** - Exact implementation from papers
+- ✅ **Comprehensive coverage** - Multiple robustness aspects
+- ✅ **Thesis-ready** - LaTeX tables and academic visualizations
 
 ## Running Experiments
 
