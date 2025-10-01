@@ -52,6 +52,19 @@ We hypothesize that DCCF's performance degrades significantly under **dynamic na
 - **Burn-in Scheduling**: Trains in easier regime for initial epochs before enabling noise schedules and DRO
 - **Exposure-Aware DRO**: After burn-in, emphasizes hardest examples while penalizing high exposure effects
 
+## Key Features
+
+### **🔥 Dynamic Noise Patterns**
+- **Burst Pattern**: Sudden noise spikes during training (e.g., viral content, flash sales)
+- **Shift Pattern**: Focus changes from popular to unpopular items (e.g., algorithm updates)
+- **Ramp Pattern**: Gradual noise increase over epochs (baseline comparison)
+
+### **📊 Comprehensive Evaluation**
+- **4 Core Experiments**: Static/Dynamic × Baseline/Solution
+- **Advanced Patterns**: Burst and shift noise simulation
+- **Robustness Metrics**: Performance drops, stability analysis
+- **Visualization**: Dynamic pattern demonstrations
+
 ## Installation
 
 ## Prerequisites
@@ -207,6 +220,13 @@ python run_all_experiments.py --quick
 # Run all experiments including additional analysis
 python run_all_experiments.py
 
+# Run dynamic noise pattern demonstrations
+python demo_dynamic_noise.py
+
+# Run specific dynamic noise experiments
+python run_dynamic_noise_experiments.py --experiment burst
+python run_dynamic_noise_experiments.py --experiment shift
+
 # Generate comprehensive analysis
 python analyze_thesis_results.py
 ```
@@ -256,7 +276,38 @@ python run_experiment.py --config configs/experiments/dynamic_baseline.yaml
 python run_experiment.py --config configs/experiments/dynamic_solution.yaml
 ```
 
-## 5. Additional Noise Pattern Analysis
+## 5. Dynamic Noise Pattern Experiments
+
+### **🔥 Burst Noise Experiments**
+```bash
+# Demonstrate burst pattern
+python demo_dynamic_noise.py
+
+# Run burst experiment
+python run_dynamic_noise_experiments.py --experiment burst
+
+# Configure burst parameters
+python run_experiment.py --config configs/experiments/burst_experiment.yaml
+```
+
+### **🔄 Shift Noise Experiments**  
+```bash
+# Run shift experiment
+python run_dynamic_noise_experiments.py --experiment shift
+
+# Configure shift parameters
+python run_experiment.py --config configs/experiments/shift_experiment.yaml
+```
+
+### **📊 Visualize Dynamic Patterns**
+```bash
+# Create visualization of both patterns
+python demo_dynamic_noise.py
+
+# This generates: dynamic_noise_patterns.png
+```
+
+## 6. Additional Noise Pattern Analysis
 ```bash
 # Burst noise pattern
 python run_experiment.py --config configs/experiments/burst_baseline.yaml
@@ -352,9 +403,39 @@ Beyond the core 4 experiments, we include comprehensive analysis with:
 - Matches the noise rates mentioned in academic literature
 
 ## Advanced Dynamic Exposure Patterns
-- **Ramp-up**: Gradual exposure bias increase over training epochs (0% → base_level)
-- **Burst**: Sudden exposure bias spikes during specific training windows (2-3x base level)  
-- **Shift**: Exposure focus changes mid-training (head items → tail items or vice versa)
+
+### **🔥 Burst Noise Pattern** 
+- **Description**: Sudden noise spikes during specific training epochs
+- **Implementation**: Normal noise → Sudden spike → Back to normal
+- **Example Schedule**: 10% → 10% → **20% (burst)** → **20%** → **20%** → 10%
+- **Configuration**: Epochs 5-7 with 2x noise intensity
+- **Real-world scenarios**: Viral content spikes, flash sales, coordinated attacks
+
+### **🔄 Shift Noise Pattern**
+- **Description**: Noise focus changes from popular to unpopular items during training
+- **Implementation**: Head focus → Focus shift → Tail focus  
+- **Example Schedule**: **Head focus** (epochs 1-7) → **Tail focus** (epochs 8-15)
+- **Configuration**: Focus shift at epoch 8, head2tail direction
+- **Real-world scenarios**: Algorithm updates, trending topic shifts, policy changes
+
+### **📈 Ramp-up Pattern** (Baseline)
+- **Description**: Gradual noise increase over training epochs (0% → base_level)
+- **Implementation**: Progressive increase from clean to noisy conditions
+- **Real-world scenarios**: Gradual system degradation, increasing bot activity
+
+### **🎯 Pattern Comparison**
+
+| Pattern | Noise Level | Focus Changes | Use Case |
+|---------|-------------|---------------|----------|
+| **Burst** | Variable (spikes) | No | Sudden events, viral content |
+| **Shift** | Constant | Yes (head→tail) | Algorithm changes, trend shifts |
+| **Ramp** | Increasing | No | Gradual degradation |
+
+### **📊 Implementation Files**
+- **Core**: `src/training/dynamic_noise.py`
+- **Demo**: `demo_dynamic_noise.py` 
+- **Configs**: `configs/experiments/burst_experiment.yaml`, `configs/experiments/shift_experiment.yaml`
+- **Visualization**: Run `python demo_dynamic_noise.py` to see patterns
 
 Each pattern simulates real-world **exposure bias scenarios**:
 - **Ramp**: Gradual shift in item popularity (trending topics, seasonal changes)
