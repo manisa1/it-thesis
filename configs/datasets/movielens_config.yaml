@@ -1,0 +1,50 @@
+# MovieLens-20M Dataset Configuration
+# As mentioned in interim report: benchmark dataset for movie ratings
+
+dataset_name: "movielens-20m"
+description: "MovieLens 20M movie ratings dataset"
+
+# Data paths
+data_dir: "data/Movielens-20M"
+processed_file: "data/Movielens-20M/ratings.csv"
+
+# Dataset characteristics
+domain: "movies"
+interaction_type: "implicit"  # Converted from explicit ratings ≥4.0
+min_interactions: 5
+
+# Data format
+columns:
+  user_id: "userId"
+  item_id: "itemId" 
+  rating: "rating"
+  timestamp: "timestamp"
+
+# Preprocessing details
+preprocessing:
+  rating_threshold: 4.0  # Keep ratings ≥ 4.0 for implicit feedback
+  implicit_rating: 1.0   # Convert to implicit feedback
+  min_user_interactions: 5
+  min_item_interactions: 5
+
+# Dataset statistics (approximate after preprocessing)
+expected_stats:
+  users: "~138,000"
+  items: "~27,000" 
+  interactions: "~13M"
+  sparsity: "very_sparse"
+
+# Download information
+source_url: "https://grouplens.org/datasets/movielens/20m/"
+raw_files:
+  - "ratings.csv"
+  - "movies.csv"
+  - "tags.csv"
+  - "genome-scores.csv"
+
+# Usage notes
+notes:
+  - "Standard benchmark dataset for recommendation systems"
+  - "High-quality explicit ratings converted to implicit feedback"
+  - "Temporal information available via timestamps"
+  - "Rich metadata available (genres, tags, etc.)"
