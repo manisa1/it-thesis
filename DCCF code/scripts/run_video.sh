@@ -1,1 +1,0 @@
-python main.py --model="L2CL" --dataset="QB-video" --config_files='properties/L2CL.yaml' --ssl_temp=0.125 --ssl_reg=5e-5 --batch_size="batch"

@@ -185,11 +185,11 @@ def main():
  print(f" - Amazon-book: {' Ready' if amazon_success else ' Needs manual download'}")
 
  if gowalla_success and amazon_success:
- print("\n All datasets ready for experiments!")
- print("You can now run experiments with different datasets by updating the data_path in configs.")
+    print("\n All datasets ready for experiments!")
+    print("You can now run experiments with different datasets by updating the data_path in configs.")
  else:
- print("\n Follow the instructions above to download the required datasets.")
- print("Then run this script again to process them.")
+    print("\n Follow the instructions above to download the required datasets.")
+    print("Then run this script again to process them.")
 
 if __name__ == "__main__":
  main()

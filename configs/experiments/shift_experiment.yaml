@@ -1,0 +1,41 @@
+# Shift Noise Experiment Configuration  
+# Noise focus changes from head items to tail items during training
+
+experiment_name: "shift_noise"
+description: "DCCF robustness under shift noise pattern"
+
+# Data configuration
+data_path: "data/ratings.csv"
+output_dir: "runs/shift_experiment"
+
+# Training parameters
+epochs: 15
+batch_size: 2048
+learning_rate: 0.001
+embedding_dim: 64
+
+# Shift noise configuration
+noise_schedule: "shift"
+base_noise_level: 0.10        # 10% constant noise level
+shift_epoch: 8                # Focus shifts at epoch 8
+shift_mode: "head2tail"       # Head items → Tail items
+
+# Expected pattern:
+# Epochs 1-7: 10% noise focused on HEAD items (popular)
+# Epochs 8-15: 10% noise focused on TAIL items (unpopular)
+
+# Alternative modes:
+# shift_mode: "tail2head"     # Tail items → Head items
+
+# Evaluation
+eval_metrics: ["recall@20", "ndcg@20"]
+eval_frequency: 1
+
+# Robustness analysis
+compare_with_static: true
+static_noise_level: 0.10
+
+# Focus analysis
+analyze_item_popularity: true
+head_items_fraction: 0.2      # Top 20% are "head" items
+tail_items_fraction: 0.2      # Bottom 20% are "tail" items

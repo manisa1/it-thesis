@@ -1,0 +1,35 @@
+# Burst Noise Experiment Configuration
+# Sudden noise spikes during specific training epochs
+
+experiment_name: "burst_noise"
+description: "DCCF robustness under burst noise pattern"
+
+# Data configuration
+data_path: "data/ratings.csv"
+output_dir: "runs/burst_experiment"
+
+# Training parameters
+epochs: 15
+batch_size: 2048
+learning_rate: 0.001
+embedding_dim: 64
+
+# Burst noise configuration
+noise_schedule: "burst"
+base_noise_level: 0.10        # 10% base noise
+burst_start_epoch: 5          # Start burst at epoch 5
+burst_duration: 3             # Burst lasts 3 epochs (5, 6, 7)
+burst_scale: 2.0              # 2x noise during burst (20%)
+
+# Expected pattern:
+# Epochs 1-4: 10% noise
+# Epochs 5-7: 20% noise (BURST)
+# Epochs 8-15: 10% noise
+
+# Evaluation
+eval_metrics: ["recall@20", "ndcg@20"]
+eval_frequency: 1
+
+# Robustness analysis
+compare_with_static: true
+static_noise_level: 0.10
