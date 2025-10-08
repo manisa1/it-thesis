@@ -1321,57 +1321,52 @@ IT Thesis, Charles Darwin University.
 
 ## 📁 **Complete Project Structure**
 
-```
-recsys/                                    # Main project directory
-├── 📊 Data & Configuration
-│   ├── data/ratings.csv                   # Generated synthetic dataset
-│   ├── make_data.py                       # Dataset generation script
-│   └── configs/                           # Experiment configurations
-│
-├── 🧠 Core Implementation
-│   └── src/
-│       ├── models/                        # All recommendation models
-│       │   ├── matrix_factorization.py   # Base MF-BPR implementation
-│       │   ├── lightgcn.py              # LightGCN (2020)
-│       │   ├── simgcl.py                 # SimGCL (2022)
-│       │   ├── ngcf.py                   # NGCF (2019)
-│       │   ├── sgl.py                    # SGL (2021)
-│       │   ├── exposure_aware_dro.py     # Exposure-aware DRO (2024)
-│       │   └── pdif.py                   # PDIF (2025)
-│       ├── training/                      # Training utilities
-│       │   ├── noise.py                  # Dynamic noise generation
-│       │   └── trainer.py                # DCCF trainer class
-│       ├── evaluation/                    # Evaluation metrics
-│       │   └── metrics.py                # Academic robustness metrics
-│       └── utils/                         # Utility functions
-│
-├── 🚀 Experiment Scripts
-│   ├── train_baselines.py                # Individual baseline training
-│   ├── run_baseline_comparison.py        # Complete baseline comparison
-│   ├── analyze_baseline_results.py       # Results analysis
-│   ├── run_experiment.py                 # DCCF experiments
-│   └── test_new_baselines.py            # Baseline validation
-│
-├── 📊 Results & Analysis
-│   └── runs/
-│       ├── baselines/                     # Baseline model results
-│       │   ├── thesis_comparison_table.csv    # 📋 Main thesis table
-│       │   ├── thesis_comparison_table.tex    # 📄 LaTeX format
-│       │   ├── baseline_comparison.png        # 📈 Performance plots
-│       │   └── {model}_{condition}/           # Individual results
-│       └── academic_robustness_analysis/      # Academic analysis
-│
-├── 📚 Documentation
-│   ├── README.md                         # This comprehensive guide
-│   ├── NEW_BASELINES_IMPLEMENTATION_GUIDE.md
-│   ├── THESIS_WORKFLOW_FLOWCHART.md
-│   ├── thesis_workflow_visual.html       # Visual workflow
-│   └── simple_flowchart.html            # Simple visual guide
-│
-└── 📄 Research Papers
-    ├── 3616855.3635848.pdf              # Exposure-aware DRO paper
-    └── 3696410.3714932.pdf              # PDIF paper
-```
+### **📊 Data & Configuration**
+- **data/ratings.csv** - Generated synthetic dataset
+- **make_data.py** - Dataset generation script
+- **configs/** - Experiment configurations
+
+### **🧠 Core Implementation (src folder)**
+**Model Files (src/models):**
+- **matrix_factorization.py** - Base MF-BPR implementation
+- **lightgcn.py** - LightGCN (2020)
+- **simgcl.py** - SimGCL (2022)
+- **ngcf.py** - NGCF (2019)
+- **sgl.py** - SGL (2021)
+- **exposure_aware_dro.py** - Exposure-aware DRO (2024)
+- **pdif.py** - PDIF (2025)
+
+**Training Files (src/training):**
+- **noise.py** - Dynamic noise generation
+- **trainer.py** - DCCF trainer class
+
+**Evaluation Files (src/evaluation):**
+- **metrics.py** - Academic robustness metrics
+
+### **🚀 Experiment Scripts**
+- **train_baselines.py** - Individual baseline training
+- **run_baseline_comparison.py** - Complete baseline comparison
+- **analyze_baseline_results.py** - Results analysis
+- **run_experiment.py** - DCCF experiments
+- **test_new_baselines.py** - Baseline validation
+
+### **📊 Results & Analysis (runs folder)**
+**Baseline Results (runs/baselines):**
+- **thesis_comparison_table.csv** - Main thesis table
+- **thesis_comparison_table.tex** - LaTeX format
+- **baseline_comparison.png** - Performance plots
+- **Individual model folders** - Detailed results for each experiment
+
+### **📚 Documentation**
+- **README.md** - This comprehensive guide
+- **NEW_BASELINES_IMPLEMENTATION_GUIDE.md** - Implementation guide
+- **THESIS_WORKFLOW_FLOWCHART.md** - Workflow documentation
+- **thesis_workflow_visual.html** - Visual workflow
+- **simple_flowchart.html** - Simple visual guide
+
+### **📄 Research Papers**
+- **3616855.3635848.pdf** - Exposure-aware DRO paper
+- **3696410.3714932.pdf** - PDIF paper
 
 ---
 
