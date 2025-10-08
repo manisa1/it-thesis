@@ -23,35 +23,30 @@ Implementation Note: This project uses a custom PyTorch framework designed speci
 
 ## Problem Statement
 
-This study investigates **robust recommendation under natural (non-adversarial) noise**, where user-item logs contain spurious positives (e.g., misclicks) and **exposure/popularity effects**. 
+This study investigates **robust recommendation under dynamic exposure bias**, where user-item logs contain spurious positives from exposure/popularity effects that change over time.
 
-**Specific Focus: Dynamic vs Static Natural Noise**
-- **Natural Noise**: Spurious positives from misclicks, mislabeled ratings, accidental interactions
-- **Exposure/Popularity Effects**: Popular items get artificially inflated interactions due to increased visibility
-- **Static vs Dynamic**: Traditional approaches assume noise patterns remain fixed, but real-world noise evolves over time
+**Specific Focus: Comparative Analysis Under Dynamic Noise**
+- **Exposure Bias**: Popular items get artificially inflated interactions due to increased visibility
+- **Dynamic Patterns**: Real-world noise evolves over time (static vs. dynamic vs. burst vs. shift)
+- **Baseline Comparison**: How do different recommendation methods handle changing noise patterns?
 
-**DCCF's Core Limitation**: DCCF assumes **static noise patterns** during training. However, real-world natural noise is **dynamic**:
-- **Temporal Drift**: User behavior patterns change over time
-- **Seasonal Effects**: Shopping campaigns, trending topics create varying noise levels  
-- **Platform Changes**: Algorithm updates affect exposure patterns
-- **Early Training Instability**: Prototype-based models suffer from unstable learning in initial epochs
-
-**Research Gap**: Current robust recommender systems lack mechanisms to handle **dynamic natural noise patterns** and **early-training instability** without architectural changes.
+**Research Gap**: Limited comparative studies exist on how different recommendation systems perform under **dynamic exposure bias patterns** that simulate real-world conditions.
 
 ## Research Questions
-**From Thesis Interim Report:**
-- **RQ1**: How does DCCF's top-K accuracy change under static versus dynamic natural noise?
-- **RQ2**: Does a burn-in phase improve early-epoch stability under noise?
-- **RQ3**: Does exposure-aware reweighting reduce robustness drop relative to vanilla DCCF (with burn-in)?
+**Core Research Focus:**
+- **RQ1**: How do different recommendation models (2019-2025) perform under dynamic exposure bias?
+- **RQ2**: Which models are most robust to different noise patterns (static, dynamic, burst, shift)?
+- **RQ3**: What insights can we gain about model behavior under realistic noise conditions?
 
 ## Hypothesis
-We hypothesize that DCCF's performance degrades significantly under **dynamic natural noise patterns**, and that our proposed training-time fixes (static confidence denoiser + burn-in scheduling) can mitigate this degradation while maintaining performance under static conditions.
+We hypothesize that different recommendation models will show **varying robustness** to dynamic exposure bias patterns, with newer models potentially showing better adaptation to changing noise conditions.
 
-## Our Solution
-**Training-Time Robustness Enhancement (No Architecture Changes)**:
-- **Static Confidence Denoiser**: Down-weights likely noisy/over-exposed interactions using item popularity proxy
-- **Burn-in Scheduling**: Trains in easier regime for initial epochs before enabling noise schedules and reweighting
-- **Exposure-Aware Reweighting**: After burn-in, emphasizes hardest examples while penalizing high exposure effects (inspired by DRO principles but using practical reweighting)
+## Our Approach
+**Comprehensive Baseline Comparison Framework**:
+- **6 State-of-the-Art Models**: Compare methods from 2019-2025 (NGCF, LightGCN, SGL, SimGCL, Exposure-aware Reweighting, PDIF)
+- **4 Noise Patterns**: Test under static, dynamic, burst, and shift exposure bias conditions
+- **Controlled Experiments**: Same datasets, same evaluation metrics, same noise simulation
+- **Academic Rigor**: 8 established robustness metrics for comprehensive analysis
 
 ## Key Features
 
@@ -61,7 +56,7 @@ We hypothesize that DCCF's performance degrades significantly under **dynamic na
 - **Ramp Pattern**: Gradual noise increase over epochs (baseline comparison)
 
 ### **📊 Comprehensive Evaluation**
-- **8 Core Experiments**: All noise patterns × Baseline/Solution conditions
+- **24 Total Experiments**: 6 models × 4 noise conditions = complete comparison matrix
 - **Advanced Patterns**: Burst and shift noise simulation with real-world scenarios
 - **8 Academic Robustness Metrics**: Following established literature standards
 - **Baseline Comparison**: 6 state-of-the-art models (LightGCN, SimGCL, NGCF, SGL, Exposure-aware Reweighting, PDIF)
@@ -89,9 +84,10 @@ Imagine you're using Netflix, Amazon, or Spotify. These platforms suggest movies
 
 ### **Our Research Focus**
 
-We study a specific recommendation system called **DCCF** (Disentangled Contrastive Collaborative Filtering) and test:
-1. **How well does it handle changing noise patterns?**
-2. **Can we make it more robust without changing its core design?**
+We compare **6 different recommendation systems** from 2019-2025 and test:
+1. **How well does each method handle changing noise patterns?**
+2. **Which models are most robust to real-world conditions?**
+3. **What can we learn about recommendation system behavior under noise?**
 
 ### **What Makes This Research Important?**
 
@@ -101,15 +97,15 @@ We study a specific recommendation system called **DCCF** (Disentangled Contrast
 - **Social Media**: Improved content recommendations during algorithm changes
 
 #### **Academic Contribution:**
-- **First comprehensive study** of dynamic noise in recommendation systems
+- **First comprehensive comparative study** of recommendation system robustness under dynamic noise
 - **Complete timeline comparison** of 6 years of recommendation methods (2019-2025)
-- **Practical solutions** that work with existing systems
+- **Systematic evaluation** using established academic metrics and realistic noise patterns
 
 ### **Our Approach (In Simple Terms)**
 
-#### **1. We Test 8 Different Scenarios:**
-- **Static conditions**: Clean data (ideal laboratory conditions)
-- **Dynamic conditions**: Gradually increasing noise (realistic conditions)
+#### **1. We Test 4 Different Noise Conditions:**
+- **Static conditions**: Fixed noise level (controlled baseline)
+- **Dynamic conditions**: Gradually increasing noise (realistic degradation)
 - **Burst conditions**: Sudden noise spikes (Black Friday fake reviews)
 - **Shift conditions**: Changing focus (algorithm updates)
 
@@ -129,15 +125,16 @@ We study a specific recommendation system called **DCCF** (Disentangled Contrast
 ### **Key Findings (What We Discovered)**
 
 #### **🔍 Main Discovery:**
-DCCF performs differently under different noise patterns:
-- **Vulnerable** to gradual noise changes (needs our solution)
-- **Resilient** to sudden noise bursts (naturally robust)
-- **Benefits** from focus shifts (unexpected advantage)
+Different recommendation models show distinct robustness patterns:
+- **PDIF (2025)** is the accuracy champion but moderately robust
+- **LightGCN (2020)** is the robustness champion with consistent performance
+- **Newer models** don't always mean better robustness
+- **Pattern-specific behaviors** vary significantly across methods
 
-#### **💡 Our Solution Works:**
-- **1.5% improvement** under realistic dynamic conditions
-- **Training-time fixes** that don't require changing the system architecture
-- **Pattern-specific insights** for future improvements
+#### **💡 Practical Insights:**
+- **No single "best" model** - choice depends on your priorities (accuracy vs. robustness)
+- **Robustness patterns** are predictable and can guide model selection
+- **Real-world noise conditions** reveal hidden model behaviors
 
 ### **What This Means for You**
 
@@ -147,14 +144,14 @@ DCCF performs differently under different noise patterns:
 - **Real-world applications** connecting theory to practice
 
 #### **If You're a Researcher:**
-- **Novel insights** into dynamic noise patterns in recommendation systems
+- **Novel insights** into comparative robustness of recommendation systems
 - **Comprehensive baseline comparison** spanning 6 years of methods
-- **Open-source implementation** for further research
+- **Open-source implementation** for further research and extension
 
 #### **If You're in Industry:**
-- **Practical solutions** for improving recommendation robustness
+- **Model selection guidance** based on robustness requirements
 - **Real-world scenarios** mapped to experimental conditions
-- **Training-time enhancements** that work with existing systems
+- **Performance trade-offs** clearly documented for decision making
 
 ### **How to Use This Research**
 
@@ -184,10 +181,10 @@ DCCF performs differently under different noise patterns:
 - **Real-world applicability** with industry-relevant scenarios
 
 #### **🏆 Academic Impact:**
-- **First comprehensive study** of DCCF under dynamic noise
-- **Novel behavioral insights** (burst resilience, shift benefits)
-- **Practical training-time solutions** requiring no architectural changes
-- **Complete experimental framework** for future research
+- **First comprehensive comparative study** of recommendation system robustness under dynamic noise
+- **Novel behavioral insights** across 6 years of recommendation methods
+- **Systematic evaluation framework** using established academic metrics
+- **Complete experimental methodology** for future comparative studies
 
 ---
 
@@ -524,92 +521,64 @@ python train.py --model_dir runs/shift_base --epochs 15 \
 
 ## Experimental Design
 
-## Complete Experimental Framework (8 Conditions)
+## Complete Experimental Framework (24 Experiments)
 
-Our comprehensive experimental design tests **noise patterns** and **training strategies** across multiple realistic scenarios. Each experiment simulates different real-world conditions that recommendation systems face:
-
----
-
-## 🔵 **Static Experiments** (Ideal Conditions)
-
-### **1. Static Baseline (`static_base`)**
-- **Noise Pattern**: No noise (clean data throughout training)
-- **Training Strategy**: Standard DCCF training (no robustness enhancements)
-- **Purpose**: Establish upper-bound performance under ideal conditions
-- **Real-World Example**: A new recommendation system with carefully curated, high-quality data
-- **Expected Performance**: Highest possible accuracy for the model
-
-### **2. Static Solution (`static_sol`)**
-- **Noise Pattern**: No noise (clean data throughout training)  
-- **Training Strategy**: DCCF + our robustness enhancements (burn-in + reweighting)
-- **Purpose**: Verify our solution doesn't harm performance under ideal conditions
-- **Real-World Example**: Applying robust training to clean data to ensure no performance degradation
-- **Expected Performance**: Similar to static baseline (no harm from robustness features)
+Our comprehensive experimental design tests **6 recommendation models** under **4 noise conditions** for a total of 24 experiments. Each condition simulates different real-world scenarios that recommendation systems face:
 
 ---
 
-## 🟡 **Dynamic Experiments** (Realistic Conditions)
+## 🔵 **Static Noise Condition** (Controlled Baseline)
 
-### **3. Dynamic Baseline (`dyn_base`)**
-- **Noise Pattern**: Gradual noise increase (0% → 10% over 10 epochs)
-- **Training Strategy**: Standard DCCF training (no robustness enhancements)
-- **Purpose**: Demonstrate DCCF's vulnerability under realistic dynamic conditions
+### **1. Static Noise Experiments**
+- **Noise Pattern**: Fixed exposure bias level throughout training
+- **Models Tested**: All 6 baseline models (NGCF, LightGCN, SGL, SimGCL, Exposure-aware Reweighting, PDIF)
+- **Purpose**: Establish baseline performance under controlled noise conditions
+- **Real-World Example**: Recommendation system with consistent fake review patterns
+- **Expected Performance**: Varies by model's inherent robustness to exposure bias
+
+---
+
+## 🟡 **Dynamic Noise Condition** (Realistic Degradation)
+
+### **2. Dynamic Noise Experiments**
+- **Noise Pattern**: Gradual exposure bias increase over training epochs
+- **Models Tested**: All 6 baseline models
+- **Purpose**: Test model adaptation to gradually changing noise conditions
 - **Real-World Example**: 
   - **E-commerce**: Gradual increase in fake reviews during holiday seasons
   - **Streaming**: Growing bot activity as platform becomes popular
   - **Social Media**: Increasing spam interactions over time
-- **Expected Performance**: Significant degradation as noise increases
-
-### **4. Dynamic Solution (`dyn_sol`)**
-- **Noise Pattern**: Gradual noise increase (0% → 10% over 10 epochs)
-- **Training Strategy**: DCCF + our robustness enhancements (burn-in + reweighting)
-- **Purpose**: Test our solution's effectiveness under realistic dynamic conditions
-- **Real-World Example**: Applying robust training to handle gradually increasing noise
-- **Expected Performance**: Better resilience compared to dynamic baseline
+- **Expected Performance**: Models with better adaptation show less degradation
 
 ---
 
-## 🔴 **Burst Experiments** (Crisis Scenarios)
+## 🔴 **Burst Noise Condition** (Crisis Scenarios)
 
-### **5. Burst Baseline (`burst_base`)**
-- **Noise Pattern**: Sudden noise spikes (10% → 20% for epochs 5-7 → back to 10%)
-- **Training Strategy**: Standard DCCF training (no robustness enhancements)
-- **Purpose**: Test model behavior under sudden noise crises
+### **3. Burst Noise Experiments**
+- **Noise Pattern**: Sudden exposure bias spikes during specific training periods
+- **Models Tested**: All 6 baseline models
+- **Purpose**: Test model stability under sudden noise crises
 - **Real-World Examples**:
   - **Black Friday Sales**: Massive influx of fake reviews and bot interactions
   - **Viral Content**: Sudden coordinated manipulation of trending items
   - **System Attacks**: Targeted spam campaigns during specific periods
   - **Breaking News**: Artificial engagement spikes around major events
-- **Expected Performance**: Potential instability during burst periods
-
-### **6. Burst Solution (`burst_sol`)**
-- **Noise Pattern**: Sudden noise spikes (10% → 20% for epochs 5-7 → back to 10%)
-- **Training Strategy**: DCCF + our robustness enhancements
-- **Purpose**: Test our solution's crisis response capabilities
-- **Real-World Example**: Robust system handling Black Friday fake review attacks
-- **Expected Performance**: Better stability during crisis periods
+- **Expected Performance**: Models with better stability show less disruption
 
 ---
 
-## 🟢 **Shift Experiments** (Platform Evolution)
+## 🟢 **Shift Noise Condition** (Platform Evolution)
 
-### **7. Shift Baseline (`shift_base`)**
-- **Noise Pattern**: Focus change from popular to unpopular items (head→tail at epoch 8)
-- **Training Strategy**: Standard DCCF training (no robustness enhancements)
-- **Purpose**: Test adaptation to changing platform dynamics
+### **4. Shift Noise Experiments**
+- **Noise Pattern**: Exposure bias focus change from popular to unpopular items
+- **Models Tested**: All 6 baseline models
+- **Purpose**: Test model adaptability to changing platform dynamics
 - **Real-World Examples**:
   - **Algorithm Updates**: Platform changes recommendation algorithm focus
   - **Policy Changes**: New policies promoting diverse/niche content
   - **Market Shifts**: User preferences shift from mainstream to niche items
   - **Platform Maturity**: Mature platforms promoting long-tail content discovery
-- **Expected Performance**: Potential confusion during transition period
-
-### **8. Shift Solution (`shift_sol`)**
-- **Noise Pattern**: Focus change from popular to unpopular items (head→tail at epoch 8)
-- **Training Strategy**: DCCF + our robustness enhancements
-- **Purpose**: Test our solution's adaptability to platform evolution
-- **Real-World Example**: Robust system adapting to YouTube's algorithm promoting smaller creators
-- **Expected Performance**: Smoother adaptation to focus changes
+- **Expected Performance**: Models with better adaptability handle transitions smoothly
 
 ---
 
