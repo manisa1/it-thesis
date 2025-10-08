@@ -1210,63 +1210,49 @@ For questions about this thesis research:
 ### **What Each File Does (In Simple Terms)**
 
 #### **🏠 Main Directory Files:**
-- **`README.md`**: This file you're reading - explains everything
-- **`make_data.py`**: Creates fake data for testing (like a movie rating simulator)
-- **`run_baseline_comparison.py`**: Runs all experiments automatically (the main button to press)
-- **`analyze_baseline_results.py`**: Creates tables and charts from results (like Excel but automatic)
+- **README.md**: This file you're reading - explains everything
+- **make_data.py**: Creates fake data for testing (like a movie rating simulator)
+- **run_baseline_comparison.py**: Runs all experiments automatically (the main button to press)
+- **analyze_baseline_results.py**: Creates tables and charts from results (like Excel but automatic)
 
-#### **📊 Data Files (`data/` folder):**
-- **`ratings.csv`**: The fake dataset we created (users, items, ratings)
-- **`gowalla/`, `amazon-book/`, `movielens-20m/`**: Real-world datasets (if available)
+#### **📊 Data Files (data folder):**
+- **ratings.csv**: The fake dataset we created (users, items, ratings)
+- **gowalla, amazon-book, movielens-20m**: Real-world datasets (if available)
 
-#### **🧠 Model Files (`src/models/` folder):**
+#### **🧠 Model Files (src/models folder):**
 Think of these as different "brains" for making recommendations:
-- **`matrix_factorization.py`**: Basic recommendation brain (simple but effective)
-- **`lightgcn.py`**: Graph-based brain (connects users and items)
-- **`simgcl.py`**: Contrastive learning brain (learns by comparing)
-- **`ngcf.py`**: Neural graph brain (advanced graph connections)
-- **`sgl.py`**: Self-supervised brain (learns without labels)
-- **`exposure_aware_dro.py`**: Robust optimization brain (handles unfairness)
-- **`pdif.py`**: Personalized denoising brain (cleans data for each user)
+- **matrix_factorization.py**: Basic recommendation brain (simple but effective)
+- **lightgcn.py**: Graph-based brain (connects users and items)
+- **simgcl.py**: Contrastive learning brain (learns by comparing)
+- **ngcf.py**: Neural graph brain (advanced graph connections)
+- **sgl.py**: Self-supervised brain (learns without labels)
+- **exposure_aware_dro.py**: Robust optimization brain (handles unfairness)
+- **pdif.py**: Personalized denoising brain (cleans data for each user)
 
-#### **🎯 Training Files (`src/training/` folder):**
-- **`trainer.py`**: The "teacher" that trains the recommendation brains
-- **`noise.py`**: Creates different types of "bad data" for testing
+#### **🎯 Training Files (src/training folder):**
+- **trainer.py**: The "teacher" that trains the recommendation brains
+- **noise.py**: Creates different types of "bad data" for testing
 
-#### **📏 Evaluation Files (`src/evaluation/` folder):**
-- **`metrics.py`**: Measures how good recommendations are (like a report card)
-- **`robustness_metrics.py`**: Measures how well systems handle bad data
+#### **📏 Evaluation Files (src/evaluation folder):**
+- **metrics.py**: Measures how good recommendations are (like a report card)
+- **robustness_metrics.py**: Measures how well systems handle bad data
 
-#### **📈 Results Files (`runs/` folder):**
+#### **📈 Results Files (runs folder):**
 After experiments run, results appear here:
-- **`baselines/thesis_comparison_table.csv`**: Main results table (open in Excel)
-- **`baselines/baseline_comparison.png`**: Charts and graphs
+- **thesis_comparison_table.csv**: Main results table (open in Excel)
+- **baseline_comparison.png**: Charts and graphs
 - **Individual folders**: Detailed results for each experiment
 
 ### **How the Code Works (Step by Step)**
 
 #### **Step 1: Data Preparation**
-```
-make_data.py → Creates fake user-item interactions
-             → Saves to data/ratings.csv
-             → Like creating a fake Netflix database
-```
+**make_data.py** creates fake user-item interactions and saves them to data/ratings.csv - like creating a fake Netflix database with users, movies, and ratings.
 
 #### **Step 2: Model Training**
-```
-run_baseline_comparison.py → Loads the data
-                          → Trains 6 different recommendation "brains"
-                          → Tests them under different noise conditions
-                          → Saves results to runs/ folder
-```
+**run_baseline_comparison.py** loads the data, trains 6 different recommendation "brains", tests them under different noise conditions, and saves results to the runs folder.
 
 #### **Step 3: Results Analysis**
-```
-analyze_baseline_results.py → Reads all experiment results
-                           → Creates comparison tables
-                           → Generates charts and graphs
-                           → Saves thesis-ready files
-```
+**analyze_baseline_results.py** reads all experiment results, creates comparison tables, generates charts and graphs, and saves thesis-ready files.
 
 ### **What Happens When You Run Experiments**
 
@@ -1288,12 +1274,12 @@ analyze_baseline_results.py → Reads all experiment results
 #### **📊 CSV Files (Spreadsheet Data):**
 - **Can open in**: Excel, Google Sheets, any spreadsheet program
 - **Contains**: Numbers and text in rows and columns
-- **Example**: `thesis_comparison_table.csv` has model names and performance scores
+- **Example**: thesis_comparison_table.csv has model names and performance scores
 
 #### **📈 PNG Files (Images):**
 - **Can open in**: Any image viewer, web browser
 - **Contains**: Charts, graphs, and visualizations
-- **Example**: `baseline_comparison.png` shows performance comparisons
+- **Example**: baseline_comparison.png shows performance comparisons
 
 #### **📄 Python Files (.py):**
 - **Can open in**: Any text editor (Notepad, TextEdit)
