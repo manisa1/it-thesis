@@ -55,9 +55,26 @@ We hypothesize that different recommendation models will show **varying robustne
 ## Key Features
 
 ### **Dynamic Noise Patterns**
-- **Burst Pattern**: Sudden noise spikes during training (e.g., viral content, flash sales)
-- **Shift Pattern**: Focus changes from popular to unpopular items (e.g., algorithm updates)
-- **Ramp Pattern**: Gradual noise increase over epochs (baseline comparison)
+
+#### **1. Static Conditions**
+**Definition**: A controlled baseline where the noise level remains constant throughout the training process, simulating steady-state operational conditions with predictable interference patterns.
+
+**Example**: Consider Amazon's recommendation system during regular business periods where fake reviews consistently account for 10% of all product feedback. This represents the baseline noise level that e-commerce platforms typically experience - competitor bots, paid reviewers, and automated fake accounts operate at a steady rate. The system learns to handle this consistent level of manipulation, establishing a performance benchmark under "normal" noisy conditions that most recommendation systems face in their day-to-day operations.
+
+#### **2. Dynamic Conditions** 
+**Definition**: Gradually increasing noise levels over time, simulating realistic degradation scenarios where interference patterns slowly intensify, representing the most common real-world noise evolution.
+
+**Example**: During the holiday shopping season, fake review activity on e-commerce platforms like Amazon gradually increases from October through December. What starts as 5% fake reviews in early October slowly escalates to 20% by Black Friday as review farms ramp up operations, sellers increase manipulation efforts, and competition intensifies. This gradual buildup mirrors how most real-world noise doesn't appear suddenly but accumulates over time, making it the most realistic test of how recommendation systems handle slowly deteriorating data quality.
+
+#### **3. Burst Conditions**
+**Definition**: Sudden, intense spikes in noise during specific time periods, simulating crisis scenarios or coordinated attacks where interference levels dramatically increase for short durations before returning to baseline.
+
+**Example**: During Black Friday sales events, Amazon experiences massive surges in fake reviews as coordinated bot armies target popular deals, causing noise levels to spike from the normal 10% to 40% for just 2-3 days before returning to baseline. Similarly, when Apple releases a new iPhone, competing Android manufacturers deploy bot networks to flood iPhone listings with fake negative reviews within hours of the launch announcement. These sudden, intense manipulation campaigns test how well recommendation systems maintain performance during crisis periods when they're most vulnerable to coordinated attacks.
+
+#### **4. Shift Conditions**
+**Definition**: Changes in the focus or priority of noise patterns, simulating platform evolution scenarios where the target of interference shifts from one category to another, representing algorithm updates or strategic changes.
+
+**Example**: When YouTube updated its algorithm to promote smaller creators over established channels, the focus of manipulation shifted accordingly - bot farms that previously targeted popular creators suddenly redirected their efforts toward emerging channels to game the new system. Similarly, when Netflix changed its strategy from promoting Hollywood blockbusters to original content, fake rating patterns shifted from mainstream movies to Netflix originals. This represents how recommendation systems must adapt when platforms evolve their priorities, requiring models to maintain performance even when the nature and target of noise fundamentally changes.
 
 ### **Comprehensive Evaluation**
 - **42 Total Experiments**: 7 models × 6 conditions = complete comparison matrix
