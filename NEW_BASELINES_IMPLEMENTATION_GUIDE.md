@@ -13,9 +13,9 @@ This guide documents the implementation of 6 baseline methods for comprehensive 
 5. **Exposure-aware Reweighting (Yang et al., 2024)** - Robust optimization approach
 6. **PDIF (Zhang et al., 2025)** - Personalized Denoising Implicit Feedback
 
-## ✅ Implementation Status
+## Implementation Status
 
-### All 6 Baseline Models ✅ COMPLETED
+### All 6 Baseline Models - COMPLETED
 - [x] **NGCF (2019)** implemented in `src/models/ngcf.py`
 - [x] **LightGCN (2020)** implemented in `src/models/lightgcn.py`
 - [x] **SGL (2021)** implemented in `src/models/sgl.py`
@@ -26,18 +26,18 @@ This guide documents the implementation of 6 baseline methods for comprehensive 
 - [x] **Training scripts** updated to support all models
 - [x] **Comparative evaluation** framework ready
 
-### Phase 2: Next Steps 🚀 READY TO EXECUTE
+### Phase 2: Next Steps - READY TO EXECUTE
 
 ## Implementation Details
 
 ### 1. Exposure-aware DRO (Yang et al., 2024)
 
 **Key Features Implemented:**
-- ✅ **Distributionally Robust Optimization** for exposure bias
-- ✅ **Dynamic weighting mechanism** to reduce corrupted interactions
-- ✅ **Uncertainty set optimization** for worst-case error minimization
-- ✅ **Exposure score tracking** based on item popularity
-- ✅ **Dual variable optimization** for DRO constraints
+- **Distributionally Robust Optimization** for exposure bias
+- **Dynamic weighting mechanism** to reduce corrupted interactions
+- **Uncertainty set optimization** for worst-case error minimization
+- **Exposure score tracking** based on item popularity
+- **Dual variable optimization** for DRO constraints
 
 **Core Algorithm:**
 ```python
@@ -51,11 +51,11 @@ weighted_loss = mean(dro_weights * bpr_losses)
 ### 2. PDIF (Zhang et al., 2025)
 
 **Key Features Implemented:**
-- ✅ **Personalized thresholds** based on user interaction history
-- ✅ **Noise identification** using interaction patterns
-- ✅ **Data resampling** based on personal loss distributions
-- ✅ **User-specific denoising** without architecture changes
-- ✅ **Interaction reliability scoring** for filtering
+- **Personalized thresholds** based on user interaction history
+- **Noise identification** using interaction patterns
+- **Data resampling** based on personal loss distributions
+- **User-specific denoising** without architecture changes
+- **Interaction reliability scoring** for filtering
 
 **Core Algorithm:**
 ```python

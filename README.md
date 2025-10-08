@@ -9,7 +9,7 @@ Implementation Note: This project uses a custom PyTorch framework designed speci
 ## Table of Contents
 
 - [Thesis Overview](#thesis-overview)
-- [🎯 Understanding This Research (For Non-Coders)](#-understanding-this-research-for-non-coders)
+- [Understanding This Research (For Non-Coders)](#understanding-this-research-for-non-coders)
 - [Installation](#installation)
 - [Project Structure](#project-structure)
 - [Usage](#usage)
@@ -38,7 +38,7 @@ This study investigates **robust recommendation under dynamic exposure bias**, w
 - **RQ2**: Which models are most robust to different noise patterns (static, dynamic, burst, shift)?
 - **RQ3**: What insights can we gain about model behavior under realistic noise conditions?
 
-**Additional Analysis (From Interim Report):**
+**Additional Analysis:**
 - **RQ4**: How does DCCF perform when noise distributions are dynamic rather than static?
 - **RQ5**: Can a warm-up strategy improve early convergence under noisy conditions?
 
@@ -54,12 +54,12 @@ We hypothesize that different recommendation models will show **varying robustne
 
 ## Key Features
 
-### **🔥 Dynamic Noise Patterns**
+### **Dynamic Noise Patterns**
 - **Burst Pattern**: Sudden noise spikes during training (e.g., viral content, flash sales)
 - **Shift Pattern**: Focus changes from popular to unpopular items (e.g., algorithm updates)
 - **Ramp Pattern**: Gradual noise increase over epochs (baseline comparison)
 
-### **📊 Comprehensive Evaluation**
+### **Comprehensive Evaluation**
 - **24 Total Experiments**: 6 models × 4 noise conditions = complete comparison matrix
 - **Advanced Patterns**: Burst and shift noise simulation with real-world scenarios
 - **8 Academic Robustness Metrics**: Following established literature standards
@@ -69,7 +69,7 @@ We hypothesize that different recommendation models will show **varying robustne
 
 ---
 
-## 🎯 Understanding This Research (For Non-Coders)
+## Understanding This Research (For Non-Coders)
 
 ### **What is This Research About?**
 
@@ -128,14 +128,14 @@ We compare **6 different recommendation systems** from 2019-2025 and test:
 
 ### **Key Findings (What We Discovered)**
 
-#### **🔍 Main Discovery:**
+#### **Main Discovery:**
 Different recommendation models show distinct robustness patterns:
 - **PDIF (2025)** is the accuracy champion but moderately robust
 - **LightGCN (2020)** is the robustness champion with consistent performance
 - **Newer models** don't always mean better robustness
 - **Pattern-specific behaviors** vary significantly across methods
 
-#### **💡 Practical Insights:**
+#### **Practical Insights:**
 - **No single "best" model** - choice depends on your priorities (accuracy vs. robustness)
 - **Robustness patterns** are predictable and can guide model selection
 - **Real-world noise conditions** reveal hidden model behaviors
@@ -159,32 +159,32 @@ Different recommendation models show distinct robustness patterns:
 
 ### **How to Use This Research**
 
-#### **📊 View Results (No Coding Required):**
+#### **View Results (No Coding Required):**
 1. **Main Results**: Open `runs/baselines/thesis_comparison_table.csv` in Excel
 2. **Visual Results**: View `runs/baselines/baseline_comparison.png` for charts
 3. **Summary**: Read `runs/thesis_results_summary.md` for plain English findings
 
-#### **🔬 Reproduce Experiments (Basic Coding):**
+#### **Reproduce Experiments (Basic Coding):**
 1. **Install Python** (we provide step-by-step instructions)
 2. **Run one command**: `python run_baseline_comparison.py`
 3. **Wait for results**: All experiments run automatically
 4. **View outputs**: Results appear in easy-to-read files
 
-#### **📚 Academic Use:**
+#### **Academic Use:**
 - **Cite our work**: Proper citations provided
 - **Use our data**: All results available in multiple formats
 - **Build upon**: Complete codebase available for extensions
 
 ### **Success Metrics**
 
-#### **✅ What We Achieved:**
+#### **What We Achieved:**
 - **24 successful experiments** across all baseline models
 - **100% reproducible results** with complete documentation
 - **6-year timeline coverage** of recommendation methods
 - **8-metric evaluation framework** following academic standards
 - **Real-world applicability** with industry-relevant scenarios
 
-#### **🏆 Academic Impact:**
+#### **Academic Impact:**
 - **First comprehensive comparative study** of recommendation system robustness under dynamic noise
 - **Novel behavioral insights** across 6 years of recommendation methods
 - **Systematic evaluation framework** using established academic metrics
@@ -249,17 +249,17 @@ The script handles **all 3 benchmark datasets mentioned in the interim report**:
 1. **Gowalla** (Location-based check-ins)
    - Format: `user_id\titem_id` (tab-separated)
    - Creates implicit feedback interactions (rating = 1.0)
-   - **Status**: ✅ Integrated and tested
+   - **Status**: Integrated and tested
 
 2. **Amazon-book** (Book ratings/metadata)
    - Format: Book catalog with metadata
    - Creates synthetic user interactions from catalog data
-   - **Status**: ✅ Integrated and tested
+   - **Status**: Integrated and tested
 
 3. **MovieLens-20M** (Movie ratings)
    - Format: Standard `userId,movieId,rating,timestamp`
    - Filters for high ratings (≥4.0) for implicit feedback
-   - **Status**: ✅ Integrated and tested
+   - **Status**: Integrated and tested
 
 ### Usage
 
@@ -290,7 +290,7 @@ Processed data is saved in:
 
 ### Dataset Privacy
 
-⚠️ **Important**: Raw dataset files are excluded from git commits due to redistribution policies. The `prepare_datasets.py` script only processes locally available data files.
+**Important**: Raw dataset files are excluded from git commits due to redistribution policies. The `prepare_datasets.py` script only processes locally available data files.
 
 ## Project Structure
 
@@ -302,15 +302,15 @@ recsys/
 ├── THESIS_PRESENTATION_GUIDE.md # Comprehensive thesis guide
 ├── data/
 │   ├── ratings.csv # Synthetic dataset (generated)
-│   ├── gowalla/ # Gowalla dataset ✅ Integrated
-│   ├── amazon-book/ # Amazon-book dataset ✅ Integrated  
-│   └── Movielens-20M/ # MovieLens dataset ✅ Integrated
+│   ├── gowalla/ # Gowalla dataset - Integrated
+│   ├── amazon-book/ # Amazon-book dataset - Integrated  
+│   └── Movielens-20M/ # MovieLens dataset - Integrated
 ├── configs/
 │   ├── experiments/ # Experiment configurations
 │   │   ├── static_baseline.yaml # Static noise experiments
 │   │   ├── dynamic_baseline.yaml # Dynamic noise experiments
-│   │   ├── burst_experiment.yaml # Burst noise experiments ✅ New
-│   │   ├── shift_experiment.yaml # Shift noise experiments ✅ New
+│   │   ├── burst_experiment.yaml # Burst noise experiments - New
+│   │   ├── shift_experiment.yaml # Shift noise experiments - New
 │   │   └── *_solution.yaml # Corresponding solution experiments
 │   └── datasets/ # Dataset configurations ✅ New
 │       ├── gowalla_config.yaml
@@ -433,7 +433,7 @@ python run_experiment.py --config configs/experiments/dynamic_solution.yaml
 
 ## 5. Dynamic Noise Pattern Experiments
 
-### **🔥 Burst Noise Experiments**
+### **Burst Noise Experiments**
 ```bash
 # Demonstrate burst pattern
 python demo_dynamic_noise.py
@@ -445,7 +445,7 @@ python run_dynamic_noise_experiments.py --experiment burst
 python run_experiment.py --config configs/experiments/burst_experiment.yaml
 ```
 
-### **🔄 Shift Noise Experiments**  
+### **Shift Noise Experiments**  
 ```bash
 # Run shift experiment
 python run_dynamic_noise_experiments.py --experiment shift
@@ -454,7 +454,7 @@ python run_dynamic_noise_experiments.py --experiment shift
 python run_experiment.py --config configs/experiments/shift_experiment.yaml
 ```
 
-### **📊 Visualize Dynamic Patterns**
+### **Visualize Dynamic Patterns**
 ```bash
 # Create visualization of both patterns
 python demo_dynamic_noise.py
@@ -586,7 +586,7 @@ Our comprehensive experimental design tests **6 recommendation models** under **
 
 ---
 
-## 📊 **Baseline Model Comparison (2019-2025)**
+## **Baseline Model Comparison (2019-2025)**
 
 We compare against **6 state-of-the-art models** spanning the complete timeline:
 
@@ -603,7 +603,7 @@ Each baseline model is tested under **all 8 experimental conditions** for compre
 
 ---
 
-## 🎯 **Key Experimental Insights**
+## **Key Experimental Insights**
 
 ### **Noise Pattern Characteristics:**
 - **Static**: Represents ideal laboratory conditions
@@ -618,7 +618,7 @@ Each baseline model is tested under **all 8 experimental conditions** for compre
 ### **Real-World Relevance:**
 Each experimental condition maps directly to scenarios that real recommendation systems encounter, making our research practically applicable to industry challenges.
 
-### **🎯 Pattern Comparison**
+### **Pattern Comparison**
 
 | Pattern | Noise Level | Focus Changes | Use Case |
 |---------|-------------|---------------|----------|
@@ -628,7 +628,7 @@ Each experimental condition maps directly to scenarios that real recommendation 
 
 ---
 
-## 🆕 **New 2024-2025 Baseline Models**
+## **New 2024-2025 Baseline Models**
 
 ### **Exposure-aware Distributionally Robust Optimization (Yang et al., 2024)**
 - **Core Innovation**: Applies distributionally robust optimization to handle exposure bias
@@ -655,7 +655,7 @@ Neural   Graph    Super.  Contrast.    │      Optim.   Denoise
 
 ---
 
-## 📊 **Experimental Results Summary**
+## **Experimental Results Summary**
 
 ### **Key Findings from Comprehensive Baseline Comparison:**
 
@@ -674,7 +674,7 @@ Neural   Graph    Super.  Contrast.    │      Optim.   Denoise
 - **Comprehensive Evaluation**: 24 successful experiments across all baseline models
 - **Practical Insights**: Real-world noise patterns mapped to experimental conditions
 
-### **📊 Implementation Files**
+### **Implementation Files**
 - **Core**: `src/training/dynamic_noise.py`
 - **Demo**: `demo_dynamic_noise.py` 
 - **Configs**: `configs/experiments/burst_experiment.yaml`, `configs/experiments/shift_experiment.yaml`
@@ -687,7 +687,7 @@ Each pattern simulates real-world **exposure bias scenarios**:
 
 ---
 
-## 🚀 **Running Experiments**
+## **Running Experiments**
 
 ### **Quick Start - Complete Baseline Comparison**
 ```bash
@@ -719,7 +719,7 @@ python run_experiment.py --config configs/experiments/shift_experiment.yaml
 
 ---
 
-## 📊 **Viewing Results**
+## **Viewing Results**
 
 ### **Thesis-Ready Tables**
 Results are automatically saved in multiple formats:
@@ -739,37 +739,37 @@ runs/baselines/
 
 ### **📖 How to Read the Results (For Non-Coders)**
 
-#### **🎯 Main Performance Metrics (What We Measure):**
+#### **Main Performance Metrics (What We Measure):**
 
 ##### **1. Recall@20 (Recommendation Accuracy)**
 - **What it means**: Out of 20 items you might like, how many did we actually recommend?
 - **Example**: If you like 10 movies and we recommend 6 of them in our top-20 list, Recall = 6/10 = 0.6
 - **Scale**: 0.0 (terrible) to 1.0 (perfect)
 - **Good values**: 0.2-0.4 is typical for recommendation systems
-- **Higher is better** ✅
+- **Higher is better**
 
 ##### **2. NDCG@20 (Ranking Quality)**
 - **What it means**: Are the items you like appearing at the top of our recommendations?
 - **Example**: Finding your favorite movie at position #1 is better than finding it at position #19
 - **Scale**: 0.0 (terrible ranking) to 1.0 (perfect ranking)
 - **Good values**: 0.1-0.3 is typical for recommendation systems
-- **Higher is better** ✅
+- **Higher is better**
 
 ##### **3. Precision@20 (Recommendation Precision)**
 - **What it means**: Out of our 20 recommendations, how many did you actually like?
 - **Example**: If we recommend 20 items and you like 8 of them, Precision = 8/20 = 0.4
 - **Scale**: 0.0 (all recommendations wrong) to 1.0 (all recommendations correct)
 - **Good values**: 0.1-0.3 is typical for recommendation systems
-- **Higher is better** ✅
+- **Higher is better**
 
-#### **🛡️ Robustness Metrics (How Well Systems Handle Bad Data):**
+#### **Robustness Metrics (How Well Systems Handle Bad Data):**
 
 ##### **4. Performance Drop % (Robustness Under Noise)**
 - **What it means**: How much worse does the system get when data is noisy?
 - **Example**: If Recall drops from 0.30 to 0.25 under noise, drop = (0.30-0.25)/0.30 = 16.7%
 - **Scale**: 0% (no degradation) to 100% (complete failure)
 - **Good values**: Under 20% drop is considered robust
-- **Lower is better** ✅
+- **Lower is better**
 
 ##### **5-8. Advanced Robustness Metrics:**
 - **Offset on Metrics (ΔM)**: How much performance changes under noise
@@ -778,7 +778,7 @@ runs/baselines/
 - **Predict Shift (PS)**: How much individual predictions change
 - **Drop Rate (DR)**: Performance degradation under different conditions
 
-#### **📊 Reading Our Results Tables:**
+#### **Reading Our Results Tables:**
 
 ##### **Main Results Table (`thesis_comparison_table.csv`):**
 ```
@@ -793,7 +793,7 @@ DCCF (Our)     | 0.2024    | 0.0690  | 0.1012       | 14.3%
 - **LightGCN is most robust**: No performance drop (0.0%) but lower accuracy
 - **Our DCCF study**: Good accuracy but needs improvement for dynamic noise (14.3% drop)
 
-#### **📈 Reading Our Charts (`baseline_comparison.png`):**
+#### **Reading Our Charts (baseline_comparison.png):**
 
 ##### **Performance Comparison Chart:**
 - **Y-axis**: Performance scores (higher bars = better)
@@ -807,7 +807,7 @@ DCCF (Our)     | 0.2024    | 0.0690  | 0.1012       | 14.3%
 - **Colors**: Different models
 - **Look for**: Shortest bars indicate most robust models
 
-#### **🔍 Key Insights from Our Results:**
+#### **Key Insights from Our Results:**
 
 ##### **What We Discovered:**
 1. **PDIF (2025) is the accuracy champion**: Best overall performance but moderate robustness
@@ -822,7 +822,7 @@ DCCF (Our)     | 0.2024    | 0.0690  | 0.1012       | 14.3%
 - **For stability**: Use LightGCN if you need consistent performance
 - **For research**: DCCF offers interesting insights into noise pattern behaviors
 
-#### **💡 Practical Implications:**
+#### **Practical Implications:**
 
 ##### **For E-commerce Platforms:**
 - **During normal times**: PDIF gives best product recommendations
@@ -841,7 +841,7 @@ DCCF (Our)     | 0.2024    | 0.0690  | 0.1012       | 14.3%
 
 ---
 
-## 🎯 **Thesis Integration**
+## **Thesis Integration**
 
 ### **Ready-to-Use Components:**
 1. **Performance Tables**: Direct copy from `thesis_comparison_table.csv`
@@ -851,15 +851,15 @@ DCCF (Our)     | 0.2024    | 0.0690  | 0.1012       | 14.3%
 5. **Academic Citations**: Proper attribution to all baseline methods
 
 ### **Key Thesis Claims Supported:**
-- ✅ **Comprehensive Comparison**: 6 state-of-the-art methods across 6 years
-- ✅ **Real-World Relevance**: All noise patterns map to actual industry scenarios  
-- ✅ **Robust Evaluation**: 24 successful experiments with consistent methodology
-- ✅ **Novel Insights**: First study to systematically compare dynamic noise patterns
-- ✅ **Practical Impact**: Training-time solutions requiring no architectural changes
+- **Comprehensive Comparison**: 6 state-of-the-art methods across 6 years
+- **Real-World Relevance**: All noise patterns map to actual industry scenarios  
+- **Robust Evaluation**: 24 successful experiments with consistent methodology
+- **Novel Insights**: First study to systematically compare dynamic noise patterns
+- **Practical Impact**: Comparative analysis requiring no architectural changes
 
 ## Academic Robustness Analysis
 
-### **📊 Complete 8-Metric Evaluation Framework**
+### **Complete 8-Metric Evaluation Framework**
 
 Following academic standards and interim report requirements, we implement **8 comprehensive metrics**:
 
@@ -879,20 +879,20 @@ Following academic standards and interim report requirements, we implement **8 c
 | 7 | **Predict Shift (PS)** | Single metric | Prediction stability |
 | 8 | **Drop Rate (DR)** | Single metric | Distribution shift robustness |
 
-### **🎯 Academic Compliance**
-- ✅ **No custom metrics** - All from established literature
-- ✅ **Peer-reviewed sources** - Top-tier conferences and journals
-- ✅ **Standard formulas** - Exact implementation from papers
-- ✅ **Comprehensive coverage** - Multiple aspects of robustness
+### **Academic Compliance**
+- **No custom metrics** - All from established literature
+- **Peer-reviewed sources** - Top-tier conferences and journals
+- **Standard formulas** - Exact implementation from papers
+- **Comprehensive coverage** - Multiple aspects of robustness
 
-### **📚 Literature References**
+### **Literature References**
 1. "Robust Recommender System: A Survey and Future Directions" (2023)
 2. "Towards Robust Recommendation: A Review and an Adversarial Robustness Evaluation Library" (2024)
 3. Wu et al. "Robustness Improvement for Recommendation" (2021)
 4. Burke et al. "Prediction Shift in Collaborative Filtering" (2015)
 5. Shriver et al. "Top Output Stability" (2019)
 
-### **🚀 Run Academic Analysis**
+### **Run Academic Analysis**
 ```bash
 # Generate comprehensive academic robustness analysis
 python run_comprehensive_robustness_analysis.py
@@ -1346,56 +1346,56 @@ Under Dynamic Exposure Bias." IT Thesis, Charles Darwin University.
 **Evaluation Files (src/evaluation):**
 - **metrics.py** - Academic robustness metrics
 
-### **🚀 Experiment Scripts**
+### **Experiment Scripts**
 - **train_baselines.py** - Individual baseline training
 - **run_baseline_comparison.py** - Complete baseline comparison
 - **analyze_baseline_results.py** - Results analysis
 - **run_experiment.py** - DCCF experiments
 - **test_new_baselines.py** - Baseline validation
 
-### **📊 Results & Analysis (runs folder)**
+### **Results & Analysis (runs folder)**
 **Baseline Results (runs/baselines):**
 - **thesis_comparison_table.csv** - Main thesis table
 - **thesis_comparison_table.tex** - LaTeX format
 - **baseline_comparison.png** - Performance plots
 - **Individual model folders** - Detailed results for each experiment
 
-### **📚 Documentation**
+### **Documentation**
 - **README.md** - This comprehensive guide
 - **NEW_BASELINES_IMPLEMENTATION_GUIDE.md** - Implementation guide
 - **THESIS_WORKFLOW_FLOWCHART.md** - Workflow documentation
 - **thesis_workflow_visual.html** - Visual workflow
 - **simple_flowchart.html** - Simple visual guide
 
-### **📄 Research Papers**
+### **Research Papers**
 - **3616855.3635848.pdf** - Exposure-aware DRO paper
 - **3696410.3714932.pdf** - PDIF paper
 
 ---
 
-## 🎓 **Academic Achievement Summary**
+## **Academic Achievement Summary**
 
-### **✅ Thesis Completion Status:**
-- **Complete Baseline Comparison**: 6 models (2019-2025) ✅
-- **Comprehensive Experiments**: 24 successful experiments ✅  
-- **8-Metric Evaluation Framework**: Core performance + academic robustness metrics ✅
-- **Thesis-Ready Results**: LaTeX tables and visualizations ✅
-- **Reproducible Framework**: Full code documentation ✅
-- **Novel Discoveries**: Burst resilience and shift benefits ✅
+### **Thesis Completion Status:**
+- **Complete Baseline Comparison**: 6 models (2019-2025)
+- **Comprehensive Experiments**: 24 successful experiments
+- **8-Metric Evaluation Framework**: Core performance + academic robustness metrics
+- **Thesis-Ready Results**: LaTeX tables and visualizations
+- **Reproducible Framework**: Full code documentation
+- **Novel Discoveries**: Burst resilience and shift benefits
 
-### **🏆 Key Contributions:**
+### **Key Contributions:**
 1. **First comprehensive study** of DCCF under dynamic noise patterns
 2. **Complete timeline comparison** (2019-2025) of robust recommendation methods
 3. **Novel insights** into DCCF's pattern-specific behaviors
 4. **Practical solution** requiring no architectural changes
 5. **Academic rigor** with established metrics and proper citations
 
-### **📊 Ready for Defense:**
-- **Performance tables** ✅
-- **Statistical analysis** ✅  
-- **Visual presentations** ✅
-- **Code reproducibility** ✅
-- **Literature positioning** ✅
+### **Ready for Defense:**
+- **Performance tables**
+- **Statistical analysis**
+- **Visual presentations**
+- **Code reproducibility**
+- **Literature positioning**
 
 ---
 
