@@ -1,19 +1,30 @@
-# New Baselines Implementation Guide (2024-2025)
+# Baseline Comparison Implementation Guide (2019-2025)
 
 ## Overview
-Your lecturer requested adding 2 recent baseline methods to strengthen your thesis comparison:
+This guide documents the implementation of 6 baseline methods for comprehensive robustness comparison:
 
-1. **Exposure-aware Distributionally Robust Optimization (Yang et al., 2024)**
-2. **Personalized Denoising Implicit Feedback - PDIF (Zhang et al., 2025)**
+**Traditional Baselines (2019-2022):**
+1. **NGCF (2019)** - Neural Graph Collaborative Filtering
+2. **LightGCN (2020)** - Simplified Graph Convolution Network  
+3. **SGL (2021)** - Self-Supervised Graph Learning
+4. **SimGCL (2022)** - Simple Graph Contrastive Learning
+
+**Recent Baselines (2024-2025):**
+5. **Exposure-aware Reweighting (Yang et al., 2024)** - Robust optimization approach
+6. **PDIF (Zhang et al., 2025)** - Personalized Denoising Implicit Feedback
 
 ## ✅ Implementation Status
 
-### Phase 1: Core Implementation ✅ COMPLETED
-- [x] **ExposureAwareDRO model** implemented in `src/models/exposure_aware_dro.py`
-- [x] **PDIF model** implemented in `src/models/pdif.py`
+### All 6 Baseline Models ✅ COMPLETED
+- [x] **NGCF (2019)** implemented in `src/models/ngcf.py`
+- [x] **LightGCN (2020)** implemented in `src/models/lightgcn.py`
+- [x] **SGL (2021)** implemented in `src/models/sgl.py`
+- [x] **SimGCL (2022)** implemented in `src/models/simgcl.py`
+- [x] **Exposure-aware Reweighting (2024)** implemented in `src/models/exposure_aware_dro.py`
+- [x] **PDIF (2025)** implemented in `src/models/pdif.py`
 - [x] **Integration** with existing framework completed
-- [x] **Training scripts** updated to support new models
-- [x] **Test script** created for validation
+- [x] **Training scripts** updated to support all models
+- [x] **Comparative evaluation** framework ready
 
 ### Phase 2: Next Steps 🚀 READY TO EXECUTE
 

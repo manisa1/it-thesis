@@ -1,8 +1,8 @@
 """
 Noise generation for simulating dynamic exposure bias.
 
-This module implements different noise patterns to study DCCF's robustness
-under various noise conditions.
+This module implements different noise patterns to study baseline model robustness
+under various noise conditions for comparative evaluation.
 """
 
 from typing import Optional

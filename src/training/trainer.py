@@ -1,8 +1,8 @@
 """
-Training module for DCCF robustness experiments.
+Training module for baseline model robustness experiments.
 
 This module implements the main training logic with support for popularity-based
-reweighting and various noise conditions.
+reweighting and various noise conditions for comparative evaluation.
 """
 
 from typing import Dict, Optional, Tuple
@@ -15,19 +15,21 @@ from data.dataset import RecommenderDataset
 from .noise import NoiseGenerator
 
 
-class DCCFTrainer:
+class BaselineTrainer:
     """
-    Trainer class for DCCF robustness experiments.
+    Trainer class for baseline model robustness experiments.
     
     This class handles the training process including BPR loss computation,
-    popularity-based reweighting, and warm-up scheduling.
+    popularity-based reweighting, and various noise conditions for comparative evaluation.
     """
     
     def __init__(self, 
                  model: MatrixFactorizationBPR,
                  learning_rate: float = 0.01,
                  weight_decay: float = 1e-6,
-                 device: str = 'cpu'):
+                 device: str = 'cpu',
+                 warmup_epochs: int = 0,
+                 warmup_noise_scale: float = 0.5):
         """
         Initialize the trainer.
         

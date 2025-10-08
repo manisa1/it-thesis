@@ -1,10 +1,10 @@
-# A Study on Robust Recommender System using Disentangled Contrastive Collaborative Filtering (DCCF)
+# Comparative Study of Recommendation System Robustness Under Dynamic Exposure Bias
 
 IT Thesis Project - Data Science
 
-This thesis investigates the robustness of Disentangled Contrastive Collaborative Filtering (DCCF) under dynamic noise conditions. While DCCF was designed to handle noise in recommendation systems, it assumes noise patterns remain static during training. Our research explores how DCCF performs when noise distributions change dynamically over time and proposes a static confidence denoiser with burn-in scheduling to improve robustness.
+This thesis presents a comprehensive comparative study of recommendation system robustness under dynamic exposure bias. We systematically evaluate 6 state-of-the-art recommendation models (spanning 2019-2025) under realistic noise conditions that simulate real-world scenarios like fake reviews, viral content manipulation, and algorithm changes.
 
-Implementation Note: This project uses a custom PyTorch framework designed specifically for this robustness study, providing full control over the experimental design and transparent implementation of DCCF concepts without relying on external frameworks.
+Implementation Note: This project uses a custom PyTorch framework designed specifically for this comparative robustness study, providing full control over the experimental design and transparent implementation of all baseline models without relying on external frameworks.
 
 ## Table of Contents
 
@@ -1316,9 +1316,8 @@ After experiments run, results appear here:
 #### **❓ "How do I cite this work?"**
 **Answer**: Use this format:
 ```
-Paudel, M. (2025). "A Study on Robust Recommender System using 
-Disentangled Contrastive Collaborative Filtering (DCCF)." 
-IT Thesis, Charles Darwin University.
+Paudel, M. (2025). "Comparative Study of Recommendation System Robustness 
+Under Dynamic Exposure Bias." IT Thesis, Charles Darwin University.
 ```
 
 ---
