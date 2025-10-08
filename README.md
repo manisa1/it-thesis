@@ -8,8 +8,8 @@ Implementation Note: This project uses a custom PyTorch framework designed speci
 
 ## Table of Contents
 
-- [🎯 Understanding This Research (For Non-Coders)](#-understanding-this-research-for-non-coders)
 - [Thesis Overview](#thesis-overview)
+- [🎯 Understanding This Research (For Non-Coders)](#-understanding-this-research-for-non-coders)
 - [Installation](#installation)
 - [Project Structure](#project-structure)
 - [Usage](#usage)
@@ -18,6 +18,55 @@ Implementation Note: This project uses a custom PyTorch framework designed speci
 - [Understanding the Implementation](#understanding-the-implementation)
 - [Dependencies](#dependencies)
 - [Academic Context](#academic-context)
+
+## Thesis Overview
+
+## Problem Statement
+
+This study investigates **robust recommendation under natural (non-adversarial) noise**, where user-item logs contain spurious positives (e.g., misclicks) and **exposure/popularity effects**. 
+
+**Specific Focus: Dynamic vs Static Natural Noise**
+- **Natural Noise**: Spurious positives from misclicks, mislabeled ratings, accidental interactions
+- **Exposure/Popularity Effects**: Popular items get artificially inflated interactions due to increased visibility
+- **Static vs Dynamic**: Traditional approaches assume noise patterns remain fixed, but real-world noise evolves over time
+
+**DCCF's Core Limitation**: DCCF assumes **static noise patterns** during training. However, real-world natural noise is **dynamic**:
+- **Temporal Drift**: User behavior patterns change over time
+- **Seasonal Effects**: Shopping campaigns, trending topics create varying noise levels  
+- **Platform Changes**: Algorithm updates affect exposure patterns
+- **Early Training Instability**: Prototype-based models suffer from unstable learning in initial epochs
+
+**Research Gap**: Current robust recommender systems lack mechanisms to handle **dynamic natural noise patterns** and **early-training instability** without architectural changes.
+
+## Research Questions
+**From Thesis Interim Report:**
+- **RQ1**: How does DCCF's top-K accuracy change under static versus dynamic natural noise?
+- **RQ2**: Does a burn-in phase improve early-epoch stability under noise?
+- **RQ3**: Does exposure-aware DRO reduce robustness drop relative to vanilla DCCF (with burn-in)?
+
+## Hypothesis
+We hypothesize that DCCF's performance degrades significantly under **dynamic natural noise patterns**, and that our proposed training-time fixes (static confidence denoiser + burn-in scheduling) can mitigate this degradation while maintaining performance under static conditions.
+
+## Our Solution
+**Training-Time Robustness Enhancement (No Architecture Changes)**:
+- **Static Confidence Denoiser**: Down-weights likely noisy/over-exposed interactions using item popularity proxy
+- **Burn-in Scheduling**: Trains in easier regime for initial epochs before enabling noise schedules and DRO
+- **Exposure-Aware DRO**: After burn-in, emphasizes hardest examples while penalizing high exposure effects
+
+## Key Features
+
+### **🔥 Dynamic Noise Patterns**
+- **Burst Pattern**: Sudden noise spikes during training (e.g., viral content, flash sales)
+- **Shift Pattern**: Focus changes from popular to unpopular items (e.g., algorithm updates)
+- **Ramp Pattern**: Gradual noise increase over epochs (baseline comparison)
+
+### **📊 Comprehensive Evaluation**
+- **8 Core Experiments**: All noise patterns × Baseline/Solution conditions
+- **Advanced Patterns**: Burst and shift noise simulation with real-world scenarios
+- **8 Academic Robustness Metrics**: Following established literature standards
+- **Baseline Comparison**: 6 state-of-the-art models (LightGCN, SimGCL, NGCF, SGL, Exposure-aware DRO, PDIF)
+- **Timeline Coverage**: Complete 2019-2025 baseline comparison
+- **Visualization**: Dynamic pattern demonstrations and academic-standard plots
 
 ---
 
@@ -141,55 +190,6 @@ DCCF performs differently under different noise patterns:
 - **Complete experimental framework** for future research
 
 ---
-
-## Thesis Overview
-
-## Problem Statement
-
-This study investigates **robust recommendation under natural (non-adversarial) noise**, where user-item logs contain spurious positives (e.g., misclicks) and **exposure/popularity effects**. 
-
-**Specific Focus: Dynamic vs Static Natural Noise**
-- **Natural Noise**: Spurious positives from misclicks, mislabeled ratings, accidental interactions
-- **Exposure/Popularity Effects**: Popular items get artificially inflated interactions due to increased visibility
-- **Static vs Dynamic**: Traditional approaches assume noise patterns remain fixed, but real-world noise evolves over time
-
-**DCCF's Core Limitation**: DCCF assumes **static noise patterns** during training. However, real-world natural noise is **dynamic**:
-- **Temporal Drift**: User behavior patterns change over time
-- **Seasonal Effects**: Shopping campaigns, trending topics create varying noise levels  
-- **Platform Changes**: Algorithm updates affect exposure patterns
-- **Early Training Instability**: Prototype-based models suffer from unstable learning in initial epochs
-
-**Research Gap**: Current robust recommender systems lack mechanisms to handle **dynamic natural noise patterns** and **early-training instability** without architectural changes.
-
-## Research Questions
-**From Thesis Interim Report:**
-- **RQ1**: How does DCCF's top-K accuracy change under static versus dynamic natural noise?
-- **RQ2**: Does a burn-in phase improve early-epoch stability under noise?
-- **RQ3**: Does exposure-aware DRO reduce robustness drop relative to vanilla DCCF (with burn-in)?
-
-## Hypothesis
-We hypothesize that DCCF's performance degrades significantly under **dynamic natural noise patterns**, and that our proposed training-time fixes (static confidence denoiser + burn-in scheduling) can mitigate this degradation while maintaining performance under static conditions.
-
-## Our Solution
-**Training-Time Robustness Enhancement (No Architecture Changes)**:
-- **Static Confidence Denoiser**: Down-weights likely noisy/over-exposed interactions using item popularity proxy
-- **Burn-in Scheduling**: Trains in easier regime for initial epochs before enabling noise schedules and DRO
-- **Exposure-Aware DRO**: After burn-in, emphasizes hardest examples while penalizing high exposure effects
-
-## Key Features
-
-### **🔥 Dynamic Noise Patterns**
-- **Burst Pattern**: Sudden noise spikes during training (e.g., viral content, flash sales)
-- **Shift Pattern**: Focus changes from popular to unpopular items (e.g., algorithm updates)
-- **Ramp Pattern**: Gradual noise increase over epochs (baseline comparison)
-
-### **📊 Comprehensive Evaluation**
-- **8 Core Experiments**: All noise patterns × Baseline/Solution conditions
-- **Advanced Patterns**: Burst and shift noise simulation with real-world scenarios
-- **8 Academic Robustness Metrics**: Following established literature standards
-- **Baseline Comparison**: 6 state-of-the-art models (LightGCN, SimGCL, NGCF, SGL, Exposure-aware DRO, PDIF)
-- **Timeline Coverage**: Complete 2019-2025 baseline comparison
-- **Visualization**: Dynamic pattern demonstrations and academic-standard plots
 
 ## Installation
 
