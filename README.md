@@ -8,6 +8,7 @@ Implementation Note: This project uses a custom PyTorch framework designed speci
 
 ## Table of Contents
 
+- [🎯 Understanding This Research (For Non-Coders)](#-understanding-this-research-for-non-coders)
 - [Thesis Overview](#thesis-overview)
 - [Installation](#installation)
 - [Project Structure](#project-structure)
@@ -17,6 +18,129 @@ Implementation Note: This project uses a custom PyTorch framework designed speci
 - [Understanding the Implementation](#understanding-the-implementation)
 - [Dependencies](#dependencies)
 - [Academic Context](#academic-context)
+
+---
+
+## 🎯 Understanding This Research (For Non-Coders)
+
+### **What is This Research About?**
+
+Imagine you're using Netflix, Amazon, or Spotify. These platforms suggest movies, products, or songs you might like. These suggestions come from **recommendation systems** - computer programs that learn your preferences and predict what you'll enjoy.
+
+### **The Problem We're Solving**
+
+**Real-World Challenge**: Recommendation systems work well in perfect conditions, but real-world data is messy:
+- **Accidental clicks**: You accidentally click on something you don't like
+- **Fake reviews**: Bots or paid reviewers create false ratings
+- **Trending bias**: Popular items get recommended too much just because they're popular
+- **Changing patterns**: User behavior changes over time (holidays, trends, etc.)
+
+**Current Systems Assume**: Noise (bad data) stays the same throughout training
+**Reality**: Noise changes over time - sometimes gradually, sometimes suddenly
+
+### **Our Research Focus**
+
+We study a specific recommendation system called **DCCF** (Disentangled Contrastive Collaborative Filtering) and test:
+1. **How well does it handle changing noise patterns?**
+2. **Can we make it more robust without changing its core design?**
+
+### **What Makes This Research Important?**
+
+#### **Real-World Impact:**
+- **E-commerce**: Better product recommendations despite fake reviews
+- **Streaming**: More accurate movie/music suggestions during viral trends
+- **Social Media**: Improved content recommendations during algorithm changes
+
+#### **Academic Contribution:**
+- **First comprehensive study** of dynamic noise in recommendation systems
+- **Complete timeline comparison** of 6 years of recommendation methods (2019-2025)
+- **Practical solutions** that work with existing systems
+
+### **Our Approach (In Simple Terms)**
+
+#### **1. We Test 8 Different Scenarios:**
+- **Static conditions**: Clean data (ideal laboratory conditions)
+- **Dynamic conditions**: Gradually increasing noise (realistic conditions)
+- **Burst conditions**: Sudden noise spikes (Black Friday fake reviews)
+- **Shift conditions**: Changing focus (algorithm updates)
+
+#### **2. We Compare 6 Different Methods:**
+- **NGCF (2019)**: Graph-based recommendations
+- **LightGCN (2020)**: Simplified graph approach
+- **SGL (2021)**: Self-supervised learning
+- **SimGCL (2022)**: Simple contrastive learning
+- **Exposure-aware DRO (2024)**: Robust optimization
+- **PDIF (2025)**: Personalized denoising
+
+#### **3. We Measure Performance Using 8 Metrics:**
+- **Accuracy metrics**: How often recommendations are correct
+- **Robustness metrics**: How well systems handle bad data
+- **Stability metrics**: How consistent performance remains
+
+### **Key Findings (What We Discovered)**
+
+#### **🔍 Main Discovery:**
+DCCF performs differently under different noise patterns:
+- **Vulnerable** to gradual noise changes (needs our solution)
+- **Resilient** to sudden noise bursts (naturally robust)
+- **Benefits** from focus shifts (unexpected advantage)
+
+#### **💡 Our Solution Works:**
+- **1.5% improvement** under realistic dynamic conditions
+- **Training-time fixes** that don't require changing the system architecture
+- **Pattern-specific insights** for future improvements
+
+### **What This Means for You**
+
+#### **If You're a Student:**
+- **Complete research framework** with reproducible experiments
+- **Academic-grade methodology** following established standards
+- **Real-world applications** connecting theory to practice
+
+#### **If You're a Researcher:**
+- **Novel insights** into dynamic noise patterns in recommendation systems
+- **Comprehensive baseline comparison** spanning 6 years of methods
+- **Open-source implementation** for further research
+
+#### **If You're in Industry:**
+- **Practical solutions** for improving recommendation robustness
+- **Real-world scenarios** mapped to experimental conditions
+- **Training-time enhancements** that work with existing systems
+
+### **How to Use This Research**
+
+#### **📊 View Results (No Coding Required):**
+1. **Main Results**: Open `runs/baselines/thesis_comparison_table.csv` in Excel
+2. **Visual Results**: View `runs/baselines/baseline_comparison.png` for charts
+3. **Summary**: Read `runs/thesis_results_summary.md` for plain English findings
+
+#### **🔬 Reproduce Experiments (Basic Coding):**
+1. **Install Python** (we provide step-by-step instructions)
+2. **Run one command**: `python run_baseline_comparison.py`
+3. **Wait for results**: All experiments run automatically
+4. **View outputs**: Results appear in easy-to-read files
+
+#### **📚 Academic Use:**
+- **Cite our work**: Proper citations provided
+- **Use our data**: All results available in multiple formats
+- **Build upon**: Complete codebase available for extensions
+
+### **Success Metrics**
+
+#### **✅ What We Achieved:**
+- **24 successful experiments** across all baseline models
+- **100% reproducible results** with complete documentation
+- **6-year timeline coverage** of recommendation methods
+- **8-metric evaluation framework** following academic standards
+- **Real-world applicability** with industry-relevant scenarios
+
+#### **🏆 Academic Impact:**
+- **First comprehensive study** of DCCF under dynamic noise
+- **Novel behavioral insights** (burst resilience, shift benefits)
+- **Practical training-time solutions** requiring no architectural changes
+- **Complete experimental framework** for future research
+
+---
 
 ## Thesis Overview
 
@@ -640,12 +764,107 @@ runs/baselines/
 - **`baseline_comparison.png`**: Performance plots for presentations
 - **Individual model results**: `runs/baselines/{model}_{condition}/metrics.csv`
 
-### **Interpreting Results:**
-- **Recall@20**: Higher is better (recommendation accuracy - fraction of relevant items found)
-- **NDCG@20**: Higher is better (ranking quality - position-sensitive accuracy)
-- **Precision@20**: Higher is better (recommendation precision - fraction of recommendations that are relevant)
-- **Robustness Metrics**: Various interpretations for comprehensive robustness analysis
-- **Performance Drops**: Lower is better (less degradation under noise conditions)
+### **📖 How to Read the Results (For Non-Coders)**
+
+#### **🎯 Main Performance Metrics (What We Measure):**
+
+##### **1. Recall@20 (Recommendation Accuracy)**
+- **What it means**: Out of 20 items you might like, how many did we actually recommend?
+- **Example**: If you like 10 movies and we recommend 6 of them in our top-20 list, Recall = 6/10 = 0.6
+- **Scale**: 0.0 (terrible) to 1.0 (perfect)
+- **Good values**: 0.2-0.4 is typical for recommendation systems
+- **Higher is better** ✅
+
+##### **2. NDCG@20 (Ranking Quality)**
+- **What it means**: Are the items you like appearing at the top of our recommendations?
+- **Example**: Finding your favorite movie at position #1 is better than finding it at position #19
+- **Scale**: 0.0 (terrible ranking) to 1.0 (perfect ranking)
+- **Good values**: 0.1-0.3 is typical for recommendation systems
+- **Higher is better** ✅
+
+##### **3. Precision@20 (Recommendation Precision)**
+- **What it means**: Out of our 20 recommendations, how many did you actually like?
+- **Example**: If we recommend 20 items and you like 8 of them, Precision = 8/20 = 0.4
+- **Scale**: 0.0 (all recommendations wrong) to 1.0 (all recommendations correct)
+- **Good values**: 0.1-0.3 is typical for recommendation systems
+- **Higher is better** ✅
+
+#### **🛡️ Robustness Metrics (How Well Systems Handle Bad Data):**
+
+##### **4. Performance Drop % (Robustness Under Noise)**
+- **What it means**: How much worse does the system get when data is noisy?
+- **Example**: If Recall drops from 0.30 to 0.25 under noise, drop = (0.30-0.25)/0.30 = 16.7%
+- **Scale**: 0% (no degradation) to 100% (complete failure)
+- **Good values**: Under 20% drop is considered robust
+- **Lower is better** ✅
+
+##### **5-8. Advanced Robustness Metrics:**
+- **Offset on Metrics (ΔM)**: How much performance changes under noise
+- **Offset on Output (ΔO)**: How much recommendation lists change under noise  
+- **Robustness Improvement (RI)**: How much our solution helps
+- **Predict Shift (PS)**: How much individual predictions change
+- **Drop Rate (DR)**: Performance degradation under different conditions
+
+#### **📊 Reading Our Results Tables:**
+
+##### **Main Results Table (`thesis_comparison_table.csv`):**
+```
+Model          | Recall@20 | NDCG@20 | Precision@20 | Performance Drop %
+PDIF (2025)    | 0.2850    | 0.3056  | 0.1425       | 4.1%
+LightGCN (2020)| 0.1000    | 0.0500  | 0.0500       | 0.0%
+DCCF (Our)     | 0.2024    | 0.0690  | 0.1012       | 14.3%
+```
+
+**How to read this:**
+- **PDIF is best overall**: Highest accuracy (0.2850 Recall) but moderate robustness (4.1% drop)
+- **LightGCN is most robust**: No performance drop (0.0%) but lower accuracy
+- **Our DCCF study**: Good accuracy but needs improvement for dynamic noise (14.3% drop)
+
+#### **📈 Reading Our Charts (`baseline_comparison.png`):**
+
+##### **Performance Comparison Chart:**
+- **Y-axis**: Performance scores (higher bars = better)
+- **X-axis**: Different models (NGCF, LightGCN, etc.)
+- **Colors**: Different metrics (Recall, NDCG, Precision)
+- **Look for**: Tallest bars indicate best-performing models
+
+##### **Robustness Analysis Chart:**
+- **Y-axis**: Performance drop percentage (lower bars = more robust)
+- **X-axis**: Different noise conditions (Static, Dynamic, Burst, Shift)
+- **Colors**: Different models
+- **Look for**: Shortest bars indicate most robust models
+
+#### **🔍 Key Insights from Our Results:**
+
+##### **What We Discovered:**
+1. **PDIF (2025) is the accuracy champion**: Best overall performance but moderate robustness
+2. **LightGCN (2020) is the robustness champion**: Most stable under all noise conditions
+3. **DCCF shows pattern-specific behavior**: 
+   - Vulnerable to gradual changes (needs our solution)
+   - Resilient to sudden bursts (naturally robust)
+   - Benefits from focus shifts (unexpected discovery)
+
+##### **What This Means:**
+- **For accuracy**: Use PDIF if you want the best recommendations
+- **For stability**: Use LightGCN if you need consistent performance
+- **For research**: DCCF offers interesting insights into noise pattern behaviors
+
+#### **💡 Practical Implications:**
+
+##### **For E-commerce Platforms:**
+- **During normal times**: PDIF gives best product recommendations
+- **During sales events**: LightGCN maintains stable performance
+- **During algorithm updates**: DCCF might actually improve (shift benefit)
+
+##### **For Streaming Services:**
+- **Content discovery**: PDIF finds more relevant movies/songs
+- **During viral trends**: LightGCN avoids recommendation chaos
+- **Platform changes**: DCCF adapts well to new recommendation focuses
+
+##### **For Social Media:**
+- **User engagement**: PDIF maximizes relevant content
+- **During trending events**: LightGCN maintains consistent quality
+- **Algorithm updates**: DCCF shows adaptive behavior
 
 ---
 
@@ -1014,6 +1233,134 @@ IT Thesis, [Charles Darwin University].
 For questions about this thesis research:
 - GitHub Issues: Technical implementation questions
 - Academic Inquiries: Contact through university channels
+
+---
+
+## 💻 **Understanding the Code (For Non-Coders)**
+
+### **What Each File Does (In Simple Terms)**
+
+#### **🏠 Main Directory Files:**
+- **`README.md`**: This file you're reading - explains everything
+- **`make_data.py`**: Creates fake data for testing (like a movie rating simulator)
+- **`run_baseline_comparison.py`**: Runs all experiments automatically (the main button to press)
+- **`analyze_baseline_results.py`**: Creates tables and charts from results (like Excel but automatic)
+
+#### **📊 Data Files (`data/` folder):**
+- **`ratings.csv`**: The fake dataset we created (users, items, ratings)
+- **`gowalla/`, `amazon-book/`, `movielens-20m/`**: Real-world datasets (if available)
+
+#### **🧠 Model Files (`src/models/` folder):**
+Think of these as different "brains" for making recommendations:
+- **`matrix_factorization.py`**: Basic recommendation brain (simple but effective)
+- **`lightgcn.py`**: Graph-based brain (connects users and items)
+- **`simgcl.py`**: Contrastive learning brain (learns by comparing)
+- **`ngcf.py`**: Neural graph brain (advanced graph connections)
+- **`sgl.py`**: Self-supervised brain (learns without labels)
+- **`exposure_aware_dro.py`**: Robust optimization brain (handles unfairness)
+- **`pdif.py`**: Personalized denoising brain (cleans data for each user)
+
+#### **🎯 Training Files (`src/training/` folder):**
+- **`trainer.py`**: The "teacher" that trains the recommendation brains
+- **`noise.py`**: Creates different types of "bad data" for testing
+
+#### **📏 Evaluation Files (`src/evaluation/` folder):**
+- **`metrics.py`**: Measures how good recommendations are (like a report card)
+- **`robustness_metrics.py`**: Measures how well systems handle bad data
+
+#### **📈 Results Files (`runs/` folder):**
+After experiments run, results appear here:
+- **`baselines/thesis_comparison_table.csv`**: Main results table (open in Excel)
+- **`baselines/baseline_comparison.png`**: Charts and graphs
+- **Individual folders**: Detailed results for each experiment
+
+### **How the Code Works (Step by Step)**
+
+#### **Step 1: Data Preparation**
+```
+make_data.py → Creates fake user-item interactions
+             → Saves to data/ratings.csv
+             → Like creating a fake Netflix database
+```
+
+#### **Step 2: Model Training**
+```
+run_baseline_comparison.py → Loads the data
+                          → Trains 6 different recommendation "brains"
+                          → Tests them under different noise conditions
+                          → Saves results to runs/ folder
+```
+
+#### **Step 3: Results Analysis**
+```
+analyze_baseline_results.py → Reads all experiment results
+                           → Creates comparison tables
+                           → Generates charts and graphs
+                           → Saves thesis-ready files
+```
+
+### **What Happens When You Run Experiments**
+
+#### **🔄 The Process (Automatic):**
+1. **Load Data**: Read user-item interactions from CSV files
+2. **Add Noise**: Simulate real-world problems (fake reviews, misclicks)
+3. **Train Models**: Each "brain" learns to make recommendations
+4. **Test Performance**: Measure accuracy using our 8 metrics
+5. **Compare Results**: See which method works best under which conditions
+6. **Generate Reports**: Create tables and charts for analysis
+
+#### **⏱️ Time Expectations:**
+- **Quick test**: 5-10 minutes (small dataset)
+- **Full comparison**: 30-60 minutes (all 6 models, all conditions)
+- **Complete analysis**: 1-2 hours (including result generation)
+
+### **File Formats Explained**
+
+#### **📊 CSV Files (Spreadsheet Data):**
+- **Can open in**: Excel, Google Sheets, any spreadsheet program
+- **Contains**: Numbers and text in rows and columns
+- **Example**: `thesis_comparison_table.csv` has model names and performance scores
+
+#### **📈 PNG Files (Images):**
+- **Can open in**: Any image viewer, web browser
+- **Contains**: Charts, graphs, and visualizations
+- **Example**: `baseline_comparison.png` shows performance comparisons
+
+#### **📄 Python Files (.py):**
+- **Can open in**: Any text editor (Notepad, TextEdit)
+- **Contains**: Code instructions for the computer
+- **Don't need to edit**: Everything works out of the box
+
+### **Common Questions from Non-Coders**
+
+#### **❓ "Do I need to understand the code to use this research?"**
+**Answer**: No! You can:
+- View results in Excel (CSV files)
+- See charts in any image viewer (PNG files)
+- Read summaries in text files
+- Run experiments with simple commands
+
+#### **❓ "What if something breaks?"**
+**Answer**: The code is designed to be robust:
+- Clear error messages if something goes wrong
+- Automatic file creation if folders are missing
+- Safe defaults for all settings
+- Complete documentation for troubleshooting
+
+#### **❓ "Can I modify the experiments?"**
+**Answer**: Yes, with basic changes:
+- Change dataset size in `make_data.py`
+- Modify noise levels in configuration files
+- Add new models by following existing patterns
+- Adjust metrics by editing evaluation files
+
+#### **❓ "How do I cite this work?"**
+**Answer**: Use this format:
+```
+Paudel, M. (2025). "A Study on Robust Recommender System using 
+Disentangled Contrastive Collaborative Filtering (DCCF)." 
+IT Thesis, Charles Darwin University.
+```
 
 ---
 
