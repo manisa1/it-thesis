@@ -24,21 +24,34 @@ def load_baseline_results(base_dir="runs/baselines"):
             if metrics_file.exists():
                 # Parse model and experiment from directory name
                 dir_name = model_dir.name
-                parts = dir_name.split("_", 1)
-                if len(parts) == 2:
-                    model_type, experiment = parts
-                    
+                
+                # Handle exposure_dro specially (has underscores in model name)
+                if dir_name.startswith("exposure_dro_"):
+                    model_type = "exposure_dro"
+                    experiment = dir_name[len("exposure_dro_"):]
+                else:
+                    parts = dir_name.split("_", 1)
+                    if len(parts) == 2:
+                        model_type, experiment = parts
+                    else:
+                        continue
+                
+                try:
                     # Load metrics
                     df = pd.read_csv(metrics_file)
-                    final_metrics = df.iloc[-1]
-                    
-                    results.append({
-                        'model': model_type,
-                        'experiment': experiment,
-                        'recall@20': final_metrics.get('recall@20', 0.0),
-                        'ndcg@20': final_metrics.get('ndcg@20', 0.0),
-                        'final_epoch': final_metrics.get('epoch', 15)
-                    })
+                    if len(df) > 0:
+                        final_metrics = df.iloc[-1]
+                        
+                        results.append({
+                            'model': model_type,
+                            'experiment': experiment,
+                            'recall@20': final_metrics.get('recall@20', 0.0),
+                            'ndcg@20': final_metrics.get('ndcg@20', 0.0),
+                            'final_epoch': final_metrics.get('epoch', 15)
+                        })
+                except Exception as e:
+                    print(f"Error loading {metrics_file}: {e}")
+                    continue
     
     return pd.DataFrame(results)
 
@@ -60,18 +73,63 @@ def load_dccf_results(runs_dir="runs"):
     for exp_dir, exp_name in exp_mapping.items():
         metrics_file = Path(runs_dir) / exp_dir / "metrics.csv"
         if metrics_file.exists():
-            df = pd.read_csv(metrics_file)
-            final_metrics = df.iloc[-1]
+            try:
+                # Try standard CSV format first
+                df = pd.read_csv(metrics_file)
+                if 'recall@20' in df.columns or 'Recall@20' in df.columns:
+                    final_metrics = df.iloc[-1]
+                    recall = final_metrics.get('recall@20', final_metrics.get('Recall@20', 0.0))
+                    ndcg = final_metrics.get('ndcg@20', final_metrics.get('NDCG@20', 0.0))
+                else:
+                    # Handle human-readable format
+                    recall, ndcg = parse_human_readable_results(metrics_file)
+            except:
+                # Fallback to human-readable format parsing
+                recall, ndcg = parse_human_readable_results(metrics_file)
             
             dccf_results.append({
                 'model': 'dccf',
                 'experiment': exp_name,
-                'recall@20': final_metrics.get('recall@20', final_metrics.get('Recall@20', 0.0)),
-                'ndcg@20': final_metrics.get('ndcg@20', final_metrics.get('NDCG@20', 0.0)),
-                'final_epoch': final_metrics.get('epoch', 15)
+                'recall@20': recall,
+                'ndcg@20': ndcg,
+                'final_epoch': 15
             })
     
     return pd.DataFrame(dccf_results)
+
+
+def parse_human_readable_results(metrics_file):
+    """Parse human-readable DCCF results format."""
+    try:
+        with open(metrics_file, 'r') as f:
+            content = f.read()
+        
+        recall = 0.0
+        ndcg = 0.0
+        
+        # Extract recall value
+        if 'Recall@20 Performance' in content:
+            for line in content.split('\n'):
+                if 'Recall@20 Performance' in line:
+                    # Extract percentage value in parentheses
+                    if '(' in line and ')' in line:
+                        value_str = line.split('(')[1].split(')')[0]
+                        recall = float(value_str)
+                    break
+        
+        # Extract NDCG value  
+        if 'NDCG@20 Quality Score' in content:
+            for line in content.split('\n'):
+                if 'NDCG@20 Quality Score' in line:
+                    # Extract percentage value in parentheses
+                    if '(' in line and ')' in line:
+                        value_str = line.split('(')[1].split(')')[0]
+                        ndcg = float(value_str)
+                    break
+        
+        return recall, ndcg
+    except:
+        return 0.0, 0.0
 
 
 def create_comparison_table(baseline_df, dccf_df):

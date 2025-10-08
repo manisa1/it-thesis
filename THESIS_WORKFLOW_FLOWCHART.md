@@ -8,7 +8,7 @@ flowchart TD
     A[📚 Literature Review<br/>DCCF Analysis] --> B{🔍 Problem Identified<br/>DCCF assumes static noise<br/>Real-world noise is dynamic}
     
     %% Research Questions
-    B --> C[❓ Research Questions<br/>RQ1: Static vs Dynamic Performance?<br/>RQ2: Burn-in effectiveness?<br/>RQ3: Exposure-aware DRO impact?]
+    B --> C[ Research Questions<br/>RQ1: Static vs Dynamic Performance?<br/>RQ2: Burn-in effectiveness?<br/>RQ3: Exposure-aware DRO impact?]
     
     %% Hypothesis Formation
     C --> D[💡 Hypothesis<br/>DCCF degrades under dynamic noise<br/>Training-time fixes can help]
