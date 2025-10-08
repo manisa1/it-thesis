@@ -641,9 +641,11 @@ runs/baselines/
 - **Individual model results**: `runs/baselines/{model}_{condition}/metrics.csv`
 
 ### **Interpreting Results:**
-- **Recall@20**: Higher is better (recommendation accuracy)
-- **NDCG@20**: Higher is better (ranking quality)
-- **Robustness Drop %**: Lower is better (less performance degradation under noise)
+- **Recall@20**: Higher is better (recommendation accuracy - fraction of relevant items found)
+- **NDCG@20**: Higher is better (ranking quality - position-sensitive accuracy)
+- **Precision@20**: Higher is better (recommendation precision - fraction of recommendations that are relevant)
+- **Robustness Metrics**: Various interpretations for comprehensive robustness analysis
+- **Performance Drops**: Lower is better (less degradation under noise conditions)
 
 ---
 
@@ -665,17 +667,25 @@ runs/baselines/
 
 ## Academic Robustness Analysis
 
-### **📊 Established Metrics from Literature**
+### **📊 Complete 8-Metric Evaluation Framework**
 
-Following academic standards, we implement **5 established robustness metric categories** from peer-reviewed literature:
+Following academic standards and interim report requirements, we implement **8 comprehensive metrics**:
 
+#### **Core Performance Metrics (3):**
+| # | Metric | Source | Purpose |
+|---|--------|--------|---------|
+| 1 | **Recall@20** | Interim Report | Primary ranking metric - recommendation accuracy |
+| 2 | **NDCG@20** | Interim Report | Primary ranking metric - ranking quality |
+| 3 | **Precision@20** | Academic Standard | Complement to recall - recommendation precision |
+
+#### **Academic Robustness Metrics (5):**
 | # | Metric Category | Implementation | Purpose |
 |---|-----------------|----------------|---------|
-| 1 | **Offset on Metrics (ΔM)** | Single metric | Most common robustness metric |
-| 2 | **Offset on Output (ΔO)** | RBO and Jaccard variants | Recommendation list comparison |
-| 3 | **Robustness Improvement (RI)** | Single metric | Defense effectiveness |
-| 4 | **Predict Shift (PS)** | Single metric | Prediction stability |
-| 5 | **Drop Rate (DR)** | Single metric | Distribution shift robustness |
+| 4 | **Offset on Metrics (ΔM)** | Single metric | Most common robustness metric |
+| 5 | **Offset on Output (ΔO)** | RBO and Jaccard variants | Recommendation list comparison |
+| 6 | **Robustness Improvement (RI)** | Single metric | Defense effectiveness |
+| 7 | **Predict Shift (PS)** | Single metric | Prediction stability |
+| 8 | **Drop Rate (DR)** | Single metric | Distribution shift robustness |
 
 ### **🎯 Academic Compliance**
 - ✅ **No custom metrics** - All from established literature
@@ -1068,7 +1078,7 @@ recsys/                                    # Main project directory
 ### **✅ Thesis Completion Status:**
 - **Complete Baseline Comparison**: 6 models (2019-2025) ✅
 - **Comprehensive Experiments**: 24 successful experiments ✅  
-- **Academic Analysis**: 5 established robustness metric categories ✅
+- **8-Metric Evaluation Framework**: Core performance + academic robustness metrics ✅
 - **Thesis-Ready Results**: LaTeX tables and visualizations ✅
 - **Reproducible Framework**: Full code documentation ✅
 - **Novel Discoveries**: Burst resilience and shift benefits ✅
