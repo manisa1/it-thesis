@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Main experiment runner for DCCF robustness study.
+Main experiment runner for baseline model robustness comparison study.
 
 This script runs individual experiments based on configuration files.
-It provides a clean interface for running thesis experiments with proper
-logging, error handling, and result saving.
+It provides a clean interface for running comparative robustness experiments 
+with proper logging, error handling, and result saving.
 
 Usage:
     python run_experiment.py --config configs/experiments/static_baseline.yaml
-    python run_experiment.py --config configs/experiments/dynamic_solution.yaml
+    python run_experiment.py --config configs/experiments/dynamic_baseline.yaml
 """
 
 import argparse
@@ -28,7 +28,7 @@ from src.utils.logging import ExperimentLogger
 from src.data.preprocessing import DataPreprocessor
 from src.data.dataset import RecommenderDataset
 from src.models.matrix_factorization import MatrixFactorizationBPR
-from src.training.trainer import DCCFTrainer
+from src.training.trainer import BaselineTrainer
 from src.training.noise import NoiseGenerator
 from src.evaluation.metrics import RecommendationMetrics
 
@@ -96,7 +96,7 @@ def run_experiment(config: ExperimentConfig) -> dict:
         )
         
         # Initialize trainer
-        trainer = DCCFTrainer(
+        trainer = BaselineTrainer(
             model=model,
             learning_rate=config.learning_rate,
             weight_decay=config.weight_decay,
