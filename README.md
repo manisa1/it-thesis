@@ -38,6 +38,10 @@ This study investigates **robust recommendation under dynamic exposure bias**, w
 - **RQ2**: Which models are most robust to different noise patterns (static, dynamic, burst, shift)?
 - **RQ3**: What insights can we gain about model behavior under realistic noise conditions?
 
+**Additional Analysis (From Interim Report):**
+- **RQ4**: How does DCCF perform when noise distributions are dynamic rather than static?
+- **RQ5**: Can a warm-up strategy improve early convergence under noisy conditions?
+
 ## Hypothesis
 We hypothesize that different recommendation models will show **varying robustness** to dynamic exposure bias patterns, with newer models potentially showing better adaptation to changing noise conditions.
 
