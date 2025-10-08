@@ -83,6 +83,10 @@ class LightGCN(nn.Module):
         items_emb = all_items[items]
         return items_emb
     
+    def get_embeddings(self):
+        """Get all user and item embeddings for evaluation."""
+        return self.computer()
+    
     def forward(self, users, pos_items, neg_items):
         """
         Forward pass for BPR loss computation.
