@@ -42,7 +42,7 @@ This study investigates **robust recommendation under natural (non-adversarial) 
 **From Thesis Interim Report:**
 - **RQ1**: How does DCCF's top-K accuracy change under static versus dynamic natural noise?
 - **RQ2**: Does a burn-in phase improve early-epoch stability under noise?
-- **RQ3**: Does exposure-aware DRO reduce robustness drop relative to vanilla DCCF (with burn-in)?
+- **RQ3**: Does exposure-aware reweighting reduce robustness drop relative to vanilla DCCF (with burn-in)?
 
 ## Hypothesis
 We hypothesize that DCCF's performance degrades significantly under **dynamic natural noise patterns**, and that our proposed training-time fixes (static confidence denoiser + burn-in scheduling) can mitigate this degradation while maintaining performance under static conditions.
@@ -50,8 +50,8 @@ We hypothesize that DCCF's performance degrades significantly under **dynamic na
 ## Our Solution
 **Training-Time Robustness Enhancement (No Architecture Changes)**:
 - **Static Confidence Denoiser**: Down-weights likely noisy/over-exposed interactions using item popularity proxy
-- **Burn-in Scheduling**: Trains in easier regime for initial epochs before enabling noise schedules and DRO
-- **Exposure-Aware DRO**: After burn-in, emphasizes hardest examples while penalizing high exposure effects
+- **Burn-in Scheduling**: Trains in easier regime for initial epochs before enabling noise schedules and reweighting
+- **Exposure-Aware Reweighting**: After burn-in, emphasizes hardest examples while penalizing high exposure effects (inspired by DRO principles but using practical reweighting)
 
 ## Key Features
 
@@ -64,7 +64,7 @@ We hypothesize that DCCF's performance degrades significantly under **dynamic na
 - **8 Core Experiments**: All noise patterns × Baseline/Solution conditions
 - **Advanced Patterns**: Burst and shift noise simulation with real-world scenarios
 - **8 Academic Robustness Metrics**: Following established literature standards
-- **Baseline Comparison**: 6 state-of-the-art models (LightGCN, SimGCL, NGCF, SGL, Exposure-aware DRO, PDIF)
+- **Baseline Comparison**: 6 state-of-the-art models (LightGCN, SimGCL, NGCF, SGL, Exposure-aware Reweighting, PDIF)
 - **Timeline Coverage**: Complete 2019-2025 baseline comparison
 - **Visualization**: Dynamic pattern demonstrations and academic-standard plots
 
