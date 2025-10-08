@@ -218,3 +218,84 @@ class NoiseGenerator:
             'actual_noise_ratio': actual_noise_ratio,
             'schedule': schedule
         }
+
+
+# Standalone functions for backward compatibility with baseline training
+_default_generator = NoiseGenerator()
+
+def add_dynamic_exposure_noise(train_df, n_users, n_items, noise_level, focus=None, seed=42):
+    """
+    Standalone function for adding dynamic exposure noise.
+    
+    Args:
+        train_df: Training dataframe
+        n_users: Number of users
+        n_items: Number of items
+        noise_level: Noise level (0.0-1.0)
+        focus: Focus type ('head', 'tail', or None) - currently ignored
+        seed: Random seed
+        
+    Returns:
+        DataFrame with added noise
+    """
+    generator = NoiseGenerator(seed=seed)
+    return generator.add_exposure_noise(
+        train_df=train_df,
+        n_users=n_users,
+        n_items=n_items,
+        noise_level=noise_level,
+        schedule='static'
+    )
+
+def noise_scale_for_epoch(epoch, schedule, base_noise, schedule_epochs=10, 
+                         burst_start=4, burst_len=2, burst_scale=2.0):
+    """
+    Calculate noise scale for a given epoch based on schedule.
+    
+    Args:
+        epoch: Current epoch (1-based)
+        schedule: Noise schedule ('none', 'ramp', 'burst', 'shift')
+        base_noise: Base noise level
+        schedule_epochs: Number of epochs for ramp schedule
+        burst_start: Start epoch for burst
+        burst_len: Length of burst
+        burst_scale: Scale multiplier for burst
+        
+    Returns:
+        Noise scale for the epoch
+    """
+    if schedule == 'none':
+        return base_noise
+    elif schedule == 'ramp':
+        # Gradual increase over schedule_epochs
+        ramp_progress = min(1.0, (epoch - 1) / max(1, schedule_epochs))
+        return base_noise * ramp_progress
+    elif schedule == 'burst':
+        # Burst pattern
+        if burst_start <= epoch < burst_start + burst_len:
+            return base_noise * burst_scale
+        else:
+            return base_noise
+    else:
+        return base_noise
+
+def focus_for_epoch(epoch, schedule, shift_epoch=5, shift_mode='head2tail'):
+    """
+    Determine focus for a given epoch based on schedule.
+    
+    Args:
+        epoch: Current epoch (1-based)
+        schedule: Noise schedule
+        shift_epoch: Epoch where focus shifts
+        shift_mode: Direction of shift ('head2tail' or 'tail2head')
+        
+    Returns:
+        Focus type ('head', 'tail', or None)
+    """
+    if schedule == 'shift':
+        if shift_mode == 'head2tail':
+            return 'head' if epoch < shift_epoch else 'tail'
+        elif shift_mode == 'tail2head':
+            return 'tail' if epoch < shift_epoch else 'head'
+    
+    return None

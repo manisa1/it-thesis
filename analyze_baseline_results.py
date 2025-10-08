@@ -3,7 +3,7 @@
 Analyze baseline comparison results.
 
 This script compares the performance of different baseline models 
-(LightGCN, SimGCL, NGCF, SGL) with DCCF under various noise conditions.
+(LightGCN, SimGCL, NGCF, SGL, Exposure-aware DRO, PDIF) with DCCF under various noise conditions.
 """
 
 import os

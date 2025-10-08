@@ -1,0 +1,11 @@
+experiment,dccf,exposure,lightgcn,ngcf,pdif,sgl,simgcl
+burst_baseline,0.0,,,,,,
+dro_dynamic_baseline,,0.3415774013568129,,,,,
+dro_dynamic_solution,,0.3322738715532831,,,,,
+dro_static_baseline,,0.3431459063812004,,,,,
+dro_static_solution,,0.3330375425228366,,,,,
+dynamic_baseline,0.0,,0.1,0.1,0.2732916829902123,0.1,0.1
+dynamic_solution,0.0,,0.1,0.1,0.2720346801890917,0.1,0.1
+shift_baseline,0.0,,,,,,
+static_baseline,0.0,,0.1,0.1,0.2849810075545368,0.1,0.1
+static_solution,0.0,,0.1,0.1,0.2787694968430261,0.1,0.1

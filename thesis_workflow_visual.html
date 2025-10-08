@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DCCF Thesis Workflow - Visual Flowchart</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .mermaid {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .section {
+            margin: 40px 0;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+            background-color: #f8f9fa;
+        }
+        .section h2 {
+            color: #2980b9;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 DCCF Robustness Study - Thesis Workflow</h1>
+        
+        <div class="section">
+            <h2>📋 Main Research Workflow</h2>
+            <div class="mermaid">
+                flowchart TD
+                    %% Problem Identification
+                    A[📚 Literature Review<br/>DCCF Analysis] --> B{🔍 Problem Identified<br/>DCCF assumes static noise<br/>Real-world noise is dynamic}
+                    
+                    %% Research Questions
+                    B --> C[❓ Research Questions<br/>RQ1: Static vs Dynamic Performance?<br/>RQ2: Burn-in effectiveness?<br/>RQ3: Exposure-aware DRO impact?]
+                    
+                    %% Hypothesis Formation
+                    C --> D[💡 Hypothesis<br/>DCCF degrades under dynamic noise<br/>Training-time fixes can help]
+                    
+                    %% Solution Design
+                    D --> E[🛠️ Solution Design<br/>Static Confidence Denoiser<br/>+ Burn-in Scheduling<br/>+ Exposure-aware DRO]
+                    
+                    %% Implementation Branch
+                    E --> F[⚙️ Implementation Phase]
+                    
+                    %% Core Implementation
+                    F --> G[🔧 Core Components<br/>Matrix Factorization + BPR<br/>Dynamic Noise Simulation<br/>Popularity Reweighting]
+                    
+                    %% Noise Patterns
+                    G --> H[🌊 Noise Pattern Design<br/>Static | Ramp | Burst | Shift]
+                    
+                    %% Baseline Models
+                    H --> I[📊 Baseline Models<br/>LightGCN | SimGCL<br/>NGCF | SGL]
+                    
+                    %% Experimental Design
+                    I --> J[🧪 Experimental Design<br/>4 Core + 4 Advanced Experiments]
+                    
+                    %% Core Experiments
+                    J --> K1[Static Baseline<br/>No noise, no solution]
+                    J --> K2[Static Solution<br/>No noise, with solution]
+                    J --> K3[Dynamic Baseline<br/>Dynamic noise, no solution]
+                    J --> K4[Dynamic Solution<br/>Dynamic noise, with solution]
+                    
+                    %% Advanced Experiments
+                    J --> L1[Burst Baseline<br/>Sudden noise spikes]
+                    J --> L2[Shift Baseline<br/>Focus changes head→tail]
+                    J --> L3[Additional Patterns<br/>Various noise levels]
+                    J --> L4[Baseline Comparison<br/>4 SOTA models]
+                    
+                    %% Results Collection
+                    K1 --> M[📈 Results Collection]
+                    K2 --> M
+                    K3 --> M
+                    K4 --> M
+                    L1 --> M
+                    L2 --> M
+                    L3 --> M
+                    L4 --> M
+                    
+                    %% Analysis Phase
+                    M --> N[🔬 Analysis Phase<br/>8 Academic Robustness Metrics<br/>Performance Comparison<br/>Pattern-specific Insights]
+                    
+                    %% Key Findings
+                    N --> O1[✅ Confirmed: Dynamic Vulnerability<br/>14.3% performance drop]
+                    N --> O2[🔍 Discovered: Burst Resilience<br/>+2.1% improvement]
+                    N --> O3[💥 Breakthrough: Shift Benefits<br/>+17.5% improvement]
+                    N --> O4[🎯 Solution Effectiveness<br/>Pattern-dependent results]
+                    
+                    %% Thesis Contributions
+                    O1 --> P[🏆 Thesis Contributions]
+                    O2 --> P
+                    O3 --> P
+                    O4 --> P
+                    
+                    %% Final Deliverables
+                    P --> Q[📋 Final Deliverables<br/>Comprehensive Analysis<br/>Academic Tables<br/>Reproducible Framework<br/>Novel Insights]
+                    
+                    %% Styling
+                    classDef problemBox fill:#ffebee,stroke:#d32f2f,stroke-width:2px
+                    classDef solutionBox fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+                    classDef experimentBox fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+                    classDef resultBox fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+                    classDef contributionBox fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+                    
+                    class A,B,C problemBox
+                    class D,E,G solutionBox
+                    class F,H,I,J,K1,K2,K3,K4,L1,L2,L3,L4 experimentBox
+                    class M,N,O1,O2,O3,O4 resultBox
+                    class P,Q contributionBox
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Solution Architecture</h2>
+            <div class="mermaid">
+                flowchart TD
+                    A[Training-Time Robustness Enhancement] --> B[Static Confidence Denoiser]
+                    A --> C[Burn-in Scheduling]
+                    A --> D[Exposure-aware DRO]
+                    
+                    B --> E[Down-weights noisy interactions<br/>using popularity proxy]
+                    C --> F[Easier training regime<br/>for initial epochs]
+                    D --> G[Emphasizes hard examples<br/>after burn-in phase]
+                    
+                    E --> H[No Architecture Changes<br/>Pure Training Enhancement]
+                    F --> H
+                    G --> H
+                    
+                    classDef solutionBox fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+                    classDef componentBox fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+                    classDef benefitBox fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+                    
+                    class A solutionBox
+                    class B,C,D componentBox
+                    class E,F,G,H benefitBox
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🧪 Experimental Framework</h2>
+            <div class="mermaid">
+                flowchart TD
+                    A[Experimental Design] --> B[Noise Pattern Simulation]
+                    A --> C[Baseline Model Comparison]
+                    A --> D[Academic Robustness Metrics]
+                    
+                    B --> B1[Static: Fixed noise level]
+                    B --> B2[Ramp: Gradual increase 0→10%]
+                    B --> B3[Burst: Sudden spikes epochs 5-7]
+                    B --> B4[Shift: Focus change head→tail]
+                    
+                    C --> C1[LightGCN: Graph convolution]
+                    C --> C2[SimGCL: Contrastive learning]
+                    C --> C3[NGCF: Neural graph CF]
+                    C --> C4[SGL: Self-supervised learning]
+                    
+                    D --> D1[Performance Drop %]
+                    D --> D2[Robustness Improvement]
+                    D --> D3[Prediction Stability]
+                    D --> D4[Output Overlap Metrics]
+                    
+                    classDef experimentBox fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+                    classDef noiseBox fill:#ffebee,stroke:#d32f2f,stroke-width:2px
+                    classDef modelBox fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+                    classDef metricBox fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+                    
+                    class A experimentBox
+                    class B,B1,B2,B3,B4 noiseBox
+                    class C,C1,C2,C3,C4 modelBox
+                    class D,D1,D2,D3,D4 metricBox
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Key Discoveries</h2>
+            <div class="mermaid">
+                flowchart TD
+                    A[Experimental Results] --> B[Expected Findings]
+                    A --> C[Unexpected Discoveries]
+                    
+                    B --> B1[✅ Dynamic Vulnerability Confirmed<br/>14.3% performance drop]
+                    B --> B2[✅ Solution Effectiveness<br/>Reduces drop to 12.9%]
+                    
+                    C --> C1[🔍 Burst Resilience Discovery<br/>+2.1% improvement under spikes]
+                    C --> C2[💥 Shift Benefits Breakthrough<br/>+17.5% improvement with focus change]
+                    C --> C3[🎯 Pattern-Dependent Behavior<br/>Three distinct DCCF modes identified]
+                    
+                    classDef resultBox fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+                    classDef expectedBox fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+                    classDef discoveryBox fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+                    
+                    class A resultBox
+                    class B,B1,B2 expectedBox
+                    class C,C1,C2,C3 discoveryBox
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>

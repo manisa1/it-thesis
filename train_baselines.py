@@ -19,15 +19,28 @@ from pathlib import Path
 # Add src to path
 sys.path.append('src')
 
-from models import LightGCN, SimGCL, NGCF, SGL, create_adj_matrix, create_augmented_graph
+from models import LightGCN, SimGCL, NGCF, SGL, ExposureAwareReweighting, PDIF, create_adj_matrix, create_augmented_graph
 from models.lightgcn import bpr_loss
 from models.simgcl import simgcl_loss
 from models.ngcf import ngcf_loss
 from models.sgl import sgl_loss
+from models.exposure_aware_dro import exposure_dro_loss
+from models.pdif import pdif_loss
 from training.noise import add_dynamic_exposure_noise, noise_scale_for_epoch, focus_for_epoch
 from evaluation.metrics import evaluate_model
-from utils.config import load_config
-from utils.logging import setup_logging
+
+# Simple logging setup
+import logging
+def setup_logging(log_file):
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(log_file),
+            logging.StreamHandler()
+        ]
+    )
+    return logging.getLogger(__name__)
 
 
 def parse_args():
@@ -40,7 +53,7 @@ def parse_args():
     parser.add_argument('--model_dir', type=str, default='runs/baseline_comparison',
                        help='Directory to save model and results')
     parser.add_argument('--model_type', type=str, default='lightgcn',
-                       choices=['lightgcn', 'simgcl', 'ngcf', 'sgl'],
+                       choices=['lightgcn', 'simgcl', 'ngcf', 'sgl', 'exposure_dro', 'pdif'],
                        help='Model type to train')
     
     # Model parameters
@@ -139,6 +152,10 @@ def create_model(model_type, n_users, n_items, args):
     elif model_type == 'sgl':
         model = SGL(n_users, n_items, args.embedding_dim, args.n_layers,
                    args.dropout, args.ssl_rate, args.ssl_temp, aug_type=args.aug_type)
+    elif model_type == 'exposure_dro':
+        model = ExposureAwareReweighting(n_users, n_items, args.embedding_dim)
+    elif model_type == 'pdif':
+        model = PDIF(n_users, n_items, args.embedding_dim)
     else:
         raise ValueError(f"Unknown model type: {model_type}")
     
@@ -183,6 +200,12 @@ def train_epoch(model, train_df, n_items, optimizer, args, epoch):
         elif args.model_type == 'sgl':
             user_emb, pos_emb, neg_emb, ssl_loss = model(users, pos_items, neg_items)
             loss, bpr_loss_val, ssl_loss_val = sgl_loss(user_emb, pos_emb, neg_emb, ssl_loss, args.reg_weight)
+        elif args.model_type == 'exposure_dro':
+            user_emb, pos_emb, neg_emb = model(users, pos_items, neg_items)
+            loss, bpr_loss_val, reg_loss_val = exposure_dro_loss(user_emb, pos_emb, neg_emb, pos_items, model, args.reg_weight)
+        elif args.model_type == 'pdif':
+            user_emb, pos_emb, neg_emb = model(users, pos_items, neg_items)
+            loss, bpr_loss_val, reg_loss_val = pdif_loss(user_emb, pos_emb, neg_emb, users, model, args.reg_weight)
         else:  # lightgcn, ngcf
             user_emb, pos_emb, neg_emb = model(users, pos_items, neg_items)
             if args.model_type == 'ngcf':
@@ -216,19 +239,22 @@ def main():
     # Create model
     model = create_model(args.model_type, n_users, n_items, args)
     
-    # Create adjacency matrix for graph-based models
-    adj_matrix = create_adj_matrix(train_df, n_users, n_items)
+    # Create adjacency matrix for graph-based models only
+    if args.model_type in ['lightgcn', 'simgcl', 'ngcf', 'sgl']:
+        adj_matrix = create_adj_matrix(train_df, n_users, n_items)
+        if torch.cuda.is_available():
+            adj_matrix = adj_matrix.cuda()
+        model.set_graph(adj_matrix)
+        
+        # Create augmented graphs for SGL
+        if args.model_type == 'sgl':
+            aug_graph_1 = create_augmented_graph(adj_matrix, args.aug_type, 0.1)
+            aug_graph_2 = create_augmented_graph(adj_matrix, args.aug_type, 0.1)
+            model.set_augmented_graphs(aug_graph_1, aug_graph_2)
+    
+    # Move model to GPU if available
     if torch.cuda.is_available():
-        adj_matrix = adj_matrix.cuda()
         model = model.cuda()
-    
-    model.set_graph(adj_matrix)
-    
-    # Create augmented graphs for SGL
-    if args.model_type == 'sgl':
-        aug_graph_1 = create_augmented_graph(adj_matrix, args.aug_type, 0.1)
-        aug_graph_2 = create_augmented_graph(adj_matrix, args.aug_type, 0.1)
-        model.set_augmented_graphs(aug_graph_1, aug_graph_2)
     
     # Setup optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.lr)

@@ -147,10 +147,14 @@ def create_adj_matrix(train_df, n_users, n_items):
     # [R.T, 0]
     adj_matrix = sp.coo_matrix((data, (row, col)), shape=(n_users, n_items))
     
-    # Create symmetric adjacency matrix
-    adj = sp.coo_matrix((n_users + n_items, n_users + n_items))
-    adj[:n_users, n_users:] = adj_matrix
-    adj[n_users:, :n_users] = adj_matrix.T
+    # Create symmetric adjacency matrix using block construction
+    zero_user = sp.coo_matrix((n_users, n_users))
+    zero_item = sp.coo_matrix((n_items, n_items))
+    
+    # Build blocks: [0, R; R.T, 0]
+    top_block = sp.hstack([zero_user, adj_matrix])
+    bottom_block = sp.hstack([adj_matrix.T, zero_item])
+    adj = sp.vstack([top_block, bottom_block]).tocoo()
     
     # Normalize adjacency matrix: D^(-1/2) * A * D^(-1/2)
     rowsum = np.array(adj.sum(1))

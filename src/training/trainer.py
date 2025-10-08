@@ -10,8 +10,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
-from ..models.matrix_factorization import MatrixFactorizationBPR
-from ..data.dataset import RecommenderDataset
+from models.matrix_factorization import MatrixFactorizationBPR
+from data.dataset import RecommenderDataset
 from .noise import NoiseGenerator
 
 

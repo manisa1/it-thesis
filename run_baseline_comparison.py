@@ -46,8 +46,8 @@ def run_experiment(model_type, experiment_name, noise_params, base_dir="runs/bas
 def main():
     """Run all baseline comparison experiments."""
     parser = argparse.ArgumentParser(description='Run baseline comparison experiments')
-    parser.add_argument('--models', nargs='+', default=['lightgcn', 'simgcl', 'ngcf', 'sgl'],
-                       choices=['lightgcn', 'simgcl', 'ngcf', 'sgl'],
+    parser.add_argument('--models', nargs='+', default=['lightgcn', 'simgcl', 'ngcf', 'sgl', 'exposure_dro', 'pdif'],
+                       choices=['lightgcn', 'simgcl', 'ngcf', 'sgl', 'exposure_dro', 'pdif'],
                        help='Models to compare')
     parser.add_argument('--experiments', nargs='+', 
                        default=['static_baseline', 'static_solution', 'dynamic_baseline', 'dynamic_solution'],
