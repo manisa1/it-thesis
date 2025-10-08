@@ -62,6 +62,7 @@ class RecommendationMetrics:
         # Compute metrics for each user
         recalls = []
         ndcgs = []
+        precisions = []
         
         for user_id, true_items in test_user_items.items():
             if user_id >= scores.shape[0]:  # Skip if user not in training
@@ -83,14 +84,17 @@ class RecommendationMetrics:
             # Compute metrics
             recall = self.recall_at_k(top_k_items, true_items, self.k)
             ndcg = self.ndcg_at_k(top_k_items, true_items, self.k)
+            precision = self.precision_at_k(top_k_items, true_items, self.k)
             
             recalls.append(recall)
             ndcgs.append(ndcg)
+            precisions.append(precision)
         
         # Return average metrics
         return {
             'recall@k': float(np.mean(recalls)) if recalls else 0.0,
             'ndcg@k': float(np.mean(ndcgs)) if ndcgs else 0.0,
+            'precision@k': float(np.mean(precisions)) if precisions else 0.0,
             'n_users': len(recalls),
             'k': self.k
         }
@@ -176,6 +180,34 @@ class RecommendationMetrics:
         
         # Return NDCG
         return dcg / idcg if idcg > 0 else 0.0
+    
+    @staticmethod
+    def precision_at_k(ranked_items: List[int], 
+                       true_items: List[int], 
+                       k: int) -> float:
+        """
+        Compute Precision@K metric.
+        
+        Args:
+            ranked_items (List[int]): List of recommended items (ranked)
+            true_items (List[int]): List of true positive items
+            k (int): Top-K value
+            
+        Returns:
+            float: Precision@K score
+        """
+        if not true_items or k == 0:
+            return 0.0
+        
+        # Get top-K recommendations
+        top_k = ranked_items[:k]
+        true_items_set = set(true_items)
+        
+        # Count hits
+        hits = len(set(top_k) & true_items_set)
+        
+        # Precision = hits / k
+        return hits / k
     
     def compute_robustness_drop(self, 
                                clean_metrics: Dict[str, float],
@@ -312,9 +344,11 @@ def calculate_metrics(predictions, ground_truth, k=20):
     metrics = RecommendationMetrics(k=k)
     recall = metrics.recall_at_k(predictions, ground_truth, k)
     ndcg = metrics.ndcg_at_k(predictions, ground_truth, k)
+    precision = metrics.precision_at_k(predictions, ground_truth, k)
     
     return {
         f'recall@{k}': recall,
         f'ndcg@{k}': ndcg,
+        f'precision@{k}': precision,
         'k': k
     }
