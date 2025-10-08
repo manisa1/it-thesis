@@ -667,18 +667,15 @@ runs/baselines/
 
 ### **📊 Established Metrics from Literature**
 
-Following academic standards, we implement **8 established robustness metrics** from peer-reviewed literature:
+Following academic standards, we implement **5 established robustness metric categories** from peer-reviewed literature:
 
-| # | Metric | Reference | Purpose |
-|---|--------|-----------|---------|
-| 1 | **Offset on Metrics (ΔM)** | Burke et al. (2015) | Most common robustness metric |
-| 2 | **Robustness Improvement (RI)** | Wu et al. (2021) | Defense effectiveness |
-| 3 | **Performance Drop %** | Multiple papers | Intuitive interpretation |
-| 4 | **Drop Rate (DR)** | Wu et al. (2022) | Distribution shift robustness |
-| 5 | **Predict Shift (PS)** | Burke et al. (2015) | Prediction stability |
-| 6 | **Offset on Output (Jaccard)** | Oh et al. (2022) | Recommendation list overlap |
-| 7 | **Offset on Output (RBO)** | Kendall (1948) | Rank-aware comparison |
-| 8 | **Top Output (TO)** | Shriver et al. (2019) | Top-1 item stability |
+| # | Metric Category | Implementation | Purpose |
+|---|-----------------|----------------|---------|
+| 1 | **Offset on Metrics (ΔM)** | Single metric | Most common robustness metric |
+| 2 | **Offset on Output (ΔO)** | RBO and Jaccard variants | Recommendation list comparison |
+| 3 | **Robustness Improvement (RI)** | Single metric | Defense effectiveness |
+| 4 | **Predict Shift (PS)** | Single metric | Prediction stability |
+| 5 | **Drop Rate (DR)** | Single metric | Distribution shift robustness |
 
 ### **🎯 Academic Compliance**
 - ✅ **No custom metrics** - All from established literature
@@ -1071,7 +1068,7 @@ recsys/                                    # Main project directory
 ### **✅ Thesis Completion Status:**
 - **Complete Baseline Comparison**: 6 models (2019-2025) ✅
 - **Comprehensive Experiments**: 24 successful experiments ✅  
-- **Academic Analysis**: 8 established robustness metrics ✅
+- **Academic Analysis**: 5 established robustness metric categories ✅
 - **Thesis-Ready Results**: LaTeX tables and visualizations ✅
 - **Reproducible Framework**: Full code documentation ✅
 - **Novel Discoveries**: Burst resilience and shift benefits ✅
