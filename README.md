@@ -552,7 +552,7 @@ Our comprehensive experimental design tests **7 recommendation models** under **
 
 ---
 
-## 🔵 **Static Noise Condition** (Controlled Baseline)
+## **Static Noise Condition** (Controlled Baseline)
 
 ### **1. Static Noise Experiments**
 - **Noise Pattern**: Fixed exposure bias level throughout training
@@ -563,7 +563,7 @@ Our comprehensive experimental design tests **7 recommendation models** under **
 
 ---
 
-## 🟡 **Dynamic Noise Condition** (Realistic Degradation)
+## **Dynamic Noise Condition** (Realistic Degradation)
 
 ### **2. Dynamic Noise Experiments**
 - **Noise Pattern**: Gradual exposure bias increase over training epochs
@@ -577,7 +577,7 @@ Our comprehensive experimental design tests **7 recommendation models** under **
 
 ---
 
-## 🔴 **Burst Noise Condition** (Crisis Scenarios)
+## **Burst Noise Condition** (Crisis Scenarios)
 
 ### **3. Burst Noise Experiments**
 - **Noise Pattern**: Sudden exposure bias spikes during specific training periods
@@ -592,7 +592,7 @@ Our comprehensive experimental design tests **7 recommendation models** under **
 
 ---
 
-## 🟢 **Shift Noise Condition** (Platform Evolution)
+## **Shift Noise Condition** (Platform Evolution)
 
 ### **4. Shift Noise Experiments**
 - **Noise Pattern**: Exposure bias focus change from popular to unpopular items
@@ -745,7 +745,7 @@ python train_baselines.py --model_type exposure_dro --noise_schedule burst --epo
 
 This section explains our comprehensive implementation, key contributions, and how our results align with the interim report findings.
 
-#### **🎯 Core Implementation Architecture**
+#### **Core Implementation Architecture**
 
 Our comparative study implements a systematic framework for evaluating 7 state-of-the-art recommendation models under dynamic exposure bias conditions:
 
@@ -777,7 +777,7 @@ class ComparativeFramework:
         return self.comparative_evaluation()
 ```
 
-#### **🏆 Major Contributions to Recommendation System Research**
+#### **Major Contributions to Recommendation System Research**
 
 **1. First Comprehensive Comparative Study (2019-2025)**
 - **Innovation**: Systematic comparison of 7 state-of-the-art models under controlled conditions
@@ -799,7 +799,7 @@ class ComparativeFramework:
 - **Code**: Pattern-specific analysis in `analyze_baseline_results.py` reveals performance gains
 - **Examples**: DCCF +17.8% under shift patterns, SGL +8.9% under dynamic noise
 
-#### **🔬 How Our Implementation Aligns with the Interim Report**
+#### **How Our Implementation Aligns with the Interim Report**
 
 **Research Questions Addressed:**
 
@@ -856,7 +856,7 @@ def model_selection_guide(scenario):
         return 'consider_pattern_specific_behavior'
 ```
 
-#### **🎯 Dynamic Noise Results - Complete Analysis**
+#### **Dynamic Noise Results - Complete Analysis**
 
 **Static Noise Condition (Controlled Baseline):**
 ```python
@@ -914,7 +914,7 @@ shift_results = {
 }
 ```
 
-#### **🎉 Final Results Summary - Breakthrough Discoveries**
+#### **Final Results Summary - Breakthrough Discoveries**
 
 **1. Performance Champions:**
 - **Overall Winner**: Exposure-aware DRO (34.3% recall) - Best performance with excellent robustness
@@ -961,7 +961,7 @@ model_specializations = {
 }
 ```
 
-#### **🔧 Technical Implementation Highlights**
+#### **Technical Implementation Highlights**
 
 **Systematic Comparison Framework:**
 ```python
@@ -988,7 +988,7 @@ def validate_perfect_robustness(model_results):
     return "BREAKTHROUGH: Perfect robustness confirmed"
 ```
 
-#### **📊 Alignment with Academic Standards**
+#### **Alignment with Academic Standards**
 
 **Reproducibility:**
 - **Complete codebase** with standardized interfaces
@@ -1513,21 +1513,21 @@ For questions about this thesis research:
 
 ---
 
-## 💻 **Understanding the Code (For Non-Coders)**
+## **Understanding the Code (For Non-Coders)**
 
 ### **What Each File Does (In Simple Terms)**
 
-#### **🏠 Main Directory Files:**
+#### **Main Directory Files:**
 - **README.md**: This file you're reading - explains everything
 - **make_data.py**: Creates fake data for testing (like a movie rating simulator)
 - **run_baseline_comparison.py**: Runs all experiments automatically (the main button to press)
 - **analyze_baseline_results.py**: Creates tables and charts from results (like Excel but automatic)
 
-#### **📊 Data Files (data folder):**
+#### **Data Files (data folder):**
 - **ratings.csv**: The fake dataset we created (users, items, ratings)
 - **gowalla, amazon-book, movielens-20m**: Real-world datasets (if available)
 
-#### **🧠 Model Files (src/models folder):**
+#### **Model Files (src/models folder):**
 Think of these as different "brains" for making recommendations:
 - **matrix_factorization.py**: Basic recommendation brain (simple but effective)
 - **lightgcn.py**: Graph-based brain (connects users and items)
@@ -1537,15 +1537,15 @@ Think of these as different "brains" for making recommendations:
 - **exposure_aware_dro.py**: Robust optimization brain (handles unfairness)
 - **pdif.py**: Personalized denoising brain (cleans data for each user)
 
-#### **🎯 Training Files (src/training folder):**
+#### **Training Files (src/training folder):**
 - **trainer.py**: The "teacher" that trains the recommendation brains
 - **noise.py**: Creates different types of "bad data" for testing
 
-#### **📏 Evaluation Files (src/evaluation folder):**
+#### **Evaluation Files (src/evaluation folder):**
 - **metrics.py**: Measures how good recommendations are (like a report card)
 - **robustness_metrics.py**: Measures how well systems handle bad data
 
-#### **📈 Results Files (runs folder):**
+#### **Results Files (runs folder):**
 After experiments run, results appear here:
 - **thesis_comparison_table.csv**: Main results table (open in Excel)
 - **baseline_comparison.png**: Charts and graphs
@@ -1564,7 +1564,7 @@ After experiments run, results appear here:
 
 ### **What Happens When You Run Experiments**
 
-#### **🔄 The Process (Automatic):**
+#### **The Process (Automatic):**
 1. **Load Data**: Read user-item interactions from CSV files
 2. **Add Noise**: Simulate real-world problems (fake reviews, misclicks)
 3. **Train Models**: Each "brain" learns to make recommendations
@@ -1572,52 +1572,52 @@ After experiments run, results appear here:
 5. **Compare Results**: See which method works best under which conditions
 6. **Generate Reports**: Create tables and charts for analysis
 
-#### **⏱️ Time Expectations:**
+#### **Time Expectations:**
 - **Quick test**: 5-10 minutes (small dataset)
 - **Full comparison**: 30-60 minutes (all 6 models, all conditions)
 - **Complete analysis**: 1-2 hours (including result generation)
 
 ### **File Formats Explained**
 
-#### **📊 CSV Files (Spreadsheet Data):**
+#### **CSV Files (Spreadsheet Data):**
 - **Can open in**: Excel, Google Sheets, any spreadsheet program
 - **Contains**: Numbers and text in rows and columns
 - **Example**: thesis_comparison_table.csv has model names and performance scores
 
-#### **📈 PNG Files (Images):**
+#### **PNG Files (Images):**
 - **Can open in**: Any image viewer, web browser
 - **Contains**: Charts, graphs, and visualizations
 - **Example**: baseline_comparison.png shows performance comparisons
 
-#### **📄 Python Files (.py):**
+#### **Python Files (.py):**
 - **Can open in**: Any text editor (Notepad, TextEdit)
 - **Contains**: Code instructions for the computer
 - **Don't need to edit**: Everything works out of the box
 
 ### **Common Questions from Non-Coders**
 
-#### **❓ "Do I need to understand the code to use this research?"**
+#### **"Do I need to understand the code to use this research?"**
 **Answer**: No! You can:
 - View results in Excel (CSV files)
 - See charts in any image viewer (PNG files)
 - Read summaries in text files
 - Run experiments with simple commands
 
-#### **❓ "What if something breaks?"**
+#### **"What if something breaks?"**
 **Answer**: The code is designed to be robust:
 - Clear error messages if something goes wrong
 - Automatic file creation if folders are missing
 - Safe defaults for all settings
 - Complete documentation for troubleshooting
 
-#### **❓ "Can I modify the experiments?"**
+#### **"Can I modify the experiments?"**
 **Answer**: Yes, with basic changes:
 - Change dataset size in `make_data.py`
 - Modify noise levels in configuration files
 - Add new models by following existing patterns
 - Adjust metrics by editing evaluation files
 
-#### **❓ "How do I cite this work?"**
+#### **"How do I cite this work?"**
 **Answer**: Use this format:
 ```
 Paudel, M. (2025). "Comparative Study of Recommendation System Robustness 
@@ -1626,14 +1626,14 @@ Under Dynamic Exposure Bias." IT Thesis, Charles Darwin University.
 
 ---
 
-## 📁 **Complete Project Structure**
+## **Complete Project Structure**
 
-### **📊 Data & Configuration**
+### **Data & Configuration**
 - **data/ratings.csv** - Generated synthetic dataset
 - **make_data.py** - Dataset generation script
 - **configs/** - Experiment configurations
 
-### **🧠 Core Implementation (src folder)**
+### **Core Implementation (src folder)**
 **Model Files (src/models):**
 - **matrix_factorization.py** - Base MF-BPR implementation
 - **lightgcn.py** - LightGCN (2020)
@@ -1691,20 +1691,20 @@ Under Dynamic Exposure Bias." IT Thesis, Charles Darwin University.
   - Burst: -2.4% drop (actually improves during crises!)
   - Shift: -17.8% drop (major improvement during platform evolution!)
 {{ ... }}
-**📊 Counter-Intuitive Discoveries (New findings for poster):**
+**Counter-Intuitive Discoveries (New findings for poster):**
 - **SGL**: Improves 8.9% under dynamic noise (0.2329 → 0.2536)
 - **NGCF**: Improves 1.2% under dynamic noise (0.2628 → 0.2658)
 - **Noise can enhance performance** - challenges traditional assumptions
 
 #### **DISCUSSION Section Enhancements:**
 
-**🔍 Novel Insights for Academic Impact:**
+**Novel Insights for Academic Impact:**
 1. **Perfect Robustness Exists**: First study to demonstrate 0% degradation across all noise types
 2. **Pattern-Specific Behaviors**: Models show distinct responses to different noise patterns
 3. **Age ≠ Robustness**: LightGCN (2020) outperforms all newer methods in robustness
 4. **Noise Benefits**: Some models actually improve under certain noise conditions
 
-**🎯 Practical Model Selection Guide:**
+**Practical Model Selection Guide:**
 - **For Maximum Accuracy**: Exposure-aware DRO (34.3% recall)
 - **For Perfect Stability**: LightGCN or SimGCL (0% degradation)
 - **For Crisis Management**: DCCF (improves during sudden events)
@@ -1712,13 +1712,13 @@ Under Dynamic Exposure Bias." IT Thesis, Charles Darwin University.
 
 #### **CONCLUSION Section Enhancements:**
 
-**📈 Research Impact:**
+**Research Impact:**
 - **42 comprehensive experiments** across 7 models and 4 realistic noise conditions
 - **First systematic comparison** revealing perfect robustness and pattern-specific behaviors
 - **Practical guidance** for industry model selection based on robustness requirements
 - **Counter-intuitive findings** that challenge existing assumptions about noise impact
 
-**🚀 Future Research Directions:**
+**Future Research Directions:**
 - Investigate why LightGCN/SimGCL achieve perfect robustness
 - Explore noise-enhancement mechanisms in SGL and NGCF
 - Develop hybrid approaches combining accuracy (Exposure-DRO) with perfect robustness (LightGCN)
