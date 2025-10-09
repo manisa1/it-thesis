@@ -64,7 +64,7 @@ def load_experiment_results(runs_dir: str = "runs") -> Dict[str, Dict[str, float
                         standardized[key] = value
                 
                 results[exp_name] = standardized
-                print(f"✅ Loaded {exp_name}: {len(standardized)} metrics")
+                print(f" Loaded {exp_name}: {len(standardized)} metrics")
         else:
             print(f"⚠️  Missing: {metrics_file}")
     
@@ -101,7 +101,7 @@ def load_baseline_results(baseline_dir: str = "runs/baselines") -> Dict[str, Dic
                             'ndcg@20': final_results.get('ndcg@20', 0.0)
                         }
     
-    print(f"✅ Loaded {len(baseline_results)} baseline results")
+    print(f" Loaded {len(baseline_results)} baseline results")
     return baseline_results
 
 
@@ -337,8 +337,8 @@ def main():
         print("❌ No DCCF results found. Run experiments first.")
         return
     
-    print(f"✅ Loaded {len(dccf_results)} DCCF experiments")
-    print(f"✅ Loaded {len(baseline_results)} baseline experiments")
+    print(f" Loaded {len(dccf_results)} DCCF experiments")
+    print(f" Loaded {len(baseline_results)} baseline experiments")
     
     # Calculate robustness metrics
     print("\n🛡️  Calculating established robustness metrics...")
@@ -397,7 +397,7 @@ def main():
         print(f"   - Performance drop under dynamic noise: {recall_drop:.1f}%")
         
         if recall_drop < 15:
-            print("   ✅ DCCF shows good robustness (< 15% drop)")
+            print("    DCCF shows good robustness (< 15% drop)")
         elif recall_drop < 25:
             print("   ⚠️  DCCF shows moderate robustness (15-25% drop)")
         else:
@@ -411,7 +411,7 @@ def main():
         print(f"   - Robustness Improvement (RI): {ri_recall:.3f}")
         
         if ri_recall > 0.1:
-            print("   ✅ Solution provides significant improvement")
+            print("    Solution provides significant improvement")
         elif ri_recall > 0.05:
             print("   ⚠️  Solution provides moderate improvement") 
         else:
@@ -433,7 +433,7 @@ def main():
     print("   - dccf_robustness_drops.png (performance visualization)")
     print("   - offset_metrics_heatmap.png (offset analysis)")
     
-    print("\n✅ Comprehensive robustness analysis completed using established metrics!")
+    print("\n Comprehensive robustness analysis completed using established metrics!")
     print("📚 References:")
     print("   - Robust Recommender System: A Survey and Future Directions (2023)")
     print("   - Towards Robust Recommendation: A Review and an Adversarial Robustness Evaluation Library (2024)")
