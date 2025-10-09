@@ -1,0 +1,1445 @@
+‪arXiv:2305.02759v4 [cs.IR] 25 Feb 2024‬
+‪Disentangled Contrastive Collaborative Filtering‬
+‪Xubin Ren‬
+‪University of Hong Kong‬
+‪Hong Kong, China‬
+‪xubinrencs@gmail.com‬
+‪Lianghao Xia‬
+‪University of Hong Kong‬
+‪Hong Kong, China‬
+‪aka_xia@foxmail.com‬
+‪Jiashu Zhao‬
+‪Wilfrid Laurier University‬
+‪Waterloo, Canada‬
+‪jzhao@wlu.ca‬
+‪Dawei Yin‬
+‪Baidu Inc‬
+‪Beijing, China‬
+‪yindawei@acm.org‬
+‪ABSTRACT‬
+‪Recent studies show that graph neural networks (GNNs) are preva- lent to model high-order relationships for collaborative filtering (CF). Towards this research line, graph contrastive learning (GCL)‬
+‪has exhibited powerful performance in addressing the supervision‬
+‪label shortage issue by learning augmented user and item repre-‬
+‪sentations. While many of them show their effectiveness, two key‬
+‪questions still remain unexplored: i) Most existing GCL-based CF‬
+‪models are still limited by ignoring the fact that user-item interac-‬
+‪tion behaviors are often driven by diverse latent intent factors (e.g.,‬
+‪shopping for family party, preferred color or brand of products); ii)‬
+‪Their introduced non-adaptive augmentation techniques are vulner-‬
+‪able to noisy information, which raises concerns about the model’s‬
+‪robustness and the risk of incorporating misleading self-supervised‬
+‪signals. In light of these limitations, we propose a Disentangled‬
+‪Contrastive Collaborative Filtering framework (DCCF) to realize‬
+‪intent disentanglement with self-supervised augmentation in an‬
+‪adaptive fashion. With the learned disentangled representations‬
+‪with global context, our DCCF is able to not only distill finer-grained‬
+‪latent factors from the entangled self-supervision signals but also‬
+‪alleviate the augmentation-induced noise. Finally, the cross-view‬
+‪contrastive learning task is introduced to enable adaptive augmen-‬
+‪tation with our parameterized interaction mask generator. Experi-‬
+‪ments on various public datasets demonstrate the superiority of our‬
+‪method compared to existing solutions. Our model implementation‬
+‪is released at the link https://github.com/HKUDS/DCCF.‬
+‪CCS CONCEPTS‬
+‪• Information systems → Recommender systems.‬
+‪KEYWORDS‬
+‪Collaborative Filtering, Contrastive Learning, Disentangled Repre-‬
+‪sentation, Graph Neural Networks, Recommendation‬
+‪∗Chao Huang is the corresponding author.‬
+‪Permission to make digital or hard copies of all or part of this work for personal or‬
+‪classroom use is granted without fee provided that copies are not made or distributed‬
+‪for profit or commercial advantage and that copies bear this notice and the full citation‬
+‪on the first page. Copyrights for components of this work owned by others than the‬
+‪author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or‬
+‪republish, to post on servers or to redistribute to lists, requires prior specific permission‬
+‪and/or a fee. Request permissions from permissions@acm.org.‬
+‪SIGIR’23, July 23–27, 2023, Taipei, Taiwan‬
+‪© 2023 Copyright held by the owner/author(s). Publication rights licensed to ACM.‬
+‪ACM ISBN 978-1-4503-9408-6/23/07...$15.00‬
+‪https://doi.org/10.1145/3539618.3591665‬
+‪Chao Huang∗‬
+‪University of Hong Kong‬
+‪Hong Kong, China‬
+‪chaohuang75@gmail.com‬
+‪ACM Reference Format:‬
+‪Xubin Ren, Lianghao Xia, Jiashu Zhao, Dawei Yin, and Chao Huang. 2023.‬
+‪Disentangled Contrastive Collaborative Filtering. In Proceedings of the 46th‬
+‪International ACM SIGIR Conference on Research and Development in Infor-‬
+‪mation Retrieval (SIGIR’23), July 23–27, 2023, Taipei, Taiwan. ACM, Taipei,‬
+‪Taiwan, 10 pages. https://doi.org/10.1145/3539618.3591665‬
+‪1 INTRODUCTION‬
+‪Recommender systems have become fundamental services for sug-‬
+‪gesting personalized items to users by learning their preference‬
+‪from historical interactions [3, 40]. Graph neural networks have‬
+‪recently achieved remarkable success in collaborative filtering (CF)‬
+‪modeling user-item interaction with high-order connectivity, such‬
+‪as NGCF [32],MCCF [35], LightGCN [13], and GCCF [7]. Those‬
+‪GNN-based CF models encode user-item bipartite graph structures‬
+‪into representations via iterative message passing for collaborative‬
+‪information aggregation [37]. By capturing the high-order user‬
+‪(item) similarity in latent embedding space, graph neural CF meth-‬
+‪ods have provided state-of-the-art recommendation performance.‬
+‪However, user-item interactions, which serve as important labels‬
+‪for supervised recommendation models, are often highly sparse in‬
+‪real-world recommender systems [41, 49, 50]. To address the issue‬
+‪of supervision shortage in recommendations, recent works [39, 42]‬
+‪attempt to marry the power of contrastive learning with GNNs to‬
+‪explore the unlabeled information and offer self-supervision signals.‬
+‪These graph contrastive learning (GCL) methods propose to learn‬
+‪invariant user (item) representations by maximizing agreement‬
+‪between established contrastive augmentation views. In general, by‬
+‪following the mutual information maximization principle [22, 28],‬
+‪the agreements of pre-defined positive pairs are achieved, and em-‬
+‪beddings of negative pairs are pushed apart. Two key research‬
+‪lines of augmentation schemes have recently emerged in GCL-‬
+‪based collaborative filtering. To be specific, SGL [39] generates con-‬
+‪trastive views with stochastic augmentors, e.g., random node/edge‬
+‪dropout. To supplement the direct graph connections, HCCF [42]‬
+‪and MHCN [46] propose to purse the consistency between node-‬
+‪level representations and graph-level semantic embeddings.‬
+‪Although promising results have been achieved, we argue that‬
+‪two key limitations exist in current GCL recommender systems.‬
+‪First, most previous studies have ignored the fact that the latent‬
+‪factors behind user-item interactions are highly entangled due to‬
+‪preference diversity, resulting in suboptimal augmentation-induced‬
+‪user representations. In real-life applications, the formation of user-‬
+‪item interactions is driven by many intent factors [34, 36], such as‬
+‪SIGIR’23, July 23–27, 2023, Taipei, Taiwan purchasing products for a family party or being attracted to cer-‬
+‪tain clothing characteristics. However, the learned user preferences‬
+‪with the encoded invariant representations in current GCL-based‬
+‪recommendation approaches are entangled, making it difficult to‬
+‪capture the finer-grained interaction patterns between users and‬
+‪items. This hinders the recommender’s ability to capture genuine‬
+‪user preferences and provide accurate intent-aware self-supervision.‬
+‪Therefore, there is an urgent need for a new method that can gener-‬
+‪ate disentangled contrastive signals for informative augmentation.‬
+‪Second, many existing GCL-based methods still struggle to pro-‬
+‪vide accurate self-supervised learning (SSL) signals against data‬
+‪noise, which makes it difficult to adapt contrastive learning to user-‬
+‪item interaction graphs with diverse structures. Specifically, the‬
+‪introduced stochastic augmentation strategy [39] may not preserve‬
+‪the original semantic relationships well, as they use random dropout‬
+‪operators. For example, For instance, dropping hub nodes can dam-‬
+‪age important inter-community connection structures, resulting in‬
+‪an augmented user-item relation graph that may not be positively‬
+‪related to the original interaction structures. Additionally, Addi-‬
+‪tionally, although some methods incorporate graph-level semantics‬
+‪into auxiliary self-supervised signals [42, 46] via self-discrimination‬
+‪over all nodes, their model performance is vulnerable to user in-‬
+‪teraction data noise, such as misclicks or popularity bias. Under a‬
+‪contrastive augmentation framework, if the importance of node- or‬
+‪edge-wise SSL signals is not differentiated, methods can be easily‬
+‪biased by supplementing the main recommendation task with self-‬
+‪supervised signals derived from noisy nodes, e.g., users with many‬
+‪misclick behaviors or high conformity to popularity bias [30].‬
+‪In this paper, we propose a new disentangled contrastive learning-‬
+‪based collaborative filtering model, called DCCF, to address the‬
+‪limitations of existing methods. Specifically, Our model encodes‬
+‪multi-intent representations by considering the global dependen-‬
+‪cies between users and items. We achieve this by designing intent-‬
+‪aware information passing and aggregation between patch-level‬
+‪nodes and global-level intent prototypes. We aim to identify im-‬
+‪portant graph structural information that captures accurate and‬
+‪helpful environment-invariant patterns with intent disentangle-‬
+‪ment. In this way, we can prevent the distillation of self-supervised‬
+‪information with severe noisy signals. To achieve our goal, we‬
+‪create parameterized edge mask generators that capture implicit‬
+‪relationships among users and items, and we inject intent-aware‬
+‪global dependencies. As a result, the graph structure masker can‬
+‪naturally capture the importance of each interaction for contrastive‬
+‪augmentation, which is adaptive to the user-item relations.‬
+‪To sum up, the main contributions of this work are as follows:‬
+‪•In this work, we study the generalization problem of GCL-based‬
+‪recommender systems in a more challenging yet practical sce-‬
+‪nario: adapting graph contrastive learning to intent disentangle-‬
+‪ment with self-supervision noise for collaborative filtering.‬
+‪•We develop a new recommendation model called DCCF, with‬
+‪parameterized mask generators that are adaptive to build over the‬
+‪global context-enhanced disentangled GNN architecture. This‬
+‪enhances recommender robustness and generalization ability.‬
+‪•Extensive experimental results demonstrate that our new method‬
+‪achieves superior recommendation performance compared to‬
+‪more than 10 existing solutions. Furthermore, the effectiveness‬
+‪Xubin Ren, Lianghao Xia, Jiashu Zhao, Dawei Yin, & Chao Huang‬
+‪of our disentangled adaptive augmentation is justified by studies‬
+‪of model ablation, robustness, and interpretability.‬
+‪2 RELATED WORK‬
+‪GNNs-based Recommender Systems. Graph neural networks‬
+‪(GNNs) have demonstrated strong performance in representation‬
+‪learning of user preference for recommendation. These GNN-based‬
+‪recommenders perform recursive message passing over graph struc-‬
+‪tures to model high-order collaborative relations [8, 40, 44]. To-‬
+‪wards this line, Many efforts have been made to build recommender‬
+‪systems based on various graph neural techniques. For instance,‬
+‪graph convolutional networks have been widely adopted as en-‬
+‪coders to model the user-item interaction graph, such as LightGCN,‬
+‪LR-GCCF [7], and HGCF [25]. Additionally, graph-enhanced atten-‬
+‪tion mechanisms explicitly distinguish influence for embedding‬
+‪propagation among neighboring nodes, and serve as important‬
+‪components in various recommenders, including social relation‬
+‪learning DGRec [24], multi-behavior recommendation [43], knowl-‬
+‪edge graph-based recommenders KGAT [31], JNSKR [4].‬
+‪Recommendation with Disentangled Representations. Learn-‬
+‪ing disentangled representations of user latent intents from im-‬
+‪plicit feedback has been a popular topic in recent years. Various‬
+‪approaches have been proposed, such as using variational auto-‬
+‪encoders to encode high-level user intentions for improving recom-‬
+‪mendation [20]. DGCF [34] builds upon this idea of intent disentan-‬
+‪glement, and performs disentangled representation learning over‬
+‪graph neural network with embedding splitting. To incorporate‬
+‪side information from user or item domain into recommendation,‬
+‪DisenHAN [36] attempts to learn disentangled user/item represen-‬
+‪tations with heterogeneous graph attention network. KGIN [33] is‬
+‪a method that aims to encode latent user intents using item knowl-‬
+‪edge graph to improve recommendation performance. DCF [10]‬
+‪decomposes users and items into factor-level representations and‬
+‪using a factor-level attention mechanism to capture the underly-‬
+‪ing intents. In CDR [6], a dynamic routing mechanism is designed‬
+‪to characterize correlations among user intentions for embedding‬
+‪denoising. However, most existing disentangled recommender sys-‬
+‪tems are built in a fully supervised manner, which can be limited‬
+‪by the sparsity of user-item interactions in real-world scenarios.‬
+‪To address this challenge, we propose a new model that leverages‬
+‪self-supervised learning for intent-aware augmentation.‬
+‪Contrastive Learning in Recommendation. Recently, contrastive‬
+‪learning (CL) has gained considerable attention in various rec-‬
+‪ommendation scenarios, such as sequential recommendation [9],‬
+‪knowledge graph-enhanced recommendation [51], multi-interest‬
+‪recommendation [47] and multi-behavior recommendation [38].‬
+‪The most relevant research line in recommendation systems is to‬
+‪enhance graph neural network (GNN)-based collaborative filtering‬
+‪with contrastive learning. To this end, several recently proposed‬
+‪models, such as SGL [39], NCL [17], and HCCF [42], have achieved‬
+‪state-of-the-art performance by leveraging contrastive augmen-‬
+‪tation. For example, SGL [39] uses random dropout operators to‬
+‪corrupt interaction graph structures for augmentation. In NCL [17],‬
+‪representation alignment is performed between individual users‬
+‪and semantic-centric nodes. While these models have been effec-‬
+‪tive in improving recommendation accuracy, they may fall short‬
+‪in encoding latent factors behind user-item interactions, which‬
+‪Disentangled Contrastive Collaborative Filtering can result in suboptimal representations with coarse-grained user‬
+‪preference modeling for recommendation.‬
+‪3 METHODOLOGY‬
+‪3.1 Disentangled Intent Representation‬
+‪3.1.1 Modeling Latent Intent Factors. In our recommendation‬
+‪scenario, we represent the interaction matrix between the user set‬
+‪U= 𝑢1,...,𝑢𝑖,...,𝑢𝐼 (with size 𝐼) and item set I= 𝑣1,...,𝑣𝑗,...,𝑣𝐽‬
+‪(with size 𝐽) as A∈R𝐼×𝐽. The entry A𝑖,𝑗 ∈Ais set to 1 if user 𝑢𝑖‬
+‪has adopted item 𝑣𝑗 before, and A𝑖,𝑗= 0 otherwise. Our model aims‬
+‪to predict the likelihood that a candidate user will adopt an item‬
+‪given their observed interactions. From a probabilistic perspective,‬
+‪our predictive model aims to estimate the conditional probability‬
+‪𝑃(𝑦|𝑢𝑖,𝑣𝑗)for the interaction between user 𝑢𝑖 and item 𝑣𝑗, where‬
+‪𝑦is the learned preference score.‬
+‪When interacting with items, users often have diverse intents,‬
+‪such as preferences for specific brands or interests in the genres‬
+‪and actors of movies [21, 48]. To capture these diverse intents, we‬
+‪assume 𝐾 different intents 𝑐𝑢 and 𝑐𝑣 from the user and item sides,‬
+‪respectively. The intent on the item side can also be understood as‬
+‪the context of the item, for example, a user who intends to shop‬
+‪for Valentine’s Day may have a preference for items that have a‬
+‪“romantic” context. Our predictive objective of user-item preference‬
+‪can be presented as follows:‬
+‪∫𝑐𝑢 ∫𝑐𝑣‬
+‪𝑃(𝑦,𝑐𝑢,𝑐𝑣|𝑢,𝑣)𝑑𝑐𝑣𝑑𝑐𝑢 =‬
+‪𝐾‬
+‪∑︁‬
+‪𝑘‬
+‪𝑃(𝑦,𝑐𝑘‬
+‪𝑢,𝑐𝑘‬
+‪𝑣|𝑢,𝑣) (1)‬
+‪The user-item interaction probability 𝑦 is determined by the‬
+‪latent intents 𝑐𝑢 and 𝑐𝑣 and can be derived using the formulas:‬
+‪𝐾‬
+‪∑︁‬
+‪𝑘‬
+‪𝐾‬
+‪𝑃(𝑦,𝑐𝑘‬
+‪𝑢,𝑐𝑘‬
+‪𝑣|𝑢,𝑣)=‬
+‪∑︁‬
+‪𝑃(𝑦|𝑐𝑘‬
+‪𝑢,𝑐𝑘‬
+‪𝑣)𝑃(𝑐𝑘‬
+‪𝑢|𝑢)𝑃(𝑐𝑘‬
+‪𝑣|𝑣) (2)‬
+‪𝑘‬
+‪= E𝑃(𝑐𝑢 |𝑢)𝑃(𝑐𝑣 |𝑣)[𝑃(𝑦|𝑐𝑢,𝑐𝑣)]. (3)‬
+‪Here, we use 𝑓(·)to denote the forecasting function over the en-‬
+‪coded intents. Following the statistical theory in [29, 30], we make‬
+‪the following approximation to derive our prediction objective:‬
+‪E𝑃(𝑐𝑢 |𝑢)𝑃(𝑐𝑣 |𝑣)[𝑓(𝑐𝑢,𝑐𝑣)]≈𝑓(E𝑃(𝑐𝑢 |𝑢)[𝑐𝑢],E𝑃(𝑐𝑣 |𝑣)[𝑐𝑣]). (4)‬
+‪With the above inference, the approximation error, known as Jensen‬
+‪gap [1], can be well bounded in our forecasting function 𝑓(·)[12].‬
+‪3.1.2 Multi-Intent Representation with Global Context. While‬
+‪intent diversity has been encoded in existing recommender systems‬
+‪through disentangled representations, global-level intent-aware col-‬
+‪laborative relations have been largely overlooked. Global-level user‬
+‪(item) dependency modeling can enhance the robustness of GNN-‬
+‪based message passing models against sparsity and over-smoothing‬
+‪issue, via propagating information without the limitation of direct‬
+‪local connections [42]. Towards this end, we propose to disentangle‬
+‪collaborative relations among users and items with both local- and‬
+‪global-level embedding for information propagation.‬
+‪Graph-based Message Passing. Owing to the strength of graph‬
+‪neural networks, GNNs has become the prevalent learning para-‬
+‪digm to capture collaborative filtering signals in state-of-the-art rec-‬
+‪ommender systems. Examples include LightGCN [13], LR-GCCF [7],‬
+‪and HGCF [25]. The insights offered by these studies have inspired‬
+‪SIGIR’23, July 23–27, 2023, Taipei, Taiwan‬
+‪us to build our DCCF model using a graph-based message passing‬
+‪framework for user representations. In general, our message propa-‬
+‪gation layer is formally presented with the user/item embedding‬
+‪matrix E(𝑢) ∈R𝐼×𝑑 and E(𝑣) ∈R𝐽×𝑑 as follows:‬
+‪Z(𝑢)=¯‬
+‪A·E(𝑣)‬
+‪, Z(𝑣)=¯‬
+‪A𝑇‬
+‪·E(𝑢)‬
+‪, (5)‬
+‪The aggregated representations from neighboring nodes to the‬
+‪target ones are denoted by Z(𝑢) ∈R𝐼×𝑑 and Z(𝑣) ∈R𝐽×𝑑. Here,‬
+‪¯‬
+‪A∈R𝐼×𝐽 denotes the normalized adjacent matrix which is derived‬
+‪from the user-item interaction matrix Aas¯‬
+‪A= D−1/2‬
+‪(𝑢) ·A·D−1/2‬
+‪(𝑣).‬
+‪where D(𝑢) ∈R𝐼×𝐼 and D(𝑣) ∈R𝐽×𝐽 are diagonal degree matrices.‬
+‪To exploit high-order collaborative filtering signals, we perform‬
+‪GNN-based embedding propagation across different graph layers,‬
+‪such as from the (𝑙−1)-th to the (𝑙)-th layer, as follows:‬
+‪E(𝑢)‬
+‪= E(𝑢)‬
+‪𝑙‬
+‪𝑙−1 +Z(𝑢)‬
+‪𝑙−1, E(𝑣)‬
+‪= E(𝑣)‬
+‪𝑙‬
+‪𝑙−1 +Z(𝑣)‬
+‪𝑙−1, (6)‬
+‪To suppress the over-smoothing effect, residual connections are‬
+‪applied to the aggregation phase [7, 42].‬
+‪Intent-aware Information Aggregation. We will describe how‬
+‪to incorporate intent-aware global user (item) dependencies into‬
+‪our GNN-based collaborative filtering framework. In our multi-‬
+‪intent encoder, disentangled user-item preferences are preserved‬
+‪in E𝑃(𝑐𝑢 |𝑢)[𝑐𝑢]and E𝑃(𝑐𝑣 |𝑣)[𝑐𝑣]. In our DCCF, we define 𝐾 global‬
+‪intent prototypes {c𝑘‬
+‪𝑢 ∈R𝑑}𝐾‬
+‪𝑘=1 and {c𝑘‬
+‪𝑣 ∈R𝑑}𝐾‬
+‪𝑘=1 for user and‬
+‪item, respectively. With these learnable intent embeddings, we‬
+‪generate user and item representations by aggregating information‬
+‪across different 𝐾 intent prototypes with the global context at the‬
+‪𝑙-th graph embedding layer, using the following design:‬
+‪𝐾‬
+‪r(𝑢)‬
+‪𝑖,𝑙= E𝑃(c𝑢 |e(𝑢)‬
+‪𝑖,𝑙 )[c𝑢]=‬
+‪∑︁‬
+‪c𝑘‬
+‪𝑢𝑃(c𝑘‬
+‪𝑢|e(𝑢)‬
+‪𝑖,𝑙 ), (7)‬
+‪𝑘‬
+‪𝐾‬
+‪r(𝑣)‬
+‪𝑗,𝑙= E𝑃(c𝑣 |e(𝑣)‬
+‪𝑗,𝑙 )[c𝑣]=‬
+‪∑︁‬
+‪c𝑘‬
+‪𝑣𝑃(c𝑘‬
+‪𝑣|e(𝑣)‬
+‪𝑗,𝑙 ), (8)‬
+‪𝑘‬
+‪The 𝑙-th layer-specific user and item embeddings are denoted by‬
+‪e(𝑢)‬
+‪𝑖,𝑙 ∈E(𝑢)‬
+‪𝑙 and e(𝑣)‬
+‪𝑗,𝑙 ∈E(𝑣)‬
+‪𝑙 , respectively. The relevance score be-‬
+‪tween user 𝑢𝑖 and each intent prototype c𝑢 is defined as 𝑃(c𝑘‬
+‪𝑢|e(𝑢)‬
+‪𝑖,𝑙 ),‬
+‪which can be derived as follows:‬
+‪𝜂(e(𝑢)⊤‬
+‪𝑖,𝑙−1 c𝑘‬
+‪𝑃(c𝑘‬
+‪𝑢|e(𝑢)‬
+‪𝑖,𝑙 )=‬
+‪𝑢)‬
+‪𝜂(e(𝑣)⊤‬
+‪𝑗,𝑙−1c𝑘‬
+‪,𝑃(c𝑘‬
+‪𝑣|e(𝑣)‬
+‪𝐾‬
+‪𝑘′𝜂(e(𝑢)⊤‬
+‪𝑗,𝑙 )=‬
+‪𝑖,𝑙−1 c𝑘′‬
+‪𝑢 )‬
+‪𝑣)‬
+‪𝐾‬
+‪𝑘′𝜂(e(𝑣)⊤‬
+‪𝑗,𝑙−1c𝑘′‬
+‪𝑣 )‬
+‪Here, 𝜂(·)= exp(·). After generating the propagated message, we‬
+‪refine it by integrating the local collaborative filtering signals with‬
+‪the global disentangled collaborative relations, as follows:‬
+‪E(𝑢)‬
+‪= E(𝑢)‬
+‪𝑙‬
+‪𝑙−1 +Z(𝑢)‬
+‪𝑙−1 +R(𝑢)‬
+‪𝑙−1, E(𝑣)‬
+‪= E(𝑣)‬
+‪𝑙‬
+‪𝑙−1 +Z(𝑣)‬
+‪𝑙−1 +R(𝑣)‬
+‪𝑙−1. (9)‬
+‪In this equation, R(𝑢)‬
+‪𝑙−1 ∈R𝐼×𝑑 and R(𝑣)‬
+‪𝑙−1 ∈R𝐽×𝑑 represent the‬
+‪stacked intent-aware user embeddings (r(𝑢)‬
+‪𝑖,𝑙−1) and item embeddings‬
+‪(r(𝑣)‬
+‪𝑗,𝑙−1), respectively. Incorporating intent disentanglement into the‬
+‪graph neural architecture enables our learned representations to‬
+‪SIGIR’23, July 23–27, 2023, Taipei, Taiwan Xubin Ren, Lianghao Xia, Jiashu Zhao, Dawei Yin, & Chao Huang‬
+‪Local-based‬
+‪Latent Intent Space‬
+‪Message‬
+‪Passing‬
+‪−1/2‬
+‪−1/2 𝐃𝐃(𝑣𝑣)‬
+‪𝐃𝐃(𝑢𝑢)‬
+‪𝓐𝓐‬
+‪𝐞𝐞‬
+‪𝐳𝐳‬
+‪Next‬
+‪GNN Layer‬
+‪ℒ𝑏𝑏𝑏𝑏𝑏𝑏‬
+‪𝐳𝐳‬
+‪𝜎𝜎‬
+‪𝐡𝐡𝛽𝛽‬
+‪+‬
+‪Last Layer‬
+‪𝐜𝐜‬
+‪Global-based‬
+‪𝐞𝐞 𝐳𝐳 𝐫𝐫 𝐡𝐡𝛽𝛽‬
+‪𝐡𝐡𝛾𝛾‬
+‪𝔼𝔼 𝑃𝑃 𝒄𝒄 𝒆𝒆 𝒄𝒄‬
+‪𝐫𝐫‬
+‪𝓐𝓐=‬
+‪𝐫𝐫‬
+‪𝜎𝜎‬
+‪𝐡𝐡𝛾𝛾‬
+‪𝑃𝑃 𝐜𝐜 𝐞𝐞)‬
+‪Self-Supervised Signal ℒ𝑠𝑠‬
+‪User Item‬
+‪(a) Interaction Graph (b) Graph-local Learning (c) Intent-aware Encoding (d) Adaptive Augmentation (e) Model Aggregation‬
+‪Figure 1: The overall framework of our proposed DCCF model involves adaptive augmentation through the integration of global‬
+‪intent disentanglement and interaction pattern encoding, resulting in disentangled environment-invariant representations.‬
+‪effectively disentangle the latent factors driving complex user-item‬
+‪interaction behaviors.‬
+‪3.2 Disentangled Contrastive Learning‬
+‪Taking inspiration from recent developments in contrastive learn-‬
+‪ing, we explore the potential of contrastive augmentation with‬
+‪intent disentanglement to address the data sparsity issue in recom-‬
+‪mender systems. Although self-supervision signals can be gener-‬
+‪ated by maximizing the consistency between positive pairs among‬
+‪contrastive views, we argue that such augmentation is susceptible‬
+‪to data noise, such as misclicks. Noisy contrastive regularization‬
+‪may mislead the self-supervised learning process. For instance,‬
+‪reinforcing the model to achieve embedding agreement via node‬
+‪self-discrimination on noisy interaction edges may involve noisy‬
+‪self-supervised signals and lead to suboptimal representations.‬
+‪To address this challenge, we design learnable augmenters that‬
+‪consider both local collaborative relations and global disentangled‬
+‪user (item) dependencies. By doing so, the learnable contrastive‬
+‪augmenters can adaptively learn disentangled SSL signals.‬
+‪3.2.1 Disentangled Data Augmentation. To enable the aug-‬
+‪mentation to be adaptive to each connection hop, we introduce a‬
+‪learnable relation matrix G𝑙 ∈R𝐼×𝐽 for each (𝑙)-th GNN layer to‬
+‪encode the implicit relationships between users and items. Inspired‬
+‪by previous work on graph denoising [18, 26], we aim to generate‬
+‪a graph mask M𝑙 ∈R𝐼×𝐽, which can be used to obtain the relation‬
+‪matrix through element-wise multiplication: G𝑙 = M𝑙 ⊙A.‬
+‪Learning Graph Mask. Each entry M𝑙‬
+‪𝑖,𝑗 ∈[0,1]in the graph mask‬
+‪M𝑙 reflects the degree to which the interaction between user 𝑖and‬
+‪item 𝑗 is masked. The closer the value is to 0, the less important the‬
+‪interaction is, and vice versa. In our DCCF model, we derive M𝑙‬
+‪𝑖,𝑗‬
+‪based on the disentangled embeddings of user (r(𝑢)‬
+‪𝑖,𝑙 ) and item (r(𝑣)‬
+‪𝑖,𝑙 )‬
+‪to preserve the intent-aware interaction patterns. Specifically, we‬
+‪use cosine similarity [11, 26] between node embeddings to measure‬
+‪the importance of interactions:‬
+‪𝑠(r(𝑢)‬
+‪𝑖,𝑙,r(𝑣)‬
+‪𝑗,𝑙 )=‬
+‪r(𝑢)‬
+‪𝑇‬
+‪r(𝑣)‬
+‪𝑖,𝑙‬
+‪𝑗,𝑙‬
+‪∥r(𝑢)‬
+‪𝑖,𝑙 ∥2 ∥r(𝑣)‬
+‪𝑗,𝑙 ∥2‬
+‪. (10)‬
+‪The mask value is obtained by linearly transforming the range of the‬
+‪similarity to [0,1], using the formula: M𝑙‬
+‪𝑖,𝑗= (𝑠(r(𝑢)‬
+‪𝑖,𝑙,r(𝑣)‬
+‪𝑗,𝑙 )+1)/2.‬
+‪Learnable Augmentation. A𝑖,𝑗 is 0 when there is no interaction‬
+‪between user 𝑖and item 𝑗. G𝑙 is obtained by element-wise multipli-‬
+‪cation of M𝑙 and A. only the mask values of observed interactions‬
+‪are calculated for computational simplicity. With the learned rela-‬
+‪tion matrix, we then normalize it with the degree of the node as‬
+‪follows (layer index is omitted for simplicity):‬
+‪𝐽‬
+‪¯‬
+‪G𝑖,𝑗= G𝑖,𝑗/‬
+‪∑︁‬
+‪𝑗′‬
+‪𝐼‬
+‪G𝑖,𝑗,¯‬
+‪G𝑇‬
+‪𝑗,𝑖= G𝑇‬
+‪𝑗,𝑖/‬
+‪∑︁‬
+‪𝑖′‬
+‪G𝑇‬
+‪𝑗,𝑖′. (11)‬
+‪To integrate our adaptive augmentation with the message passing‬
+‪scheme, we apply our normalized learned relation matrix¯‬
+‪G𝑙 over‬
+‪the messages of nodes for learnable propagation. With this design,‬
+‪we perturb the graph structure to generate contrastive learning‬
+‪views with adaptive augmentation. The augmentation with adaptive‬
+‪masking can be formally presented as follows:‬
+‪H(𝑢)‬
+‪=¯‬
+‪𝑙‬
+‪G·E(𝑣)‬
+‪𝑙, H(𝑣)‬
+‪𝑙‬
+‪=¯‬
+‪G𝑇‬
+‪·E(𝑢)‬
+‪𝑙, (12)‬
+‪To generate multiple contrastive views, we consider both local col-‬
+‪laborative signals and global disentangled relationships. In particu-‬
+‪lar, we perform augmentation using two learnable mask matrices‬
+‪over encoded local embeddings (Z(𝑢)‬
+‪𝑙 and Z(𝑣)‬
+‪𝑙 in Eq. 5), and global‬
+‪embeddings with intent disentanglement (R(𝑢)‬
+‪𝑙 and R(𝑣)‬
+‪𝑙 in Eq. 7).‬
+‪We derive two mask values M𝑙‬
+‪𝑖,𝑗 separately using the following for-‬
+‪mulas: M𝑙‬
+‪𝑖,𝑗= (𝑠(r(𝑢)‬
+‪𝑖,𝑙,r(𝑣)‬
+‪𝑗,𝑙 )+1)/2 and M′,𝑙‬
+‪𝑖,𝑗= (𝑠(z(𝑢)‬
+‪𝑖,𝑙,z(𝑣)‬
+‪𝑗,𝑙 )+1)/2.‬
+‪After that, our augmentation-aware message passing paradigm can‬
+‪be described with the following embedding refinement details:‬
+‪E(𝑢)‬
+‪= E(𝑢)‬
+‪𝑙‬
+‪𝑙−1 +Z(𝑢)‬
+‪𝑙−1 +R(𝑢)‬
+‪𝑙−1 +H𝛽,(𝑢)‬
+‪𝑙−1 +H𝛾,(𝑢)‬
+‪𝑙−1 (13)‬
+‪Here, H𝛽,(𝑢)‬
+‪𝑙−1 and H𝛾,(𝑢)‬
+‪𝑙−1 represent the local- and global-level aug-‬
+‪mented representations, respectively. Similarly, item embeddings‬
+‪are fused in an analogous manner.‬
+‪3.2.2 Contrastive Learning. Using the above augmented repre-‬
+‪sentation views, we conduct contrastive learning across different‬
+‪view-specific embeddings of users and items. Following the ap-‬
+‪proach of supervised contrastive signals in [39, 42], we generate‬
+‪each positive pair using the embeddings of the same user (item)‬
+‪from the original CF view and each of the augmented views. The‬
+‪encoded representations of different nodes are treated as nega-‬
+‪tive pairs. Specifically, we generate three augmented views using‬
+‪Disentangled Contrastive Collaborative Filtering our augmenters: i) the local collaborative view with adaptive aug-‬
+‪mentation (H𝛽,(𝑢)); ii) the disentangled global collaborative view‬
+‪(R(𝑢)); and iii) the adaptive augmented view (H𝛾,(𝑢)). We generate‬
+‪contrastive self-supervision signals using InfoNCE loss as follows:‬
+‪I(m,n)=‬
+‪1‬
+‪𝐼‬
+‪𝐼‬
+‪∑︁‬
+‪𝑖=0‬
+‪𝐿‬
+‪∑︁‬
+‪𝑙=0‬
+‪exp(𝑠(m(𝑢)‬
+‪𝑖,𝑙,n(𝑢)‬
+‪−log‬
+‪𝑖,𝑙 )/𝜏)‬
+‪𝐼‬
+‪𝑖′=0 exp(𝑠(m(𝑢)‬
+‪𝑖,𝑙,n(𝑢)‬
+‪𝑖′,𝑙 )/𝜏), (14)‬
+‪Here, m denotes the original view with vanilla embeddings (z ∈‬
+‪Z(𝑢)) encoded from GNN. n is sampled from one of three aug-‬
+‪mented embeddings h𝛽 ∈H𝛽,(𝑢)‬
+‪, R(𝑢), and h𝛾 ∈H𝛾,(𝑢). The‬
+‪cosine similarity function is denoted by 𝑠(·). The contrastive learn-‬
+‪ing loss from the user side can be formalized as follows:‬
+‪L(𝑢)‬
+‪𝑐𝑙‬
+‪= I(z,r)+I(z,h𝛽)+I(z,h𝛾) (15)‬
+‪By stacking 𝐿graph neural layers, the layer-specific embeddings‬
+‪are aggregated across different layers as follows: E(𝑢)= 𝐿‬
+‪𝑙=0 E(𝑢)‬
+‪𝑙‬
+‪and E(𝑣)= 𝐿‬
+‪𝑙=0 E(𝑣)‬
+‪𝑙 . The user-item preference score is derived as:‬
+‪Y= E(𝑢)(E(𝑣))𝑇‬
+‪, Y𝑖,𝑗= (e(𝑢)‬
+‪𝑖 )𝑇e(𝑣)‬
+‪𝑗. (16)‬
+‪To optimize the classical supervised recommendation task using‬
+‪the estimated preference score, we use the following Bayesian Per-‬
+‪sonalized Ranking (BPR) loss:‬
+‪1‬
+‪L𝑏𝑝𝑟=−‬
+‪|R| ∑︁‬
+‪𝑙𝑛𝜎(Y𝑖,𝑝𝑠−Y𝑖,𝑛𝑠 ), (17)‬
+‪(𝑖,𝑝𝑠 ,𝑛𝑠 )∈R‬
+‪where Ris the set of sampled interactions in each mini-batch [13].‬
+‪For each user 𝑢𝑖, we sample 𝑆 positive items (indexed by 𝑝𝑠) and 𝑆‬
+‪negative items (indexed by 𝑛𝑠) from the training data.‬
+‪Finally, we integrate the self-supervised loss with our classical‬
+‪recommendation loss into a multi-task learning objective as follows:‬
+‪L= L𝑏𝑝𝑟 +𝜆1 ·(L(𝑢)‬
+‪𝑐𝑙 +L(𝑣)‬
+‪𝑐𝑙 )+𝜆2 ·∥Θ1 ∥2‬
+‪F +𝜆3 ·∥Θ2 ∥2‬
+‪F (18)‬
+‪where 𝜆1, 𝜆2 and 𝜆3 are tunable weights. Θ1 = {E(𝑢)‬
+‪0 ,E(𝑣)‬
+‪0 }and‬
+‪Θ2 = {{c𝑘‬
+‪𝑢}𝐾‬
+‪𝑘=1,{c𝑘‬
+‪𝑣}𝐾‬
+‪𝑘=1}are trainable parameters in our model.‬
+‪3.3 Discussions on DCCF Model‬
+‪In this section, we present theoretical analyses of the benefits of our‬
+‪disentangled contrastive learning paradigm. Initially, for a specific‬
+‪user 𝑢𝑖, the corresponding contrastive self-supervised learning sig-‬
+‪nals are incorporated with I(r(𝑢)‬
+‪𝑖 ,z(𝑢)‬
+‪𝑖 ), where r(𝑢)‬
+‪𝑖 is the encoded‬
+‪embedding of 𝑢𝑖 from the augmentation with intent-aware user‬
+‪global dependency. The gradients of I(r(𝑢)‬
+‪𝑖 ,z(𝑢)‬
+‪𝑖 )with respect to‬
+‪the disentangled representation r(𝑢)‬
+‪𝑖 contributed by negative sam-‬
+‪ples can be derived as follows:‬
+‪𝑐(𝑖′)=‬
+‪×‬
+‪r(𝑢)‬
+‪𝑖‬
+‪−𝑠(r(𝑢)‬
+‪𝑖 ,z(𝑢)‬
+‪𝑖′ )‬
+‪∥r(𝑢)‬
+‪𝑖 ∥2‬
+‪exp(𝑠(r(𝑢)‬
+‪𝑖 ,z′(𝑢)‬
+‪𝑖 )/𝜏)‬
+‪𝑖′exp(𝑠(r(𝑢)‬
+‪𝑖 ,z(𝑢)‬
+‪𝑖′ /𝜏)‬
+‪(19)‬
+‪z(𝑢)‬
+‪𝑖‬
+‪∥z′(𝑢)‬
+‪𝑖 ∥2‬
+‪SIGIR’23, July 23–27, 2023, Taipei, Taiwan‬
+‪Without loss of generality, we omit the index of graph layers. Here,‬
+‪𝑖′denotes the negative sample 𝑢′‬
+‪𝑖 for 𝑢𝑖 (𝑖′≠ 𝑖& 1 ≤𝑖 ≤𝐼). The L2‬
+‪norm of 𝑐(𝑖′)is proportional to a special function as follows:‬
+‪∥𝑐(𝑖′)∥2 ∝√︃1−𝑠(r(𝑢)‬
+‪𝑠(r(𝑢)‬
+‪𝑖 ,z(𝑢)‬
+‪𝑖 ,z(𝑢)‬
+‪𝑖′ )‬
+‪𝑖′ )2 ·exp(‬
+‪) (20)‬
+‪𝜏‬
+‪In the above equation, 𝑠(r(𝑢)‬
+‪𝑖 ,z(𝑢)‬
+‪𝑖′ )∈[−1,1]. For hard negative‬
+‪samples, the corresponding embedding similarity score is close to‬
+‪1, and the L2 norm of 𝑐(𝑖′)increases significantly [39, 42]. Simi-‬
+‪lar observations can be made for the contrastive augmentations‬
+‪I(z,h𝛼)and I(z,h𝛽)using the learnable augmenter. Thus, our‬
+‪disentangled contrastive learning paradigm is capable of seeking‬
+‪hard negative samples to enhance model optimization.‬
+‪In addition, we further justify the effectiveness of our model‬
+‪design for capturing the implicit cross-intent dependency via the‬
+‪gradient propagation. Here, we discuss how the encoding process of‬
+‪disentangled representation r(𝑢)‬
+‪𝑖 can propagate gradients to latent‬
+‪intent prototypes {c𝑘‬
+‪𝑢}𝐾‬
+‪𝑘=1. Referring to Equation (7) and (9), we‬
+‪have the following partial derivative:‬
+‪𝜕r(𝑢)‬
+‪𝑖‬
+‪=‬
+‪𝜕c𝑡‬
+‪𝑢‬
+‪         ‬
+‪𝜕(r(𝑢)‬
+‪𝑖 )1‬
+‪𝜕(c𝑡‬
+‪𝑢 )1···‬
+‪.‬
+‪.‬
+‪.‬
+‪.‬
+‪.‬
+‪.‬
+‪𝜕(r(𝑢)‬
+‪𝑖 )𝑑‬
+‪𝜕(c𝑡‬
+‪𝑢 )1···‬
+‪𝜕(r(𝑢)‬
+‪𝑖 )1‬
+‪𝜕(c𝑡‬
+‪𝑢 )𝑑‬
+‪.‬
+‪.‬
+‪.‬
+‪𝜕(r(𝑢)‬
+‪𝑖 )𝑑‬
+‪𝜕(c𝑡‬
+‪𝑢 )𝑑‬
+‪         , (21)‬
+‪𝜕(r(𝑢)‬
+‪𝑖 )𝑚‬
+‪= 𝑃𝑡‬
+‪𝜕(c𝑡‬
+‪𝑢)𝑛‬
+‪𝐾‬
+‪∑︁‬
+‪𝑘=1‬
+‪𝑃𝑘[(e(𝑢)‬
+‪𝑖 )𝑛((c𝑡‬
+‪𝑢)𝑚 −(c𝑘‬
+‪𝑢)𝑚)+I(𝑚= 𝑛)]. (22)‬
+‪𝑃𝑡 is short for 𝑃(c𝑡‬
+‪𝑢|e(𝑢)‬
+‪𝑖 ). As can be seen from the partial deriva-‬
+‪tives, the intent-aware representations r(𝑢)‬
+‪𝑖 propagate gradients‬
+‪to the latent intent prototype via the estimation of conditional‬
+‪probability 𝐾‬
+‪𝑘 𝑃(𝑦,𝑐𝑘‬
+‪𝑢,𝑐𝑘‬
+‪𝑣|𝑢,𝑣). During the backward propagation‬
+‪process, the cross-intent embedding aggregation can propagate‬
+‪gradients to all latent intents with the learned relevance weights.‬
+‪Therefore, the gradient learning enhanced by our auxiliary con-‬
+‪trastive learning tasks is appropriately distributed to all latent in-‬
+‪tents, which facilitates the cross-intent dependency modeling and‬
+‪helps to capture accurate user preferences for recommendation.‬
+‪Time Complexity Analysis. We analyze the time complexity of‬
+‪different components in our DCCF from the following aspects: i)‬
+‪The graph-based message passing procedure takes O(𝐿×|A|×‬
+‪𝑑)time, where 𝐿 denotes the number of graph neural layers for‬
+‪message passing. |A|represents the number of edges in the graph‬
+‪and 𝑑 is the dimensionality of user/item representations. ii) The‬
+‪intent-aware information aggregation component takes O(𝐿×(𝐼+‬
+‪𝐽)×𝐾×𝑑)time complexity, where 𝐾 denotes the number of latent‬
+‪intents. iii) Due to local- and global-based adaptive augmentation, it‬
+‪takes O(2×𝐿×|A|×𝑑)time complexity to generate two augmented‬
+‪views for self-supervision. iv) To calculate the contrastive learning‬
+‪objective, the cost is O(𝐿×𝐵×(𝐼+𝐽)×𝑑), where 𝐵is the number‬
+‪of users/items included in a single mini-batch.‬
+‪SIGIR’23, July 23–27, 2023, Taipei, Taiwan Table 1: Statistics of the experimental datasets.‬
+‪Xubin Ren, Lianghao Xia, Jiashu Zhao, Dawei Yin, & Chao Huang‬
+‪Dataset #Users #Items #Interactions Density‬
+‪Gowalla 50,821 57,440 1,172,425 4.0𝑒−4‬
+‪Amazon-book 78,578 77,801 2,240,156 3.7𝑒−4‬
+‪Tmall 47,939 41,390 2,357,450 1.2𝑒−3‬
+‪4 EVALUATION‬
+‪In this section, we perform experiments to evaluate our DCCF on‬
+‪different datasets by answering the following research questions:‬
+‪•RQ1: Does our proposed DCCF outperform various recommen-‬
+‪dation solutions under different experimental settings?‬
+‪•RQ2: Do the designed key components benefit the representation‬
+‪learning of our DCCF in achieving performance improvement?‬
+‪•RQ3: Is our proposed model effective in alleviating the data‬
+‪sparsity issues with our disentangled self-supervised signals?‬
+‪•RQ4: What is the impact of the number of latent intents?‬
+‪•RQ5: How does our DCCF perform w.r.t training efficiency?‬
+‪4.1 Experimental Settings‬
+‪4.1.1 Datasets. We evaluate our model performance on public‬
+‪datasets: Gowalla: This dataset is collected from the Gowalla plat-‬
+‪form to record check-in relations between users and different lo-‬
+‪cations based on mobility traces. Amazon-book: This dataset in-‬
+‪cludes rating behaviors of users over products with book category‬
+‪on Amazon. Tmall: It contains customer purchase behaviors from‬
+‪the online retailer Tmall. Table 1 summarizes the dataset statistics.‬
+‪4.1.2 Evaluation Protocols and Metrics. To alleviate the bias‬
+‪of negative item instance sampling, we follow the all-rank proto-‬
+‪col [13, 36, 39] over all items to measure the accuracy of our rec-‬
+‪ommendation results. We use two widely adopted ranking-based‬
+‪metrics to evaluate the performance of all methods, namely Re-‬
+‪call@N and NDCG (Normalized Discounted Cumulative Gain)@N.‬
+‪4.1.3 Baseline Methods. We include five groups of baseline meth-‬
+‪ods for comprehensive comparison, as detailed below.‬
+‪(i) Factorization-based Method.‬
+‪•NCF [14]. This method replaces the inner product in MF with‬
+‪a multi-layer perceptron to estimate user-item interactions. For‬
+‪comparison, we include the NeuMF version.‬
+‪(ii) Autoencoder-based Method.‬
+‪•AutoR [23]. It reconstructs user-item interactions based on the‬
+‪autoencoder to obtain user preference for non-interacted items.‬
+‪(iii) Recommendation with Graph Neural Network.‬
+‪•NGCF [32]. This method designs the propagation rule to inject‬
+‪collaborative signals into the embedding process of recommenda-‬
+‪tion, which is beneficial for capturing higher-order connectivity.‬
+‪•LightGCN [13]. This method simplifies the message passing‬
+‪rule of GCN by linearly propagate user/item embeddings on the‬
+‪interaction graph for collaborative filtering.‬
+‪(iv) Disentangled Multi-Intent Recommender Systems.‬
+‪•DisenGCN [19]. This method proposes a neighborhood routing‬
+‪mechanism to learn disentangled node representation. The dot-‬
+‪product is used to predict the interaction likelihood.‬
+‪•DisenHAN [36]. It disentangles user/item representations into‬
+‪different aspects (i.e., latent intents) and then aggregates infor-‬
+‪mation from various aspects with attention for recommendation.‬
+‪•CDR [6]. This method utilizes a user’s noisy multi-feedback to‬
+‪mine user intentions and improves the training process through‬
+‪curriculum learning. We implement it with implicit feedback.‬
+‪•DGCF [34]. This method generates the intent-aware graph by‬
+‪modeling a distribution over intents for each interaction and thus‬
+‪learns disentangled representations.‬
+‪•DGCL [16]. This method proposes a factor-wise discrimination‬
+‪objective to learn disentangled representations. We implement it‬
+‪to learn disentangled representations of nodes and make user-‬
+‪item interaction prediction using inner products.‬
+‪(v) Self-Supervised Learning for Recommendation.‬
+‪•SLRec [45]. This method proposes a multi-task self-supervised‬
+‪learning framework to address the label sparsity problem in large-‬
+‪scale item recommender system.‬
+‪•SGL-ED/ND [39]. This method reinforces user/item representa-‬
+‪tion learning with GNNs by applying an auxiliary self-supervised‬
+‪contrastive learning task through data augmentation, namely‬
+‪edge drop (ED) or node drop (ND).‬
+‪•HCCF [42]. It jointly captures local and global collaborative‬
+‪relations under a hypergraph neural network, and designs cross-‬
+‪view contrastive learning for augmentation.‬
+‪•LightGCL [2]. It is a lightweight graph contrastive learning‬
+‪framework by leveraging singular value decomposition to gener-‬
+‪ate augmented view for embedding contrasting.‬
+‪4.1.4 Hyperparameter Settings. We implement our DCCF using‬
+‪PyTorch and use Adam [15] as optimizer with learning rate 1𝑒−3‬
+‪.‬
+‪The number of latent intent prototypes 𝐾is selected from the range‬
+‪of {32,64,128,256}with 𝐾= 128 by default. 𝜆1, 𝜆2 and 𝜆3 are‬
+‪tuned from the range of [0.001,0.025,0.1,0.2], [2.5𝑒−5‬
+‪,5𝑒−4‬
+‪,5𝑒−3],‬
+‪[2.5𝑒−5‬
+‪,5𝑒−4‬
+‪,5𝑒−3], respectively. To evaluate baseline performance‬
+‪with fair settings, latent embedding dimensionality 𝑑and batchsize‬
+‪is set as 32 and 10240 for all compared methods. For graph-based‬
+‪models, the number of propagation layers is chosen from {1,2,3}.‬
+‪Detailed model implementation of our DCCF can be found in our‬
+‪released source code in the Abstract Section.‬
+‪4.2 Performance Comparison (RQ1)‬
+‪Table 2 shows the performance comparison of different methods‬
+‪on all datasets. To validate the significant performance improve-‬
+‪ment achieved by our DCCF model, the p-value is provided. From‬
+‪evaluation results, we summarize the following observations:‬
+‪•DCCF consistently outperforms all baselines on all three datasets.‬
+‪Through disentangled contrastive learning, DCCF improves the‬
+‪generalization and robustness of recommenders by offering more‬
+‪informative representations. We attribute the significant per-‬
+‪formance gain of DCCF to two key aspects: (i) DCCF effec-‬
+‪tively alleviates the data sparsity issue by distilling disentangled‬
+‪self-supervised signals as supplementary training tasks. (ii) Our‬
+‪proposed parameterized graph mask generator is beneficial for‬
+‪achieving adaptive self-supervision against data noise redun-‬
+‪dancy, which further improves the representation robustness.‬
+‪Disentangled Contrastive Collaborative Filtering SIGIR’23, July 23–27, 2023, Taipei, Taiwan‬
+‪Table 2: Recommendation performance of all compared methods on different datasets in terms of Recall and NDCG.‬
+‪Data Gowalla Amazon-book Tmall‬
+‪Metrics Recall@20 Recall@40 NDCG@20 NDCG@40 Recall@20 Recall@40 NDCG@20 NDCG@40 Recall@20 Recall@40 NDCG@20 NDCG@40‬
+‪NCF 0.1247 0.1910 0.0659 0.0832 0.0468 0.0771 0.0336 0.0438 0.0383 0.0647 0.0252 0.0344‬
+‪AutoR 0.1409 0.2142 0.0716 0.0905 0.0546 0.0914 0.0354 0.0482 0.0336 0.0611 0.0203 0.0295‬
+‪NGCF LightGCN 0.1413 0.2072 0.0813 0.0987 0.1799 0.2577 0.1053 0.1255 0.0532 0.0866 0.0388 0.0501 0.0732 0.1148 0.0544 0.0681 0.0420 0.0751 0.0250 0.0365‬
+‪0.0555 0.0895 0.0381 0.0499‬
+‪DisenGCN DisenHAN CDR DGCF DGCL 0.1379 0.2003 0.0798 0.0961 0.1437 0.2079 0.0829 0.0997 0.1364 0.1943 0.0812 0.0963 0.1784 0.2515 0.1069 0.1259 0.1793 0.2483 0.1067 0.1247 0.0481 0.0776 0.0353 0.0451 0.0542 0.0865 0.0407 0.0513 0.0564 0.0887 0.0419 0.0526 0.0688 0.1073 0.0513 0.0640 0.0677 0.1057 0.0506 0.0631 0.0422 0.0688 0.0285 0.0377‬
+‪0.0416 0.0682 0.0283 0.0376‬
+‪0.0520 0.0833 0.0356 0.0465‬
+‪0.0544 0.0867 0.0372 0.0484‬
+‪0.0526 0.0845 0.0359 0.0469‬
+‪SLRec SGL-ED SGL-ND HCCF LightGCL 0.1529 0.2200 0.0926 0.1102 0.1809 0.2559 0.1067 0.1262 0.1814 0.2589 0.1065 0.1267 0.1818 0.2601 0.1061 0.1265 0.1825 0.2601 0.1077 0.1280 0.0544 0.0879 0.0374 0.0490 0.0774 0.1204 0.0578 0.0719 0.0722 0.1121 0.0542 0.0674 0.0824 0.1282 0.0625 0.0776 0.0836 0.1280 0.0643 0.0790 0.0549 0.0888 0.0375 0.0492‬
+‪0.0574 0.0919 0.0393 0.0513‬
+‪0.0553 0.0885 0.0379 0.0494‬
+‪0.0623 0.0986 0.0425 0.0552‬
+‪0.0632 0.0971 0.0444 0.0562‬
+‪DCCF 0.1876 0.2644 0.1123 0.1323 0.0889 0.1343 0.0680 0.0829 0.0668 0.1042 0.0469 0.0598‬
+‪p-val. 8.9𝑒−6 1.3𝑒−3 2.6𝑒−6 8.1𝑒−6 8.6𝑒−7 2.2𝑒−6 8.6𝑒−6 2.2𝑒−6 2.6𝑒−7 1.4𝑒−7 8.6𝑒−7 1.8𝑒−7‬
+‪Table 3: Ablation study on key components of DCCF (mea-‬
+‪sured by 𝑅𝑒𝑐𝑎𝑙𝑙@20 and 𝑁𝐷𝐶𝐺@20) on different datasets.‬
+‪LightGCN‬
+‪DGCF‬
+‪DGCL‬
+‪DCCF‬
+‪Category Data Gowalla Amazon-book Tmall‬
+‪Variants Recall NDCG Recall NDCG Recall NDCG‬
+‪NDCG@40‬
+‪0.10‬
+‪0.08‬
+‪0.06‬
+‪0.04‬
+‪0.02‬
+‪LightGCN‬
+‪DGCF‬
+‪DGCL‬
+‪DCCF‬
+‪DME -Disen 0.1637 0.0975 0.0772 0.0580 0.0629 0.0437‬
+‪Recall@40‬
+‪0.25‬
+‪0.20‬
+‪0.15‬
+‪0.10‬
+‪0.05‬
+‪0-10 10-20 20-30 30-40 40-50‬
+‪Interaction Degree‬
+‪0-10 10-20 20-30 30-40 40-50‬
+‪Interaction Degree‬
+‪PAM -LocalR -DisenR 0.1719 0.1015 0.1718 0.1016 0.0786 0.0593 0.0793 0.0597 0.0638 0.0446‬
+‪0.0640 0.0447‬
+‪(a) Performance w.r.t. different item groups‬
+‪SSL -DisenG -AllAda 0.1763 0.1053 0.1845 0.1096 0.0829 0.0635 0.0833 0.0632 0.0644 0.0449‬
+‪0.0651 0.0452‬
+‪LightGCN‬
+‪DGCF‬
+‪DGCL‬
+‪DCCF‬
+‪LightGCN‬
+‪DGCF‬
+‪DGCL‬
+‪DCCF‬
+‪DCCF 0.1876 0.1123 0.0889 0.0680 0.0668 0.0469‬
+‪Recall@40‬
+‪0.30‬
+‪0.25‬
+‪0.20‬
+‪•Although data augmentation techniques are also proposed in‬
+‪current SSL-based methods (e.g., SGL, HCCF), our DCCF still out-‬
+‪performs them by a large margin. This is because simply learning‬
+‪augmented representations at coarse-grained level cannot dis-‬
+‪entangle latent intention factors behind user-item interactions.‬
+‪In addition, we notice that most SSL-based methods perform‬
+‪better than conventional GNN-based approaches (e.g., LightGCN,‬
+‪NGCF), which suggests the positive effects of SSL brings to GNN-‬
+‪based CF models. With our disentangled adaptive augmentation,‬
+‪DCCF still pushes that boundary forward, achieving state-of-the-‬
+‪art performance across all datasets.‬
+‪•The performance improvement of DCCF over other disentangled‬
+‪recommender systems (e.g., DGCF, DisenGCN, CDR) verifies‬
+‪that our approach is not limited to the label shortage issue. The‬
+‪integration of disentangled multi-intent encoding and contrastive‬
+‪learning results in better performance. Existing disentangled‬
+‪learning solutions struggle to generate informative embeddings‬
+‪in the face of insufficient training labels due to the overfitting‬
+‪effect. Although DGCL attempts to use contrastive learning to‬
+‪encode latent factors into augmented representations, its non-‬
+‪adaptive contrastive view generation makes it easily influenced‬
+‪by noise perturbation.‬
+‪0-10 10-20 20-30 30-40 40-50‬
+‪Interaction Degree‬
+‪NDCG@40‬
+‪0.14‬
+‪0.13‬
+‪0.12‬
+‪0.11‬
+‪0-10 10-20 20-30 30-40 40-50‬
+‪Interaction Degree‬
+‪(b) Performance w.r.t. different user groups‬
+‪Figure 2: Performance comparison w.r.t. data sparsity over‬
+‪different user/item groups on Gowalla data.‬
+‪4.3 Ablation Study (RQ2)‬
+‪In this section, to verify the effectiveness of each component, we‬
+‪conduct an ablation study to examine the component-specific ben-‬
+‪efits of our DCCF framework from three perspectives: (i) Disen-‬
+‪tangled Multi-intent Encoding (DME); (ii) Parameterized Adaptive‬
+‪Masking (PAM); (iii) Self-supervised Learning (SSL). The perfor-‬
+‪mance results are reported in Table 3, and the variant details and‬
+‪impact study are presented as follows:‬
+‪•Disentangled Multi-intent Encoding (DME). We generate‬
+‪the ablation model (-Disen) by removing the disentangled multi-‬
+‪intent encoding module. The performance gap between DCCF‬
+‪and -Disen indicates the contribution of multi-intent representa-‬
+‪tion encoding to the overall performance.‬
+‪•Parameterized Adaptive Masking (PAM). To investigate the‬
+‪effect of our parameterized adaptive masking, we create two‬
+‪variants: (i) -LocalR which removes implicit user-item relation‬
+‪learning based on local relation embeddings; and (ii) -DisenR,‬
+‪SIGIR’23, July 23–27, 2023, Taipei, Taiwan Table 4: The embedding smoothness on Amazon-book and‬
+‪Tmall data measured by MAD metric (the smaller the MAD‬
+‪indicates more obvious the over-smoothing phenomenon).‬
+‪Embedding‬
+‪Type‬
+‪DCCF DCCF-CL DGCL DisenGCN LightGCN‬
+‪Amazon-book‬
+‪User Item 0.999 0.902 0.980 0.961 0.984‬
+‪0.990 0.961 0.989 0.986 0.944‬
+‪Tmall‬
+‪User Item 0.999 0.800 0.897 0.876 0.910‬
+‪0.998 0.873 0.920 0.992 0.927‬
+‪which removes the intent-based graph structure learning pro-‬
+‪cess. The results show that both variants lead to a performance‬
+‪degradation, indicating the necessity of adaptive self-supervised‬
+‪signal distillation for contrastive augmentation.‬
+‪•Self-Supervised Learning (SSL). We also examine the influ-‬
+‪ence of our disentangled contrastive learning on performance‬
+‪by adjusting the incorporated self-supervised optimization ob-‬
+‪jectives. Specifically, we creat two variants by removing agree-‬
+‪ments between the original graph representations with auxiliary‬
+‪augmented views: (i) disentangled global collaborative view (-‬
+‪DisenG) and (ii) all augmented views with adaptive masking‬
+‪(-AllAda). Our results show that DCCF achieves the best per-‬
+‪formance compared to these variants, further emphasizing the‬
+‪benefits of integrating auxiliary self-supervised learning signals‬
+‪from the global view of intent-aware collaborative relationships‬
+‪for adaptive data augmentation.‬
+‪4.4 In-Depth Analysis of DCCF (RQ3 & RQ4)‬
+‪4.4.1 Performance w.r.t Data Sparsity. We further verify if‬
+‪DCCF is robust to data sparsity issue. To do this, we divide users‬
+‪and items into different groups based on the number of their in-‬
+‪teractions, and separately measured recommendation accuracy for‬
+‪each group. From the results in Figure 2, we make two main obser-‬
+‪vations: (i) DCCF consistently outperforms several representative‬
+‪baselines (i.e., LightGCN, DGCL, DGCF) by providing better recom-‬
+‪mendation results for both inactive and active users. This indicates‬
+‪the benefits of our generated self-supervised signals in alleviating‬
+‪sparse data issues. While DGCL conducts factor-wise alignment‬
+‪with contrastive learning, the interaction noise and bias can still im-‬
+‪pair the disentangled representation learning for latent factors.(ii)‬
+‪We notice that the performance gap between DCCF and the com-‬
+‪pared methods is still apparent on low-degree items. This is because‬
+‪the baseline DGCF only focuses on splitting the user representation‬
+‪into multiple intent-aware embeddings, which can easily lead to‬
+‪recommending high-degree items and neglect the long-tail items. In‬
+‪contrast, our DCCF enhances the interaction modeling on long-tail‬
+‪items through effective self-supervised information.‬
+‪4.4.2 Impact of the Number of Intent Prototypes. To investi-‬
+‪gate the impact of the number of latent intents on model perfor-‬
+‪mance, we select this parameter from the range {32,64,128,256}‬
+‪and re-train the model. The results are shown in Figure 3. It is‬
+‪clear that as the number of intents increases, the performance of‬
+‪the model also improves. However, when the number of intents‬
+‪Xubin Ren, Lianghao Xia, Jiashu Zhao, Dawei Yin, & Chao Huang‬
+‪Decrease of NDCG@20 (%)‬
+‪Decrease of Recall@20 (%)‬
+‪0.0‬
+‪2.5‬
+‪5.0‬
+‪7.5‬
+‪10.0‬
+‪0.0‬
+‪2.5‬
+‪5.0‬
+‪7.5‬
+‪10.0‬
+‪Gowalla‬
+‪Amazon-book‬
+‪Tmall‬
+‪32 64 128 256‬
+‪Number of Latent Intents‬
+‪Gowalla‬
+‪Amazon-book‬
+‪Tmall‬
+‪Decrease of NDCG@40 (%)‬
+‪Decrease of Recall@40 (%)‬
+‪0.0‬
+‪2.5‬
+‪5.0‬
+‪7.5‬
+‪0.0‬
+‪2.5‬
+‪5.0‬
+‪7.5‬
+‪Gowalla‬
+‪Amazon-book‬
+‪Tmall‬
+‪32 64 128 256‬
+‪Number of Latent Intents‬
+‪Gowalla‬
+‪Amazon-book‬
+‪Tmall‬
+‪32 64 128 256‬
+‪Number of Latent Intents‬
+‪32 64 128 256‬
+‪Number of Latent Intents‬
+‪Figure 3: Performance w.r.t the number of latent intents.‬
+‪increases from 128 to 256, the performance improvement is limited,‬
+‪and even degrades on the Tmall dataset. To further understand this‬
+‪phenomenon, we transform the intent prototypes into 2D space for‬
+‪visualization using t-SNE [27] and then clustered them. As shown‬
+‪in Figure 4, when the number of intents is 128, some latent intents‬
+‪have begun to cluster together. Further increasing the number of‬
+‪intents causes intent redundancy with too fine-grained latent factor‬
+‪granularity and introduces noise into learning representations.‬
+‪4.4.3 Robustness of DCCF in Alleviating Over-Smoothing.‬
+‪To validate the effectiveness of DCCF in alleviating over-smoothing,‬
+‪we calculate the Mean Average Distance (MAD) [5, 42] over en-‬
+‪coded user/item embeddings of DCCF and the variant DCCF-CL,‬
+‪which disables the cross-view contrastive learning module. We also‬
+‪calculate the MAD of several representative baseline methods (i.e.,‬
+‪DGCL, DisenGCN, LightGCN) for comparison. Note that all the em-‬
+‪beddings were normalized before calculating MAD for fair compar-‬
+‪ison. The results are shown in Table 4. We notice that by removing‬
+‪the SSL objective, the over-smoothing phenomenon becomes more‬
+‪pronounced, which suggests the effectiveness of our contrastive‬
+‪learning component in addressing the over-smoothing problem.‬
+‪Moreover, all the baselines have lower MAD than our DCCF, in-‬
+‪dicating that DCCF is capable of alleviating the over-smoothing‬
+‪issue in the widely-adopted GNN architecture. Our disentangled‬
+‪contrastive learning approach achieves better representation uni-‬
+‪formity in recommendation compared to the baselines.‬
+‪Table 5: Computational cost evaluation in terms of per-epoch‬
+‪training time (seconds) on Gowalla, Amazon, and Tmall data.‬
+‪Model DisenGCN DGCF DisenHAN DGCL Ours‬
+‪Gowalla Amazon-book Tmall 19.1s 25.1s 16.8s 9.3s 42.2s 49.6s 30.6s 12.4s 43.5s 51.6s 29.8s 12.0s 12.4s‬
+‪18.9s‬
+‪18.8s‬
+‪4.5 Model Training Efficiency Study (RQ5)‬
+‪In this section, we investigate the model efficiency of our DCCF in‬
+‪terms of training computational cost on all datasets. The experi-‬
+‪ments were conducted on a server with system configurations of an‬
+‪Intel Xeon Gold 6330 CPU, NVIDIA RTX 3090. As shown in Table 5,‬
+‪we compare our DCCF with disentangled recommender systems‬
+‪(e.g., DGCF and DisenHAN) and found that our DCCF achieves‬
+‪comparable training efficiency in all cases. Specifically, while DGCF‬
+‪Disentangled Contrastive Collaborative Filtering 40‬
+‪20‬
+‪0‬
+‪20‬
+‪40‬
+‪40‬
+‪20‬
+‪0‬
+‪20‬
+‪40‬
+‪40‬
+‪20‬
+‪0‬
+‪20‬
+‪40‬
+‪50 25 0 25‬
+‪Gowalla‬
+‪40 20 0 20 40‬
+‪Amazon-book‬
+‪50 25 0 25‬
+‪Tmall‬
+‪(a) User intent prototypes‬
+‪40‬
+‪20‬
+‪0‬
+‪20‬
+‪40‬
+‪30‬
+‪20‬
+‪10‬
+‪0‬
+‪10‬
+‪20‬
+‪30‬
+‪40‬
+‪20‬
+‪0‬
+‪20‬
+‪40‬
+‪20 0 20‬
+‪Gowalla‬
+‪40 20 0 20 40‬
+‪Amazon-book‬
+‪40 20 0 20‬
+‪Tmall‬
+‪(b) Item intent prototypes‬
+‪Figure 4: Distribution of latent intent prototypes.‬
+‪>3hops‬
+‪𝒖𝟏𝟏𝟓𝟓 𝒖𝟑𝟐𝟖𝟓𝟔‬
+‪0.83 0.82‬
+‪weight‬
+‪( 𝟏𝟎𝟐)‬
+‪0.82‬
+‪0.83‬
+‪0.84‬
+‪0.82‬
+‪0.82‬
+‪0.83‬
+‪0.83‬
+‪0.83‬
+‪𝟏𝟎𝟔 𝟐𝟗 𝟑𝟔 𝟖𝟎 𝟒𝟔‬
+‪𝟔𝟗‬
+‪user latent intent prototypes‬
+‪(with the highest weight)‬
+‪𝒖𝟏𝟏𝟓𝟓‬
+‪𝒖𝟑𝟐𝟖𝟓𝟔‬
+‪Categories that‬
+‪them most interacted with‬
+‪16‬
+‪13‬
+‪12‬
+‪34 20‬
+‪14‬
+‪num. of‬
+‪interactions‬
+‪𝟏𝟑𝟔𝟕‬
+‪𝟏𝟎𝟐𝟒‬
+‪𝟔𝟒𝟓‬
+‪category id‬
+‪Figure 5: Case study of intent-aware global user relations.‬
+‪Non-locally connected users (𝑢1155 and 𝑢32856) can be identi-‬
+‪fied with similar user preference (large item category over-‬
+‪lap) via our learned disentangled representations.‬
+‪splits the user embedding into intent-aware vectors to reduce em-‬
+‪bedding size, the heavy cost of DGCF stems from the recursively‬
+‪routing mechanism for information propagation. It requires extra‬
+‪time to process multiple iterations to obtain intent-relevant weights.‬
+‪In DisenHAN, the time-consuming graph attention network brings‬
+‪high cost due to the need for computing the attention weights.‬
+‪4.6 Case Study‬
+‪Global Intent-aware Semantic Dependency. In this section, we‬
+‪examine the potential ability of our DCCF in capturing the global‬
+‪intent-aware semantic dependencies among users. To achieve this‬
+‪goal, we showe some concrete examples in Figure 5 to visualize the‬
+‪intent-aware user preferences learned by our DCCF. We observe‬
+‪that 𝑢1155 and 𝑢32856 share very similar intent-aware preferences, as‬
+‪shown with intent prototype-specific user weights, despite not be-‬
+‪ing locally connected on the interaction graph. After investigating‬
+‪their interaction patterns, we observe a significant overlap between‬
+‪the categories (categories 29,36,and 69) of the items they interacted‬
+‪with, indicating the high semantic relatedness of their interaction‬
+‪behaviors. Therefore, in addition to local collaborative relations,‬
+‪the global intent-aware user dependencies can be preserved with‬
+‪SIGIR’23, July 23–27, 2023, Taipei, Taiwan‬
+‪Cate. 1024 (19 interactions, avg. 𝟎. 𝟎𝟐𝟓𝟔) Cate. 645 (10 interactions, avg. 𝟎. 𝟎𝟐𝟒𝟎)‬
+‪𝒊𝟏𝟎𝟑𝟗𝟖 𝒊𝟏𝟕𝟖𝟖 𝒊𝟏𝟖𝟎𝟐𝟏 𝒊𝟐𝟖𝟔𝟒𝟏 𝒊𝟑𝟑𝟕𝟕𝟏 𝒊𝟑𝟑𝟔𝟗𝟔 𝒊𝟒𝟎𝟒𝟕𝟏 𝒊𝟏𝟐𝟔𝟗𝟕 𝒊𝟏𝟑𝟎𝟏𝟖‬
+‪remain items remain items‬
+‪0.0282 0.0281 0.0275 0.0270‬
+‪0.0259 0.0254‬
+‪0.0259‬
+‪0.0270 0.0273‬
+‪augmented relation value‬
+‪in matrix (Eq. 10~11)‬
+‪𝒖𝟐𝟐𝟓𝟔𝟕‬
+‪0.0226‬
+‪0.0182‬
+‪0.0221‬
+‪0.0268‬
+‪0.0186‬
+‪0.0178‬
+‪0.0185‬
+‪0.0239‬
+‪0.0232‬
+‪𝒊𝟐𝟎𝟓𝟔 𝒊𝟒𝟔𝟒𝟒 𝒊𝟔𝟏𝟕𝟒 𝒊𝟐𝟏𝟎𝟎𝟐 𝒊𝟑𝟓𝟖𝟒𝟑 𝒊𝟑𝟒𝟕𝟑𝟖‬
+‪Cate. 299 Cate. 676 Cate. 1 Cate. 1195 Cate. 338 Cate. 1264‬
+‪𝒊𝟑𝟒𝟐𝟎𝟕 𝒊𝟏𝟖𝟎𝟏𝟕 𝒊𝟏𝟐𝟐𝟒𝟓‬
+‪remain items‬
+‪Cate. 1367 (7 interactions, avg. 𝟎. 𝟎𝟐𝟐𝟒)‬
+‪only one interaction in each category‬
+‪Figure 6: Case study of intent-aware adaptive augmentation‬
+‪over the user-item relation matrix. User interacted items are‬
+‪grouped in terms of their categories. The value of the learned‬
+‪user-item connectivity weight is consistent with the user‬
+‪preference degree, i.e., the higher user-item weight encoded‬
+‪by DCCF indicates stronger user preference.‬
+‪our encoded disentangled user representations.‬
+‪Intent-aware Adaptive Augmentation We further analyze the ra-‬
+‪tionality of our intent-aware adaptive augmentation over user-item‬
+‪relations. As shown in Figure 6, we grouped the interacted items of‬
+‪user 𝑢22567 based on categories (e.g., category 1024, 645). After per-‬
+‪forming adaptive augmentation over the user-item relation matrix,‬
+‪the implicit dependency weight between each user-item pair was‬
+‪learned through our contrastive intent disentanglement. The value‬
+‪of the learned user-item connectivity weight determines the user’s‬
+‪preference degree over this item. We notice that a higher user-item‬
+‪relation weight (e.g., 0.0282 or 0.0273) indicates a stronger interac-‬
+‪tion preference over category-specific items, which is consistent‬
+‪with the observation of the category-specific interaction frequency‬
+‪of 𝑢22567. For example, the highest item correlation weight (i.e.,‬
+‪0.0282) is generated from the categorical items that 𝑢22567 inter-‬
+‪acted with the most. This observation further demonstrates the‬
+‪effectiveness of our disentangled contrastive augmentation, which‬
+‪is easily adaptable to different user-item interaction environments.‬
+‪5 CONCLUSION‬
+‪This paper proposes a disentangled contrastive learning method for‬
+‪recommendation that explores latent factors underlying implicit in-‬
+‪tents for interactions. We introduce a graph structure learning layer‬
+‪that enables adaptive interaction augmentation based on learned‬
+‪disentangled user (item) intent-aware dependencies. Along the aug-‬
+‪mented intent-aware graph structures, we propose an intent-aware‬
+‪contrastive learning scheme that brings the benefits of disentangled‬
+‪self-supervision signals. Our extensive experiments validate the‬
+‪effectiveness of our proposed model on different recommendation‬
+‪datasets. For future work, one potential extension is to integrate‬
+‪disentangled representation learning with causal analysis to ad-‬
+‪dress the bias issues of noisy interaction data. Additionally, by‬
+‪considering the diverse nature of user characteristics, personalized‬
+‪augmentation may further enhance the power of contrastive learn-‬
+‪ing for customized graph perturbing operations in recommenders.‬
+‪By tailoring the augmentation operations to the specific user char-‬
+‪acteristics, we may better capture the individual preferences.‬
+‪SIGIR’23, July 23–27, 2023, Taipei, Taiwan REFERENCES‬
+‪[1] Shoshana Abramovich and Lars-Erik Persson. 2016. Some new estimates of the‬
+‪’Jensen gap’. Journal of Inequalities and Applications 2016, 1 (2016), 1–9.‬
+‪[2] Xuheng Cai, Chao Huang, Lianghao Xia, and Xubin Ren. 2023. LightGCL: Simple‬
+‪Yet Effective Graph Contrastive Learning for Recommendation. In ICLR.‬
+‪[3] Jianxin Chang, Chen Gao, Yu Zheng, Yiqun Hui, Yanan Niu, Yang Song, Depeng‬
+‪Jin, and Yong Li. 2021. Sequential recommendation with graph neural networks.‬
+‪In SIGIR. 378–387.‬
+‪[4] Chong Chen, Min Zhang, Weizhi Ma, Yiqun Liu, and Shaoping Ma. 2020. Jointly‬
+‪non-sampling learning for knowledge graph enhanced recommendation. In SIGIR.‬
+‪189–198.‬
+‪[5] Deli Chen, Yankai Lin, Wei Li, Peng Li, Jie Zhou, and Xu Sun. 2020. Measuring‬
+‪and relieving the over-smoothing problem for graph neural networks from the‬
+‪topological view. In AAAI, Vol. 34. 3438–3445.‬
+‪[6] Hong Chen, Yudong Chen, Xin Wang, Ruobing Xie, Rui Wang, Feng Xia, and‬
+‪Wenwu Zhu. 2021. Curriculum Disentangled Recommendation with Noisy Multi-‬
+‪feedback. NeurIPS 34, 26924–26936.‬
+‪[7] Lei Chen, Le Wu, Richang Hong, Kun Zhang, and Meng Wang. 2020. Revisiting‬
+‪Graph Based Collaborative Filtering: A Linear Residual Graph Convolutional‬
+‪Network Approach. In AAAI, Vol. 34. 27–34.‬
+‪[8] Mengru Chen, Chao Huang, Lianghao Xia, Wei Wei, Yong Xu, and Ronghua‬
+‪Luo. 2023. Heterogeneous Graph Contrastive Learning for Recommendation. In‬
+‪WSDM. 544–552.‬
+‪[9] Yongjun Chen, Zhiwei Liu, Jia Li, Julian McAuley, and Caiming Xiong. 2022. Intent‬
+‪contrastive learning for sequential recommendation. In WWW. 2172–2182.‬
+‪[10] Yudong Chen, Xin Wang, Miao Fan, Jizhou Huang, Shengwen Yang, et al. 2021.‬
+‪Curriculum meta-learning for next POI recommendation. In KDD. 2692–2702.‬
+‪[11] Yu Chen, Lingfei Wu, and Mohammed Zaki. 2020. Iterative deep graph learning‬
+‪for graph neural networks: Better and robust node embeddings. NeurIPS (2020),‬
+‪19314–19326.‬
+‪[12] Xiang Gao, Meera Sitharam, and Adrian E Roitberg. 2019. Bounds on the Jensen‬
+‪gap, and implications for mean-concentrated distributions. AJMAA 16, 14 (2019),‬
+‪1–16.‬
+‪[13] Xiangnan He, Kuan Deng, Xiang Wang, et al. 2020. Lightgcn: Simplifying and‬
+‪powering graph convolution network for recommendation. In SIGIR. 639–648.‬
+‪[14] Xiangnan He, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu, and Tat-Seng‬
+‪Chua. 2017. Neural collaborative filtering. In WWW. 173–182.‬
+‪[15] Diederik P. Kingma and Jimmy Ba. 2015. Adam: A Method for Stochastic Opti-‬
+‪mization. In ICLR.‬
+‪[16] Haoyang Li, Xin Wang, Ziwei Zhang, Zehuan Yuan, Hang Li, and Wenwu Zhu.‬
+‪2021. Disentangled contrastive learning on graphs. NeurIPS 34 (2021), 21872–‬
+‪21884.‬
+‪[17] Zihan Lin, Changxin Tian, Yupeng Hou, and Wayne Xin Zhao. 2022. Improving‬
+‪Graph Collaborative Filtering with Neighborhood-enriched Contrastive Learning.‬
+‪In WWW. 2320–2329.‬
+‪[18] Dongsheng Luo, Wei Cheng, Wenchao Yu, Bo Zong, Jingchao Ni, Haifeng Chen,‬
+‪and Xiang Zhang. 2021. Learning to drop: Robust graph neural network via‬
+‪topological denoising. In WSDM. 779–787.‬
+‪[19] Jianxin Ma, Peng Cui, Kun Kuang, Xin Wang, and Wenwu Zhu. 2019. Disentangled‬
+‪graph convolutional networks. In ICML. PMLR, 4212–4221.‬
+‪[20] Jianxin Ma, Chang Zhou, Peng Cui, Hongxia Yang, and Wenwu Zhu. 2019. Learn-‬
+‪ing disentangled representations for recommendation. In NeurIPS. 5711–5722.‬
+‪[21] Shanlei Mu, Yaliang Li, Wayne Xin Zhao, Siqing Li, and Ji-Rong Wen. 2021.‬
+‪Knowledge-Guided Disentangled Representation Learning for Recommender‬
+‪Systems. Transactions on Information Systems (TOIS) 40, 1 (2021), 1–26.‬
+‪[22] Zhen Peng, Wenbing Huang, Minnan Luo, et al. 2020. Graph representation‬
+‪learning via graphical mutual information maximization. In WWW. 259–270.‬
+‪[23] Suvash Sedhain, Aditya Krishna Menon, Scott Sanner, and Lexing Xie. 2015.‬
+‪Autorec: Autoencoders meet collaborative filtering. In WWW. 111–112.‬
+‪[24] Weiping Song, Zhiping Xiao, Yifan Wang, Laurent Charlin, Ming Zhang, and Jian‬
+‪Tang. 2019. Session-based social recommendation via dynamic graph attention‬
+‪networks. In WSDM. 555–563.‬
+‪[25] Jianing Sun, Zhaoyue Cheng, Saba Zuberi, Felipe Pérez, and Maksims Volkovs.‬
+‪2021. HGCF: Hyperbolic Graph Convolution Networks for Collaborative Filtering.‬
+‪Xubin Ren, Lianghao Xia, Jiashu Zhao, Dawei Yin, & Chao Huang‬
+‪In WWW. 593–601.‬
+‪[26] Changxin Tian, Yuexiang Xie, Yaliang Li, Nan Yang, and Wayne Xin Zhao. 2022.‬
+‪Learning to Denoise Unreliable Interactions for Graph Collaborative Filtering. In‬
+‪SIGIR. 122–132.‬
+‪[27] Laurens Van der Maaten and Geoffrey Hinton. 2008. Visualizing data using t-SNE.‬
+‪Journal of machine learning research 9, 11 (2008).‬
+‪[28] Petar Velickovic, William Fedus, William L Hamilton, Pietro Liò, Yoshua Bengio,‬
+‪and R Devon Hjelm. 2019. Deep Graph Infomax.. In ICLR.‬
+‪[29] Tan Wang, Jianqiang Huang, Hanwang Zhang, and Qianru Sun. 2020. Visual‬
+‪commonsense r-cnn. In CVPR. 10760–10770.‬
+‪[30] Wenjie Wang, Fuli Feng, Xiangnan He, Xiang Wang, and Tat-Seng Chua. 2021.‬
+‪Deconfounded recommendation for alleviating bias amplification. In KDD. 1717–‬
+‪1725.‬
+‪[31] Xiang Wang, Xiangnan He, Yixin Cao, Meng Liu, and Tat-Seng Chua. 2019. Kgat:‬
+‪Knowledge graph attention network for recommendation. In KDD. 950–958.‬
+‪[32] Xiang Wang, Xiangnan He, Meng Wang, Fuli Feng, and Tat-Seng Chua. 2019.‬
+‪Neural Graph Collaborative Filtering. In SIGIR.‬
+‪[33] Xiang Wang, Tinglin Huang, Dingxian Wang, Yancheng Yuan, Zhenguang Liu,‬
+‪Xiangnan He, and Tat-Seng Chua. 2021. Learning intents behind interactions‬
+‪with knowledge graph for recommendation. In WWW. 878–887.‬
+‪[34] Xiang Wang, Hongye Jin, An Zhang, Xiangnan He, Tong Xu, and Tat-Seng Chua.‬
+‪2020. Disentangled graph collaborative filtering. In SIGIR. 1001–1010.‬
+‪[35] Xiao Wang, Ruijia Wang, Chuan Shi, Guojie Song, et al. 2020. Multi-component‬
+‪graph convolutional collaborative filtering. In AAAI, Vol. 34. 6267–6274.‬
+‪[36] Yifan Wang, Suyao Tang, et al. 2020. Disenhan: Disentangled heterogeneous‬
+‪graph attention network for recommendation. In CIKM. 1605–1614.‬
+‪[37] Zhenyi Wang, Huan Zhao, and Chuan Shi. 2022. Profiling the Design Space for‬
+‪Graph Neural Networks based Collaborative Filtering. In WSDM. 1109–1119.‬
+‪[38] Wei Wei, Chao Huang, Lianghao Xia, Yong Xu, Jiashu Zhao, and Dawei Yin. 2022.‬
+‪Contrastive meta learning with behavior multiplicity for recommendation. In‬
+‪WSDM. 1120–1128.‬
+‪[39] Jiancan Wu, Xiang Wang, Fuli Feng, Xiangnan He, Liang Chen, Jianxun Lian, et al.‬
+‪2021. Self-supervised graph learning for recommendation. In SIGIR. 726–735.‬
+‪[40] Shiwen Wu, Fei Sun, Wentao Zhang, Xu Xie, et al. 2020. Graph neural networks‬
+‪in recommender systems: a survey. ACM Computing Surveys (CSUR) (2020).‬
+‪[41] Lianghao Xia, Chao Huang, Chunzhen Huang, Kangyi Lin, Tao Yu, and Ben‬
+‪Kao. 2023. Automated Self-Supervised Learning for Recommendation. In WWW.‬
+‪992–1002.‬
+‪[42] Lianghao Xia, Chao Huang, Yong Xu, Jiashu Zhao, Dawei Yin, and Jimmy Huang.‬
+‪2022. Hypergraph contrastive collaborative filtering. In SIGIR. 70–79.‬
+‪[43] Yuhao Yang, Chao Huang, Lianghao Xia, Yuxuan Liang, Yanwei Yu, and Chen-‬
+‪liang Li. 2022. Multi-behavior hypergraph-enhanced transformer for sequential‬
+‪recommendation. In KDD. 2263–2274.‬
+‪[44] Yonghui Yang, Le Wu, Richang Hong, Kun Zhang, and Meng Wang. 2021. En-‬
+‪hanced graph learning for collaborative filtering via mutual information maxi-‬
+‪mization. In SIGIR. 71–80.‬
+‪[45] Tiansheng Yao, Xinyang Yi, Derek Zhiyuan Cheng, et al. 2021. Self-supervised‬
+‪Learning for Large-scale Item Recommendations. In CIKM. 4321–4330.‬
+‪[46] Junliang Yu, Hongzhi Yin, Jundong Li, Qinyong Wang, Nguyen Quoc Viet Hung,‬
+‪and Xiangliang Zhang. 2021. Self-Supervised Multi-Channel Hypergraph Convo-‬
+‪lutional Network for Social Recommendation. In WWW. 413–424.‬
+‪[47] Shengyu Zhang, Lingxiao Yang, Dong Yao, Yujie Lu, Fuli Feng, Zhou Zhao,‬
+‪Tat-seng Chua, and Fei Wu. 2022. Re4: Learning to Re-contrast, Re-attend, Re-‬
+‪construct for Multi-interest Recommendation. In WWW. 2216–2226.‬
+‪[48] Sen Zhao, Wei Wei, Ding Zou, and Xianling Mao. 2022. Multi-view intent disen-‬
+‪tangle graph networks for bundle recommendation. AAAI (2022).‬
+‪[49] Kun Zhou, Hui Wang, Wayne Xin Zhao, Yutao Zhu, Sirui Wang, Fuzheng Zhang,‬
+‪Zhongyuan Wang, et al. 2020. S3-rec: Self-supervised learning for sequential‬
+‪recommendation with mutual information maximization. In CIKM. 1893–1902.‬
+‪[50] Yaochen Zhu and Zhenzhong Chen. 2022. Mutually-regularized dual collaborative‬
+‪variational auto-encoder for recommendation systems. In WWW. 2379–2387.‬
+‪[51] Ding Zou, Wei Wei, Ziyang Wang, Xian-Ling Mao, Feida Zhu, Rui Fang, and‬
+‪Dangyang Chen. 2022. Improving knowledge-aware recommendation with multi-‬
+‪level interactive contrastive learning. In CIKM. 2817–2826.‬
