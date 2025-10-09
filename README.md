@@ -136,7 +136,7 @@ We compare **7 different recommendation systems** from 2019-2025 and test:
 - **SGL (2021)**: Self-supervised learning
 - **SimGCL (2022)**: Simple contrastive learning
 - **DCCF (2023)**: Disentangled contrastive learning
-- **Exposure-aware DRO (2024)**: Robust optimization
+- **Exposure-aware DRO (2024)**: DRO-inspired robust optimization
 - **PDIF (2025)**: Personalized denoising
 
 #### **3. We Measure Performance Using 8 Metrics:**
@@ -618,7 +618,7 @@ We compare against **7 state-of-the-art models** spanning the complete timeline:
 | **2021** | SGL | Self-supervised | Graph augmentation learning |
 | **2022** | SimGCL | Contrastive | Simple contrastive learning |
 | **2023** | DCCF | Disentangled contrastive | Disentangled collaborative filtering |
-| **2024** | Exposure-aware DRO | Robust optimization | Distributionally robust training |
+| **2024** | Exposure-aware DRO | DRO-inspired | Distributionally robust optimization (simplified) |
 | **2025** | PDIF | Personalized denoising | User-specific noise filtering |
 
 Each baseline model is tested under **all 6 experimental conditions** for comprehensive comparison.
@@ -652,12 +652,12 @@ Each experimental condition maps directly to scenarios that real recommendation 
 
 ## **New 2024-2025 Baseline Models**
 
-### **Exposure-aware Distributionally Robust Optimization (Yang et al., 2024)**
-- **Core Innovation**: Applies distributionally robust optimization to handle exposure bias
-- **Key Mechanism**: Dynamic reweighting to minimize worst-case error over uncertainty sets
-- **Implementation**: `src/models/exposure_aware_dro.py`
-- **Academic Significance**: Addresses exposure bias through robust optimization theory
-- **Real-World Application**: Handles recommendation systems with varying item exposure patterns
+### **Exposure-aware DRO (Inspired by Yang et al., 2024)**
+- **Core Innovation**: DRO-inspired robust optimization for handling exposure bias
+- **Key Mechanism**: Simplified DRO implementation using exposure-aware reweighting without full minimax optimization
+- **Implementation**: `src/models/exposure_aware_dro.py` (practical DRO approximation)
+- **Academic Significance**: Computationally efficient approach to distributionally robust optimization
+- **Real-World Application**: Handles recommendation systems with varying item exposure patterns using DRO principles
 
 ### **Personalized Denoising Implicit Feedback - PDIF (Zhang et al., 2025)**
 - **Core Innovation**: User-specific noise filtering using personalized thresholds
@@ -671,8 +671,8 @@ Each experimental condition maps directly to scenarios that real recommendation 
 2019 ──── 2020 ──── 2021 ──── 2022 ──── 2023 ──── 2024 ──── 2025
 NGCF    LightGCN    SGL     SimGCL    DCCF    Exp-DRO   PDIF
  │         │         │        │        │        │        │
-Graph    Simple    Self-   Simple   Disent.  Robust   Personal
-Neural   Graph    Super.  Contrast. Contrast. Optim.   Denoise
+Graph    Simple    Self-   Simple   Disent.  DRO-Inspired Personal
+Neural   Graph    Super.  Contrast. Contrast. Robust    Denoise
 ```
 
 ---
@@ -682,7 +682,7 @@ Neural   Graph    Super.  Contrast. Contrast. Optim.   Denoise
 ### **Key Findings from Comprehensive Baseline Comparison:**
 
 #### **Performance Ranking (Recall@20):**
-1. **Exposure-aware DRO (2024)**: 0.3431 - Best overall performance with robust optimization
+1. **Exposure-aware DRO (2024)**: 0.3431 - Best overall performance with DRO-inspired robust optimization
 2. **PDIF (2025)**: 0.2850 - Strong performance with personalized denoising
 3. **NGCF (2019)**: 0.2628 - Solid graph-based performance
 4. **LightGCN (2020)**: 0.2604 - Perfect robustness with good performance
@@ -692,6 +692,7 @@ Neural   Graph    Super.  Contrast. Contrast. Optim.   Denoise
 
 #### **Robustness Analysis:**
 - **Most Robust**: LightGCN (0.0% performance drop under noise)
+- **Best Overall**: Exposure-aware DRO (0.5% robustness drop with highest performance)
 - **Adaptive**: PDIF (4.1% drop but maintains high absolute performance)
 - **Crisis Response**: Our solution shows improved stability during burst and shift patterns
 
@@ -1405,16 +1406,16 @@ Under Dynamic Exposure Bias." IT Thesis, Charles Darwin University.
 
 ### **Key Findings for Your Poster (Based on 42 Experiments):**
 
-#### **RESULTS Section Enhancements:**
+#### **RESULTS SECTION Enhancements:**
 
-**🏆 Overall Robustness Champions (Update your current results):**
-- **Exposure-aware DRO**: 0.3431 Recall@20 (34.3%) with only 0.5% robustness drop - **Best Overall Performance**
+**Overall Robustness Champions (Update your current results):**
+- **Exposure-aware Reweighting: 0.5% drop (34.3%) with only 0.5% robustness drop - **Best Overall Performance**
 - **LightGCN & SimGCL**: Perfect 0.0% performance drop across ALL noise conditions - **Perfect Robustness Discovery**
 - **DCCF Pattern-Specific Behavior**: 
   - Dynamic: 14.3% drop (vulnerable to gradual changes)
   - Burst: -2.4% drop (actually improves during crises!)
   - Shift: -17.8% drop (major improvement during platform evolution!)
-
+{{ ... }}
 **📊 Counter-Intuitive Discoveries (New findings for poster):**
 - **SGL**: Improves 8.9% under dynamic noise (0.2329 → 0.2536)
 - **NGCF**: Improves 1.2% under dynamic noise (0.2628 → 0.2658)
