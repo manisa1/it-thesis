@@ -2,7 +2,7 @@
 
 IT Thesis Project - Data Science
 
-This thesis presents a comprehensive comparative study of recommendation system robustness under dynamic exposure bias. We systematically evaluate 6 state-of-the-art recommendation models (spanning 2019-2025) under realistic noise conditions that simulate real-world scenarios like fake reviews, viral content manipulation, and algorithm changes.
+This thesis presents a comprehensive comparative study of recommendation system robustness under dynamic exposure bias. We systematically evaluate 7 state-of-the-art recommendation models (spanning 2019-2025) under realistic noise conditions that simulate real-world scenarios like fake reviews, viral content manipulation, and algorithm changes.
 
 Implementation Note: This project uses a custom PyTorch framework designed specifically for this comparative robustness study, providing full control over the experimental design and transparent implementation of all baseline models without relying on external frameworks.
 
@@ -38,16 +38,16 @@ This study investigates **robust recommendation under dynamic exposure bias**, w
 - **RQ2**: Which models are most robust to different noise patterns (static, dynamic, burst, shift)?
 - **RQ3**: What insights can we gain about model behavior under realistic noise conditions?
 
-**Additional Analysis:**
-- **RQ4**: How does DCCF perform when noise distributions are dynamic rather than static?
-- **RQ5**: Can a warm-up strategy improve early convergence under noisy conditions?
+**Specific Model Analysis:**
+- **RQ4**: How does each model's robustness vary across different noise patterns?
+- **RQ5**: What are the performance-robustness trade-offs for each approach?
 
 ## Hypothesis
 We hypothesize that different recommendation models will show **varying robustness** to dynamic exposure bias patterns, with newer models potentially showing better adaptation to changing noise conditions.
 
 ## Our Approach
 **Comprehensive Baseline Comparison Framework**:
-- **6 State-of-the-Art Models**: Compare methods from 2019-2025 (NGCF, LightGCN, SGL, SimGCL, Exposure-aware Reweighting, PDIF)
+- **7 State-of-the-Art Models**: Compare methods from 2019-2025 (NGCF, LightGCN, SGL, SimGCL, Exposure-aware DRO, PDIF, DCCF)
 - **4 Noise Patterns**: Test under static, dynamic, burst, and shift exposure bias conditions
 - **Controlled Experiments**: Same datasets, same evaluation metrics, same noise simulation
 - **Academic Rigor**: 8 established robustness metrics for comprehensive analysis
@@ -80,7 +80,7 @@ We hypothesize that different recommendation models will show **varying robustne
 - **42 Total Experiments**: 7 models × 6 conditions = complete comparison matrix
 - **Advanced Patterns**: Static, dynamic, burst, and shift noise simulation with real-world scenarios
 - **8 Academic Robustness Metrics**: Following established literature standards
-- **Complete Baseline Comparison**: 6 state-of-the-art models + DCCF (2019-2025 timeline)
+- **Complete Baseline Comparison**: 7 state-of-the-art models (2019-2025 timeline)
 - **Perfect Robustness Discovery**: LightGCN & SimGCL show 0% degradation across all conditions
 - **Pattern-Specific Insights**: Models show distinct behaviors under different noise types
 
@@ -105,7 +105,7 @@ Imagine you're using Netflix, Amazon, or Spotify. These platforms suggest movies
 
 ### **Our Research Focus**
 
-We compare **6 different recommendation systems** from 2019-2025 and test:
+We compare **7 different recommendation systems** from 2019-2025 and test:
 1. **How well does each method handle changing noise patterns?**
 2. **Which models are most robust to real-world conditions?**
 3. **What can we learn about recommendation system behavior under noise?**
@@ -130,11 +130,12 @@ We compare **6 different recommendation systems** from 2019-2025 and test:
 - **Burst conditions**: Sudden noise spikes (Black Friday fake reviews)
 - **Shift conditions**: Changing focus (algorithm updates)
 
-#### **2. We Compare 6 Different Methods:**
+#### **2. We Compare 7 Different Methods:**
 - **NGCF (2019)**: Graph-based recommendations
 - **LightGCN (2020)**: Simplified graph approach
 - **SGL (2021)**: Self-supervised learning
 - **SimGCL (2022)**: Simple contrastive learning
+- **DCCF (2023)**: Disentangled contrastive learning
 - **Exposure-aware DRO (2024)**: Robust optimization
 - **PDIF (2025)**: Personalized denoising
 
@@ -148,8 +149,9 @@ We compare **6 different recommendation systems** from 2019-2025 and test:
 #### **Main Discovery:**
 Our comprehensive analysis of 42 experiments reveals groundbreaking insights:
 - **Exposure-aware DRO (2024)** is the overall champion: highest accuracy (34.3%) with excellent robustness (0.5% drop)
+- **PDIF (2025)** achieves second-best performance: strong accuracy (28.5%) with good robustness (4.1% drop)
 - **LightGCN & SimGCL** achieve perfect robustness: 0.0% performance drop across ALL noise conditions
-- **DCCF shows pattern-specific behavior**: vulnerable to gradual changes (14.3% drop) but thrives on platform shifts (-17.8% improvement)
+- **DCCF shows pattern-specific behavior**: vulnerable to gradual changes (14.3% drop) but thrives on platform shifts (+17.8% improvement)
 - **Some models benefit from noise**: SGL improves 8.9% under dynamic conditions, NGCF improves 1.2%
 
 #### **Practical Insights:**
@@ -544,9 +546,9 @@ python train.py --model_dir runs/shift_base --epochs 15 \
 
 ## Experimental Design
 
-## Complete Experimental Framework (24 Experiments)
+## Complete Experimental Framework (42 Experiments)
 
-Our comprehensive experimental design tests **6 recommendation models** under **4 noise conditions** for a total of 24 experiments. Each condition simulates different real-world scenarios that recommendation systems face:
+Our comprehensive experimental design tests **7 recommendation models** under **6 noise conditions** for a total of 42 experiments. Each condition simulates different real-world scenarios that recommendation systems face:
 
 ---
 
@@ -554,7 +556,7 @@ Our comprehensive experimental design tests **6 recommendation models** under **
 
 ### **1. Static Noise Experiments**
 - **Noise Pattern**: Fixed exposure bias level throughout training
-- **Models Tested**: All 6 baseline models (NGCF, LightGCN, SGL, SimGCL, Exposure-aware Reweighting, PDIF)
+- **Models Tested**: All 7 baseline models (NGCF, LightGCN, SGL, SimGCL, DCCF, Exposure-aware DRO, PDIF)
 - **Purpose**: Establish baseline performance under controlled noise conditions
 - **Real-World Example**: Recommendation system with consistent fake review patterns
 - **Expected Performance**: Varies by model's inherent robustness to exposure bias
@@ -565,7 +567,7 @@ Our comprehensive experimental design tests **6 recommendation models** under **
 
 ### **2. Dynamic Noise Experiments**
 - **Noise Pattern**: Gradual exposure bias increase over training epochs
-- **Models Tested**: All 6 baseline models
+- **Models Tested**: All 7 baseline models
 - **Purpose**: Test model adaptation to gradually changing noise conditions
 - **Real-World Example**: 
   - **E-commerce**: Gradual increase in fake reviews during holiday seasons
@@ -579,7 +581,7 @@ Our comprehensive experimental design tests **6 recommendation models** under **
 
 ### **3. Burst Noise Experiments**
 - **Noise Pattern**: Sudden exposure bias spikes during specific training periods
-- **Models Tested**: All 6 baseline models
+- **Models Tested**: All 7 baseline models
 - **Purpose**: Test model stability under sudden noise crises
 - **Real-World Examples**:
   - **Black Friday Sales**: Massive influx of fake reviews and bot interactions
@@ -594,7 +596,7 @@ Our comprehensive experimental design tests **6 recommendation models** under **
 
 ### **4. Shift Noise Experiments**
 - **Noise Pattern**: Exposure bias focus change from popular to unpopular items
-- **Models Tested**: All 6 baseline models
+- **Models Tested**: All 7 baseline models
 - **Purpose**: Test model adaptability to changing platform dynamics
 - **Real-World Examples**:
   - **Algorithm Updates**: Platform changes recommendation algorithm focus
@@ -607,7 +609,7 @@ Our comprehensive experimental design tests **6 recommendation models** under **
 
 ## **Baseline Model Comparison (2019-2025)**
 
-We compare against **6 state-of-the-art models** spanning the complete timeline:
+We compare against **7 state-of-the-art models** spanning the complete timeline:
 
 | Year | Model | Type | Key Innovation |
 |------|-------|------|----------------|
@@ -615,10 +617,11 @@ We compare against **6 state-of-the-art models** spanning the complete timeline:
 | **2020** | LightGCN | Graph-based | Simplified graph convolution |
 | **2021** | SGL | Self-supervised | Graph augmentation learning |
 | **2022** | SimGCL | Contrastive | Simple contrastive learning |
+| **2023** | DCCF | Disentangled contrastive | Disentangled collaborative filtering |
 | **2024** | Exposure-aware DRO | Robust optimization | Distributionally robust training |
 | **2025** | PDIF | Personalized denoising | User-specific noise filtering |
 
-Each baseline model is tested under **all 8 experimental conditions** for comprehensive comparison.
+Each baseline model is tested under **all 6 experimental conditions** for comprehensive comparison.
 
 ---
 
@@ -666,10 +669,10 @@ Each experimental condition maps directly to scenarios that real recommendation 
 ### **Complete Baseline Timeline Coverage**
 ```
 2019 ──── 2020 ──── 2021 ──── 2022 ──── 2023 ──── 2024 ──── 2025
-NGCF    LightGCN    SGL     SimGCL   Your DCCF  Exp-DRO   PDIF
- │         │         │        │       Study      │        │
-Graph    Simple    Self-   Simple      │      Robust   Personal
-Neural   Graph    Super.  Contrast.    │      Optim.   Denoise
+NGCF    LightGCN    SGL     SimGCL    DCCF    Exp-DRO   PDIF
+ │         │         │        │        │        │        │
+Graph    Simple    Self-   Simple   Disent.  Robust   Personal
+Neural   Graph    Super.  Contrast. Contrast. Optim.   Denoise
 ```
 
 ---
@@ -679,9 +682,13 @@ Neural   Graph    Super.  Contrast.    │      Optim.   Denoise
 ### **Key Findings from Comprehensive Baseline Comparison:**
 
 #### **Performance Ranking (Recall@20):**
-1. **PDIF (2025)**: 0.2850 - Best overall performance with personalized denoising
-2. **Exposure-aware DRO (2024)**: 0.3431 - Strong performance with robust optimization
-3. **Traditional Models**: LightGCN, SimGCL, NGCF, SGL (~0.10) - Consistent baseline performance
+1. **Exposure-aware DRO (2024)**: 0.3431 - Best overall performance with robust optimization
+2. **PDIF (2025)**: 0.2850 - Strong performance with personalized denoising
+3. **NGCF (2019)**: 0.2628 - Solid graph-based performance
+4. **LightGCN (2020)**: 0.2604 - Perfect robustness with good performance
+5. **SimGCL (2022)**: 0.2604 - Perfect robustness with good performance
+6. **SGL (2021)**: 0.2329 - Variable performance across conditions
+7. **DCCF (2023)**: 0.2024 - Pattern-specific behavior, lowest baseline
 
 #### **Robustness Analysis:**
 - **Most Robust**: LightGCN (0.0% performance drop under noise)
@@ -690,7 +697,7 @@ Neural   Graph    Super.  Contrast.    │      Optim.   Denoise
 
 #### **Academic Impact:**
 - **Complete Timeline**: First study to compare 2019-2025 recommendation methods
-- **Comprehensive Evaluation**: 24 successful experiments across all baseline models
+- **Comprehensive Evaluation**: 42 successful experiments across all baseline models
 - **Practical Insights**: Real-world noise patterns mapped to experimental conditions
 
 ### **Implementation Files**
@@ -713,8 +720,8 @@ Each pattern simulates real-world **exposure bias scenarios**:
 # 1. Activate virtual environment
 source .venv/bin/activate
 
-# 2. Run all 6 baseline models (24 experiments total)
-python run_baseline_comparison.py --models lightgcn simgcl ngcf sgl exposure_dro pdif
+# 2. Run all 7 baseline models (42 experiments total)
+python run_baseline_comparison.py --models lightgcn simgcl ngcf sgl dccf exposure_dro pdif
 
 # 3. Analyze results and generate thesis tables
 python analyze_baseline_results.py
