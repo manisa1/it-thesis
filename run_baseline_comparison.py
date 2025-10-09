@@ -35,7 +35,7 @@ def run_experiment(model_type, experiment_name, noise_params, base_dir="runs/bas
     
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        print(f"✅ {model_type} - {experiment_name} completed successfully")
+        print(f"{model_type} - {experiment_name} completed successfully")
         return True
     except subprocess.CalledProcessError as e:
         print(f"❌ {model_type} - {experiment_name} failed")
@@ -127,7 +127,7 @@ def main():
     print("=" * 60)
     
     success_count = sum(1 for r in results if r['status'] == 'success')
-    print(f"✅ Successful experiments: {success_count}/{total_experiments}")
+    print(f"Successful experiments: {success_count}/{total_experiments}")
     print(f"❌ Failed experiments: {total_experiments - success_count}/{total_experiments}")
     
     # Show results by model

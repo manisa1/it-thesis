@@ -146,7 +146,7 @@ def demonstrate_noise_patterns():
     # Create visualization
     print(f"\n📈 Creating noise pattern visualization...")
     visualize_noise_schedules()
-    print(f"✅ Saved: dynamic_noise_patterns.png")
+    print(f" Saved: dynamic_noise_patterns.png")
 
 
 def main():

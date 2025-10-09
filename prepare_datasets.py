@@ -183,7 +183,7 @@ def prepare_movielens_dataset():
         print(f"   Extract and place ratings.csv in: {movielens_dir}/")
         return False
 
-    print(f"✅ Found raw file: {raw_file}")
+    print(f"Found raw file: {raw_file}")
     print("Processing MovieLens data...")
 
     # Read the raw data
@@ -227,7 +227,7 @@ def prepare_movielens_dataset():
     output_file = movielens_dir / "ratings.csv"
     df.to_csv(output_file, index=False)
 
-    print(f"✅ MovieLens dataset prepared:")
+    print(f"MovieLens dataset prepared:")
     print(f"   - Users: {df['userId'].nunique():,}")
     print(f"   - Items (Movies): {df['itemId'].nunique():,}")
     print(f"   - Interactions: {len(df):,}")
@@ -272,9 +272,9 @@ def main():
 
  print("\n" + "=" * 60)
  print("📋 DATASET PREPARATION SUMMARY:")
- print(f" - Gowalla: {'✅ Ready' if gowalla_success else '❌ Needs manual download'}")
- print(f" - Amazon-book: {'✅ Ready' if amazon_success else '❌ Needs manual download'}")
- print(f" - MovieLens-20M: {'✅ Ready' if movielens_success else '❌ Needs manual download'}")
+ print(f" - Gowalla: {'Ready' if gowalla_success else 'Needs manual download'}")
+ print(f" - Amazon-book: {'Ready' if amazon_success else 'Needs manual download'}")
+ print(f" - MovieLens-20M: {'Ready' if movielens_success else 'Needs manual download'}")
 
  ready_count = sum([gowalla_success, amazon_success, movielens_success])
  

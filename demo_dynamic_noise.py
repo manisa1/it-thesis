@@ -184,7 +184,7 @@ def main():
     print()
     print("📊 Creating visualization...")
     visualize_patterns()
-    print("✅ Saved: dynamic_noise_patterns.png")
+    print(" Saved: dynamic_noise_patterns.png")
     print()
     print("🎯 These patterns test DCCF's robustness under realistic dynamic conditions!")
 

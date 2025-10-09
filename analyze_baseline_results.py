@@ -324,7 +324,7 @@ def main():
             robustness_score = avg_robustness.min()
             print(f"  - Most robust model: {most_robust.upper()} (Avg drop: {robustness_score:.1f}%)")
     
-    print("\n✅ Analysis complete!")
+    print("\nAnalysis complete!")
 
 
 if __name__ == "__main__":

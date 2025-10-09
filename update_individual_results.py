@@ -101,7 +101,7 @@ def update_individual_experiment_files():
                 new_df.to_csv(metrics_file, index=False)
                 updated_files.append(metrics_file)
                 
-                print(f"✅ Updated: {metrics_file}")
+                print(f" Updated: {metrics_file}")
                 print(f"   Performance: {recall*100:.1f}% - {get_performance_level(recall)}")
     
     print(f"\n🎉 Updated {len(updated_files)} experiment files!")
@@ -145,5 +145,5 @@ def get_result_meaning(exp_key, recall_value):
 if __name__ == "__main__":
     print("🔄 Updating individual experiment files to be user-friendly...")
     updated_files = update_individual_experiment_files()
-    print("\n✅ All experiment files now have descriptions and explanations!")
+    print("\n All experiment files now have descriptions and explanations!")
     print("📖 Open any metrics.csv file to see the improved format")

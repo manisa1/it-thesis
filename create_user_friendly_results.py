@@ -110,7 +110,7 @@ def create_user_friendly_results():
         comparison_df = pd.DataFrame(comparison_data)
         comparison_df.to_csv(f"{output_dir}/research_findings_explained.csv", index=False)
     
-    print("✅ User-friendly results created!")
+    print(" User-friendly results created!")
     print(f"📁 Location: {output_dir}/")
     print("📊 Files created:")
     print("   - comprehensive_results_explained.csv (detailed results)")
@@ -214,5 +214,5 @@ if __name__ == "__main__":
     print("🔄 Creating user-friendly results tables...")
     results_df = create_user_friendly_results()
     create_metrics_explanation()
-    print("\n✅ All user-friendly tables created!")
+    print("\n All user-friendly tables created!")
     print("📖 Open the CSV files in Excel for easy reading")

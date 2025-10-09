@@ -20,7 +20,7 @@ if [ ! -f "data/ratings.csv" ]; then
         echo "❌ Failed to generate data"
         exit 1
     fi
-    echo "✅ Data generated successfully"
+    echo " Data generated successfully"
 fi
 
 # Install dependencies if needed
@@ -35,7 +35,7 @@ if [ $? -ne 0 ]; then
     fi
 fi
 
-echo "✅ Dependencies ready"
+echo " Dependencies ready"
 echo ""
 
 # Run all experiments

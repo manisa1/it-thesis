@@ -331,7 +331,7 @@ recsys/
 │   │   ├── burst_experiment.yaml # Burst noise experiments - New
 │   │   ├── shift_experiment.yaml # Shift noise experiments - New
 │   │   └── *_solution.yaml # Corresponding solution experiments
-│   └── datasets/ # Dataset configurations ✅ New
+│   └── datasets/ # Dataset configurations
 │       ├── gowalla_config.yaml
 │       ├── amazon_book_config.yaml
 │       └── movielens_config.yaml
@@ -340,24 +340,24 @@ recsys/
 │   ├── static_sol/ # Static solution results
 │   ├── dyn_base/ # Dynamic baseline results
 │   ├── dyn_sol/ # Dynamic solution results
-│   ├── burst_base/ # Burst baseline results ✅ New
-│   ├── burst_sol/ # Burst solution results ✅ New
-│   ├── shift_base/ # Shift baseline results ✅ New
-│   ├── shift_sol/ # Shift solution results ✅ New
+│   ├── burst_base/ # Burst baseline results
+│   ├── burst_sol/ # Burst solution results
+│   ├── shift_base/ # Shift baseline results
+│   ├── shift_sol/ # Shift solution results
 │   ├── comprehensive_summary.csv # All experiment results
 │   └── comprehensive_robustness.csv # Robustness analysis
-├── src/ # Modular source code ✅ Enhanced
+├── src/ # Modular source code
 │   ├── models/ # Model implementations (DCCF + 4 baselines)
-│   ├── training/ # Training and dynamic noise modules ✅ New
-│   ├── evaluation/ # Metrics and robustness evaluation ✅ Enhanced
+│   ├── training/ # Training and dynamic noise modules
+│   ├── evaluation/ # Metrics and robustness evaluation
 │   ├── data/ # Data processing
 │   └── utils/ # Configuration and logging
 ├── train.py # Enhanced training script (burst/shift support)
 ├── run_train_experiments.py # Automated experiment runner
 ├── run_all_experiments.py # Original modular experiment runner
 ├── analyze_comprehensive_results.py # Enhanced results analysis
-├── prepare_datasets.py # Dataset preparation script ✅ Updated
-├── demo_dynamic_noise.py # Dynamic noise demonstration ✅ New
+├── prepare_datasets.py # Dataset preparation script
+├── demo_dynamic_noise.py # Dynamic noise demonstration
 └── test_new_experiments.py # Validation script
 ```
 

@@ -319,7 +319,7 @@ def main():
         print("❌ No experimental results found. Run experiments first.")
         return
     
-    print(f"✅ Loaded {len(all_results)} experimental results")
+    print(f"Loaded {len(all_results)} experimental results")
     
     # Calculate all robustness metrics
     print("\n🔬 Calculating established robustness metrics...")
@@ -362,7 +362,7 @@ def main():
     print("   - academic_robustness_heatmap.png (offset on metrics)")
     print("   - academic_performance_drops.png (performance comparison)")
     
-    print("\n✅ Academic robustness analysis completed!")
+    print("\nAcademic robustness analysis completed!")
     print("📚 All metrics follow established evaluation methodology from literature")
     print("🎯 Ready for thesis defense and publication")
 

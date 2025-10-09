@@ -276,4 +276,4 @@ if __name__ == "__main__":
     # Create visualization
     print("\n📊 Creating visualization...")
     visualize_noise_schedules()
-    print("✅ Saved: dynamic_noise_patterns.png")
+    print("Saved: dynamic_noise_patterns.png")
