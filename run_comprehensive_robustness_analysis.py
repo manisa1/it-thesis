@@ -109,7 +109,9 @@ def calculate_all_robustness_metrics(results: Dict[str, Dict[str, float]]) -> Di
         'lightgcn': 'lightgcn_static_baseline',
         'simgcl': 'simgcl_static_baseline', 
         'ngcf': 'ngcf_static_baseline',
-        'sgl': 'sgl_static_baseline'
+        'sgl': 'sgl_static_baseline',
+        'exposure_dro': 'exposure_dro_static_baseline',
+        'pdif': 'pdif_static_baseline'
     }
     
     # Define noisy conditions
@@ -190,7 +192,11 @@ def create_academic_robustness_table(robustness_results: Dict) -> pd.DataFrame:
     
     for model, metrics in robustness_results.items():
         if model == 'dccf':
-            model_name = 'DCCF (Ours)'
+            model_name = 'DCCF'
+        elif model == 'exposure_dro':
+            model_name = 'EXPOSURE_DRO'
+        elif model == 'pdif':
+            model_name = 'PDIF'
         else:
             model_name = model.upper()
         
@@ -242,7 +248,10 @@ def create_robustness_visualizations(robustness_results: Dict, output_dir: str):
     # Create heatmap
     sns.heatmap(heatmap_data, 
                 xticklabels=[n.title() for n in noise_types],
-                yticklabels=[m.upper() if m != 'dccf' else 'DCCF (Ours)' for m in models],
+                yticklabels=[m.upper() if m not in ['dccf', 'exposure_dro', 'pdif'] 
+                           else ('DCCF' if m == 'dccf' 
+                                else 'EXPOSURE_DRO' if m == 'exposure_dro' 
+                                else 'PDIF') for m in models],
                 annot=True, fmt='.3f', cmap='Reds',
                 cbar_kws={'label': 'Offset on Metrics (ΔM)'})
     
@@ -259,7 +268,16 @@ def create_robustness_visualizations(robustness_results: Dict, output_dir: str):
     # 2. Performance Drop Comparison (Intuitive interpretation)
     plt.figure(figsize=(12, 6))
     
-    models_clean = [m.upper() if m != 'dccf' else 'DCCF (Ours)' for m in models]
+    models_clean = []
+    for m in models:
+        if m == 'dccf':
+            models_clean.append('DCCF')
+        elif m == 'exposure_dro':
+            models_clean.append('EXPOSURE_DRO')
+        elif m == 'pdif':
+            models_clean.append('PDIF')
+        else:
+            models_clean.append(m.upper())
     dynamic_drops = []
     
     for model in models:
