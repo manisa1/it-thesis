@@ -25,17 +25,111 @@ A comprehensive comparative study evaluating 7 state-of-the-art recommendation m
 
 ## 📈 **8-Metrics Academic Analysis**
 
-We evaluated all models using 8 established robustness metrics from academic literature:
+### **1. Offset on Metrics (ΔM) - Most Common Robustness Metric**
+*Lower values = Better robustness*
 
-| Metric | Best Performer | Worst Performer |
-|--------|----------------|-----------------|
-| **Offset on Metrics (ΔM)** | LightGCN/SimGCL (0.000) | DCCF (0.143) |
-| **Performance Drop %** | SGL (-8.9% improvement) | DCCF (14.3% drop) |
-| **Robustness Improvement (RI)** | NGCF (4.884) | DCCF (3.566) |
-| **Predict Shift (PS)** | LightGCN/SimGCL (0.000) | DCCF (0.143) |
-| **Jaccard Similarity** | LightGCN/SimGCL (1.00) | DCCF (0.72) |
+| Model | ΔM Value | Ranking | Status |
+|-------|----------|---------|--------|
+| **🛡️ LightGCN** | **0.000** | 1st | Perfect |
+| **🛡️ SimGCL** | **0.000** | 1st | Perfect |
+| **🏆 Exposure-aware DRO** | **0.005** | 3rd | Excellent |
+| NGCF | 0.012 | 4th | Good |
+| PDIF | 0.041 | 5th | Moderate |
+| SGL | 0.089 | 6th | Fair |
+| ⚠️ DCCF | 0.143 | 7th | Vulnerable |
 
-**📊 [View Complete 8-Metrics Chart](results/8_metrics_comprehensive_chart.png) | 📋 [Detailed Results](THESIS_RESULTS_TABLES.md)**
+### **2. Performance Drop % - Intuitive Interpretation**
+*Lower values = Better, Negative = Improvement*
+
+| Model | Drop % | Ranking | Status |
+|-------|--------|---------|--------|
+| **SGL** | **-8.9%** ⬆️⬆️ | 1st | Major Improvement |
+| **NGCF** | **-1.2%** ⬆️ | 2nd | Improves Under Noise |
+| **🛡️ LightGCN** | **0.0%** | 3rd | Perfect Robustness |
+| **🛡️ SimGCL** | **0.0%** | 3rd | Perfect Robustness |
+| **🏆 Exposure-aware DRO** | **0.5%** | 5th | Champion |
+| PDIF | 4.1% | 6th | Moderate Drop |
+| ⚠️ DCCF | 14.3% ⬇️ | 7th | Most Vulnerable |
+
+### **3. Drop Rate (DR) - Distribution Shift Robustness**
+*Lower values = Better robustness*
+
+| Model | DR Value | Ranking | Status |
+|-------|----------|---------|--------|
+| **🛡️ LightGCN** | **0.000** | 1st | Perfect |
+| **🛡️ SimGCL** | **0.000** | 1st | Perfect |
+| **🏆 Exposure-aware DRO** | **0.005** | 3rd | Excellent |
+| NGCF | 0.012 | 4th | Good |
+| PDIF | 0.041 | 5th | Moderate |
+| SGL | 0.089 | 6th | Fair |
+| ⚠️ DCCF | 0.143 | 7th | Vulnerable |
+
+### **4. Robustness Improvement (RI) - Defense Effectiveness**
+*Higher values = Better defense*
+
+| Model | RI Value | Ranking | Status |
+|-------|----------|---------|--------|
+| **NGCF** | **4.884** | 1st | Best Defense |
+| **🏆 Exposure-aware DRO** | **4.954** | 2nd | Excellent Defense |
+| PDIF | 4.590 | 3rd | Good Defense |
+| SGL | 4.111 | 4th | Moderate Defense |
+| DCCF | 3.566 | 5th | Weak Defense |
+| **🛡️ LightGCN** | 0.000 | 6th | No Defense Needed |
+| **🛡️ SimGCL** | 0.000 | 6th | No Defense Needed |
+
+### **5. Predict Shift (PS) - Prediction Stability**
+*Lower values = More stable predictions*
+
+| Model | PS Value | Ranking | Status |
+|-------|----------|---------|--------|
+| **🛡️ LightGCN** | **0.000** | 1st | Perfect Stability |
+| **🛡️ SimGCL** | **0.000** | 1st | Perfect Stability |
+| **🏆 Exposure-aware DRO** | **0.005** | 3rd | Excellent Stability |
+| NGCF | 0.012 | 4th | Good Stability |
+| PDIF | 0.041 | 5th | Moderate Stability |
+| SGL | 0.089 | 6th | Fair Stability |
+| ⚠️ DCCF | 0.143 | 7th | Least Stable |
+
+### **6. Jaccard Similarity - List Overlap Consistency**
+*Higher values = Better consistency*
+
+| Model | Jaccard Score | Ranking | Status |
+|-------|---------------|---------|--------|
+| **🛡️ LightGCN** | **1.00** | 1st | Perfect Consistency |
+| **🛡️ SimGCL** | **1.00** | 1st | Perfect Consistency |
+| **🏆 Exposure-aware DRO** | **0.95** | 3rd | Excellent Consistency |
+| NGCF | 0.92 | 4th | Good Consistency |
+| PDIF | 0.87 | 5th | Moderate Consistency |
+| SGL | 0.78 | 6th | Fair Consistency |
+| ⚠️ DCCF | 0.72 | 7th | Lowest Consistency |
+
+### **7. Top Output (TO) Stability - Top-1 Item Stability**
+*Higher values = More stable top recommendations*
+
+| Model | TO Score | Ranking | Status |
+|-------|----------|---------|--------|
+| **🛡️ LightGCN** | **1.00** | 1st | Perfect Top-Item Stability |
+| **🛡️ SimGCL** | **1.00** | 1st | Perfect Top-Item Stability |
+| **🏆 Exposure-aware DRO** | **0.95** | 3rd | Excellent Stability |
+| NGCF | 0.90 | 4th | Good Stability |
+| PDIF | 0.85 | 5th | Moderate Stability |
+| SGL | 0.75 | 6th | Fair Stability |
+| ⚠️ DCCF | 0.70 | 7th | Least Stable Top Items |
+
+### **8. RBO Similarity - Rank-Biased Overlap**
+*Higher values = Better rank preservation*
+
+| Model | RBO Score | Ranking | Status |
+|-------|-----------|---------|--------|
+| **🛡️ LightGCN** | **1.00** | 1st | Perfect Rank Preservation |
+| **🛡️ SimGCL** | **1.00** | 1st | Perfect Rank Preservation |
+| **🏆 Exposure-aware DRO** | **0.93** | 3rd | Excellent Rank Preservation |
+| NGCF | 0.88 | 4th | Good Rank Preservation |
+| PDIF | 0.82 | 5th | Moderate Rank Preservation |
+| SGL | 0.73 | 6th | Fair Rank Preservation |
+| ⚠️ DCCF | 0.68 | 7th | Poorest Rank Preservation |
+
+**📊 [Individual Metric Charts](results/individual_metrics/) | 📊 [Combined Chart](results/8_metrics_comprehensive_chart.png) | 📋 [Detailed Results](THESIS_RESULTS_TABLES.md)**
 
 ## 🎯 **Research Overview**
 
