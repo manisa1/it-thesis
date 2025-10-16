@@ -1079,15 +1079,20 @@ runs/baselines/
 ##### **Main Results Table (`thesis_comparison_table.csv`):**
 ```
 Model          | Recall@20 | NDCG@20 | Performance Drop %
+Exposure-aware DRO | 0.3431    | 0.3286  | 0.5%
 PDIF (2025)    | 0.2850    | 0.3056  | 4.1%
-LightGCN (2020)| 0.2604    | 0.2117  | 0.0%
-DCCF (Our)     | 0.2024    | 0.0690  | 14.3%
+NGCF (2019)    | 0.2628    | 0.2179  | -1.2% (Improves!)
+LightGCN (2020)| 0.2604    | 0.2117  | 0.0% (Perfect)
+SimGCL (2022)  | 0.2604    | 0.2126  | 0.0% (Perfect)
+SGL (2021)     | 0.2329    | 0.2522  | -8.9% (Major Improvement!)
+DCCF (2023)    | 0.2024    | 0.0690  | 14.3%
 ```
 
 **How to read this:**
-- **PDIF is best overall**: Highest accuracy (0.2850 Recall) but moderate robustness (4.1% drop)
-- **LightGCN is most robust**: No performance drop (0.0%) but lower accuracy
-- **Our DCCF study**: Good accuracy but needs improvement for dynamic noise (14.3% drop)
+- **Exposure-aware DRO is best overall**: Highest accuracy (0.3431 Recall) with excellent robustness (0.5% drop)
+- **Perfect robustness discovered**: LightGCN & SimGCL show 0.0% performance drop
+- **Counter-intuitive improvements**: SGL improves 8.9% under noise, NGCF improves 1.2%
+- **DCCF is most vulnerable**: Needs improvement for dynamic noise (14.3% drop)
 
 #### **Reading Our Charts (baseline_comparison.png):**
 
