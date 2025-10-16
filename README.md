@@ -849,7 +849,7 @@ def model_selection_guide(scenario):
     if scenario == 'guaranteed_robustness':
         return ['lightgcn', 'simgcl']  # 0% degradation
     elif scenario == 'best_performance':
-        return 'exposure_dro'          # 34.3% accuracy, 0.5% drop
+        return 'exposure_dro'          # 0.3431 recall, 0.5% drop
     elif scenario == 'personalized_noise':
         return 'pdif'                  # User-specific denoising
     elif scenario == 'dynamic_environment':
@@ -917,9 +917,9 @@ shift_results = {
 #### **Final Results Summary - Breakthrough Discoveries**
 
 **1. Performance Champions:**
-- **Overall Winner**: Exposure-aware DRO (34.3% recall) - Best performance with excellent robustness
+- **Overall Winner**: Exposure-aware DRO (0.3431 recall) - Best performance with excellent robustness
 - **Robustness Champions**: LightGCN & SimGCL (0% degradation) - Perfect noise immunity
-- **Personalized Leader**: PDIF (28.5% recall) - Strong user-specific denoising
+- **Personalized Leader**: PDIF (0.2850 recall) - Strong user-specific denoising
 
 **2. Perfect Robustness Phenomenon:**
 ```python
@@ -1186,13 +1186,13 @@ Following academic standards and interim report requirements, we implement **8 c
 
 | Model | Recall@20 | NDCG@20 | Precision@20 | ΔM | Drop % | RI | PS | DR |
 |-------|-----------|---------|--------------|----|---------|----|----|----|
-| **Exposure-aware DRO** | **0.3431** | **0.3286** | **0.1716** | 0.005 | **0.5%** | 0.200 | 0.005 | 0.005 |
-| PDIF | 0.2850 | 0.3056 | 0.1425 | 0.041 | 4.1% | 0.317 | 0.041 | 0.041 |
-| NGCF | 0.2628 | 0.2179 | 0.1314 | 0.012 | -1.2% | 4.849 | 0.012 | 0.012 |
-| **LightGCN** | 0.2604 | 0.2117 | 0.1302 | **0.000** | **0.0%** | N/A | **0.000** | **0.000** |
-| **SimGCL** | 0.2604 | 0.2126 | 0.1302 | **0.000** | **0.0%** | N/A | **0.000** | **0.000** |
-| SGL | 0.2329 | 0.2522 | 0.1165 | 0.089 | -8.9% | -0.274 | 0.089 | 0.089 |
-| DCCF | 0.2024 | 0.0690 | 0.1012 | 0.143 | 14.3% | 0.148 | 0.143 | 0.143 |
+| **Exposure-aware DRO** | **0.3431** | **0.3286** | **0.1716** | 0.005 | **0.5%** | 4.954 | 0.005 | 0.005 |
+| PDIF | 0.2850 | 0.3056 | 0.1425 | 0.041 | 4.1% | 4.590 | 0.041 | 0.041 |
+| NGCF | 0.2628 | 0.2179 | 0.1314 | 0.012 | -1.2% | 4.884 | 0.012 | 0.012 |
+| **LightGCN** | 0.2604 | 0.2117 | 0.1302 | **0.000** | **0.0%** | N/A (Perfect) | **0.000** | **0.000** |
+| **SimGCL** | 0.2604 | 0.2126 | 0.1302 | **0.000** | **0.0%** | N/A (Perfect) | **0.000** | **0.000** |
+| SGL | 0.2329 | 0.2522 | 0.1165 | 0.089 | -8.9% | 4.111 | 0.089 | 0.089 |
+| DCCF | 0.2024 | 0.0690 | 0.1012 | 0.143 | 14.3% | 3.566 | 0.143 | 0.143 |
 
 **Legend**: ΔM = Offset on Metrics, RI = Robustness Improvement, PS = Predict Shift, DR = Drop Rate  
 **Bold values** indicate best performance in each metric.
