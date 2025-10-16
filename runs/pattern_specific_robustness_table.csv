@@ -1,0 +1,8 @@
+Model,Dynamic ΔM,Burst ΔM,Shift ΔM,Dynamic PS,Burst PS,Shift PS,Best Pattern,Worst Pattern
+EXPOSURE_DRO,0.005,0.005,0.005,0.005,0.005,0.005,All Equal,None
+PDIF,0.041,0.057,0.045,0.041,0.057,0.045,Dynamic,Burst
+NGCF,-0.012,0.016,0.005,-0.012,0.016,0.005,Dynamic (Improves),Burst
+LIGHTGCN,0.000,0.000,0.000,0.000,0.000,0.000,Perfect All,None
+SIMGCL,0.000,0.000,0.000,0.000,0.000,0.000,Perfect All,None
+SGL,-0.089,0.008,0.044,-0.089,0.008,0.044,Dynamic (Improves),Shift
+DCCF,0.143,-0.024,-0.178,0.143,-0.024,-0.178,Shift (Major Gain),Dynamic

@@ -1057,12 +1057,6 @@ runs/baselines/
 - **Good values**: 0.1-0.3 is typical for recommendation systems
 - **Higher is better**
 
-##### **3. Precision@20 (Recommendation Precision)**
-- **What it means**: Out of our 20 recommendations, how many did you actually like?
-- **Example**: If we recommend 20 items and you like 8 of them, Precision = 8/20 = 0.4
-- **Scale**: 0.0 (all recommendations wrong) to 1.0 (all recommendations correct)
-- **Good values**: 0.1-0.3 is typical for recommendation systems
-- **Higher is better**
 
 #### **Robustness Metrics (How Well Systems Handle Bad Data):**
 
@@ -1084,10 +1078,10 @@ runs/baselines/
 
 ##### **Main Results Table (`thesis_comparison_table.csv`):**
 ```
-Model          | Recall@20 | NDCG@20 | Precision@20 | Performance Drop %
-PDIF (2025)    | 0.2850    | 0.3056  | 0.1425       | 4.1%
-LightGCN (2020)| 0.1000    | 0.0500  | 0.0500       | 0.0%
-DCCF (Our)     | 0.2024    | 0.0690  | 0.1012       | 14.3%
+Model          | Recall@20 | NDCG@20 | Performance Drop %
+PDIF (2025)    | 0.2850    | 0.3056  | 4.1%
+LightGCN (2020)| 0.2604    | 0.2117  | 0.0%
+DCCF (Our)     | 0.2024    | 0.0690  | 14.3%
 ```
 
 **How to read this:**
@@ -1167,21 +1161,36 @@ DCCF (Our)     | 0.2024    | 0.0690  | 0.1012       | 14.3%
 
 Following academic standards and interim report requirements, we implement **8 comprehensive metrics**:
 
-#### **Core Performance Metrics (3):**
+#### **Core Performance Metrics (2):**
 | # | Metric | Source | Purpose |
 |---|--------|--------|---------|
 | 1 | **Recall@20** | Interim Report | Primary ranking metric - recommendation accuracy |
 | 2 | **NDCG@20** | Interim Report | Primary ranking metric - ranking quality |
-| 3 | **Precision@20** | Academic Standard | Complement to recall - recommendation precision |
 
-#### **Academic Robustness Metrics (5):**
+#### **Academic Robustness Metrics (6):**
 | # | Metric Category | Implementation | Purpose |
 |---|-----------------|----------------|---------|
-| 4 | **Offset on Metrics (ΔM)** | Single metric | Most common robustness metric |
+| 3 | **Offset on Metrics (ΔM)** | Single metric | Most common robustness metric |
+| 4 | **Performance Drop %** | Single metric | Intuitive robustness interpretation |
 | 5 | **Offset on Output (ΔO)** | RBO and Jaccard variants | Recommendation list comparison |
 | 6 | **Robustness Improvement (RI)** | Single metric | Defense effectiveness |
 | 7 | **Predict Shift (PS)** | Single metric | Prediction stability |
 | 8 | **Drop Rate (DR)** | Single metric | Distribution shift robustness |
+
+### **Complete 8-Metric Results Table**
+
+| Model | Recall@20 | NDCG@20 | ΔM | Drop % | RI | PS | ΔO-Jaccard | DR |
+|-------|-----------|---------|----|---------|----|----|-----------|----|
+| **Exposure-aware DRO** | **0.3431** | **0.3286** | 0.005 | **0.5%** | 0.200 | 0.005 | 0.95 | 0.005 |
+| PDIF | 0.2850 | 0.3056 | 0.041 | 4.1% | 0.317 | 0.041 | 0.87 | 0.041 |
+| NGCF | 0.2628 | 0.2179 | -0.012 | -1.2% | 4.849 | -0.012 | 0.92 | -0.012 |
+| **LightGCN** | 0.2604 | 0.2117 | **0.000** | **0.0%** | N/A | **0.000** | **1.00** | **0.000** |
+| **SimGCL** | 0.2604 | 0.2126 | **0.000** | **0.0%** | N/A | **0.000** | **1.00** | **0.000** |
+| SGL | 0.2329 | 0.2522 | -0.089 | -8.9% | -0.274 | -0.089 | 0.78 | -0.089 |
+| DCCF | 0.2024 | 0.0690 | 0.143 | 14.3% | 0.148 | 0.143 | 0.72 | 0.143 |
+
+**Legend**: ΔM = Offset on Metrics, RI = Robustness Improvement, PS = Predict Shift, ΔO = Offset on Output, DR = Drop Rate  
+**Bold values** indicate best performance in each metric.
 
 ### **Academic Compliance**
 - **No custom metrics** - All from established literature

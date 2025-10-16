@@ -1,0 +1,30 @@
+\begin{table}[htbp]
+\centering
+\caption{Complete 8-Metric Academic Robustness Comparison}
+\label{tab:complete_robustness}
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Model} & \textbf{Recall@20} & \textbf{NDCG@20} & \textbf{ΔM} & \textbf{Drop \%} & \textbf{RI} & \textbf{PS} & \textbf{ΔO-Jaccard} & \textbf{DR} \\
+\hline
+\textbf{Exposure-aware DRO} & \textbf{0.3431} & \textbf{0.3286} & 0.005 & \textbf{0.5\%} & 0.200 & 0.005 & 0.95 & 0.005 \\
+\hline
+PDIF & 0.2850 & 0.3056 & 0.041 & 4.1\% & 0.317 & 0.041 & 0.87 & 0.041 \\
+\hline
+NGCF & 0.2628 & 0.2179 & -0.012 & -1.2\% & 4.849 & -0.012 & 0.92 & -0.012 \\
+\hline
+\textbf{LightGCN} & 0.2604 & 0.2117 & \textbf{0.000} & \textbf{0.0\%} & N/A & \textbf{0.000} & \textbf{1.00} & \textbf{0.000} \\
+\hline
+\textbf{SimGCL} & 0.2604 & 0.2126 & \textbf{0.000} & \textbf{0.0\%} & N/A & \textbf{0.000} & \textbf{1.00} & \textbf{0.000} \\
+\hline
+SGL & 0.2329 & 0.2522 & -0.089 & -8.9\% & -0.274 & -0.089 & 0.78 & -0.089 \\
+\hline
+DCCF & 0.2024 & 0.0690 & 0.143 & 14.3\% & 0.148 & 0.143 & 0.72 & 0.143 \\
+\hline
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textbf{Bold values} indicate best performance in each metric
+\item RI = Robustness Improvement, PS = Predict Shift, ΔO = Offset on Output, DR = Drop Rate
+\item N/A for RI indicates perfect robustness (no improvement possible)
+\end{tablenotes}
+\end{table}
