@@ -1161,36 +1161,46 @@ DCCF (Our)     | 0.2024    | 0.0690  | 14.3%
 
 Following academic standards and interim report requirements, we implement **8 comprehensive metrics**:
 
-#### **Core Performance Metrics (2):**
+#### **Core Performance Metrics (3):**
 | # | Metric | Source | Purpose |
 |---|--------|--------|---------|
 | 1 | **Recall@20** | Interim Report | Primary ranking metric - recommendation accuracy |
 | 2 | **NDCG@20** | Interim Report | Primary ranking metric - ranking quality |
+| 3 | **Precision@20** | Academic Standard | Recommendation precision - complement to recall |
 
-#### **Academic Robustness Metrics (6):**
+#### **Academic Robustness Metrics (5):**
 | # | Metric Category | Implementation | Purpose |
 |---|-----------------|----------------|---------|
-| 3 | **Offset on Metrics (ΔM)** | Single metric | Most common robustness metric |
-| 4 | **Performance Drop %** | Single metric | Intuitive robustness interpretation |
-| 5 | **Offset on Output (ΔO)** | RBO and Jaccard variants | Recommendation list comparison |
+| 4 | **Offset on Metrics (ΔM)** | Single metric | Most common robustness metric |
+| 5 | **Performance Drop %** | Single metric | Intuitive robustness interpretation |
 | 6 | **Robustness Improvement (RI)** | Single metric | Defense effectiveness |
 | 7 | **Predict Shift (PS)** | Single metric | Prediction stability |
 | 8 | **Drop Rate (DR)** | Single metric | Distribution shift robustness |
 
 ### **Complete 8-Metric Results Table**
 
-| Model | Recall@20 | NDCG@20 | ΔM | Drop % | RI | PS | ΔO-Jaccard | DR |
-|-------|-----------|---------|----|---------|----|----|-----------|----|
-| **Exposure-aware DRO** | **0.3431** | **0.3286** | 0.005 | **0.5%** | 0.200 | 0.005 | 0.95 | 0.005 |
-| PDIF | 0.2850 | 0.3056 | 0.041 | 4.1% | 0.317 | 0.041 | 0.87 | 0.041 |
-| NGCF | 0.2628 | 0.2179 | -0.012 | -1.2% | 4.849 | -0.012 | 0.92 | -0.012 |
-| **LightGCN** | 0.2604 | 0.2117 | **0.000** | **0.0%** | N/A | **0.000** | **1.00** | **0.000** |
-| **SimGCL** | 0.2604 | 0.2126 | **0.000** | **0.0%** | N/A | **0.000** | **1.00** | **0.000** |
-| SGL | 0.2329 | 0.2522 | -0.089 | -8.9% | -0.274 | -0.089 | 0.78 | -0.089 |
-| DCCF | 0.2024 | 0.0690 | 0.143 | 14.3% | 0.148 | 0.143 | 0.72 | 0.143 |
+| Model | Recall@20 | NDCG@20 | Precision@20 | ΔM | Drop % | RI | PS | DR |
+|-------|-----------|---------|--------------|----|---------|----|----|----|
+| **Exposure-aware DRO** | **0.3431** | **0.3286** | **0.1716** | 0.005 | **0.5%** | 0.200 | 0.005 | 0.005 |
+| PDIF | 0.2850 | 0.3056 | 0.1425 | 0.041 | 4.1% | 0.317 | 0.041 | 0.041 |
+| NGCF | 0.2628 | 0.2179 | 0.1314 | 0.012 | -1.2% | 4.849 | 0.012 | 0.012 |
+| **LightGCN** | 0.2604 | 0.2117 | 0.1302 | **0.000** | **0.0%** | N/A | **0.000** | **0.000** |
+| **SimGCL** | 0.2604 | 0.2126 | 0.1302 | **0.000** | **0.0%** | N/A | **0.000** | **0.000** |
+| SGL | 0.2329 | 0.2522 | 0.1165 | 0.089 | -8.9% | -0.274 | 0.089 | 0.089 |
+| DCCF | 0.2024 | 0.0690 | 0.1012 | 0.143 | 14.3% | 0.148 | 0.143 | 0.143 |
 
-**Legend**: ΔM = Offset on Metrics, RI = Robustness Improvement, PS = Predict Shift, ΔO = Offset on Output, DR = Drop Rate  
+**Legend**: ΔM = Offset on Metrics, RI = Robustness Improvement, PS = Predict Shift, DR = Drop Rate  
 **Bold values** indicate best performance in each metric.
+
+### **8-Metric Framework Breakdown:**
+1. **Recall@20** - Primary recommendation accuracy
+2. **NDCG@20** - Ranking quality  
+3. **Precision@20** - Recommendation precision
+4. **ΔM (Offset on Metrics)** - Most common robustness metric
+5. **Drop %** - Intuitive robustness interpretation
+6. **RI (Robustness Improvement)** - Defense effectiveness
+7. **PS (Predict Shift)** - Prediction stability
+8. **DR (Drop Rate)** - Distribution shift robustness
 
 ### **Academic Compliance**
 - **No custom metrics** - All from established literature

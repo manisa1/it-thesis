@@ -53,6 +53,13 @@ def ndcg_at_k(ranked, positives, k=20):
     idcg = sum(1.0 / math.log2(i+1) for i in range(1, min(k, len(positives))+1))
     return dcg / idcg if idcg>0 else 0.0
 
+def precision_at_k(ranked, positives, k=20):
+    if not positives or k == 0:
+        return 0.0
+    top_k = ranked[:k]
+    hits = len(set(top_k) & set(positives))
+    return hits / k
+
 # ---------------------------
 # Noise (train-only)
 # ---------------------------
@@ -152,12 +159,15 @@ def evaluate(model, test_df, train_pos, k=20, device="cpu"):
     user2pos_test = defaultdict(list)
     for u,i in zip(test_df["u"].values, test_df["i"].values):
         user2pos_test[int(u)].append(int(i))
-    recs, ndcgs = [], []
+    recs, ndcgs, precs = [], [], []
     for u, items in user2pos_test.items():
         ranked = np.argsort(-scores[u]).tolist()
         recs.append(recall_at_k(ranked, items, k))
         ndcgs.append(ndcg_at_k(ranked, items, k))
-    return float(np.mean(recs) if recs else 0.0), float(np.mean(ndcgs) if ndcgs else 0.0)
+        precs.append(precision_at_k(ranked, items, k))
+    return (float(np.mean(recs) if recs else 0.0), 
+            float(np.mean(ndcgs) if ndcgs else 0.0),
+            float(np.mean(precs) if precs else 0.0))
 
 def build_pop_weights(train_df, n_items, alpha=0.5, eps=1e-6):
     pop = np.bincount(train_df["i"].values, minlength=n_items).astype(float)
@@ -262,7 +272,7 @@ def main():
 
         loss = train_epoch(model, opt, user_pos, n_items, item_weights=iw, device=device)
         # quick val
-        r, n = evaluate(model, val_df, make_user_pos(train_df), k=args.k_eval, device=device)
+        r, n, p = evaluate(model, val_df, make_user_pos(train_df), k=args.k_eval, device=device)
         
         if r > best["recall"]:
             best = {"recall": r, "epoch": epoch}
@@ -272,8 +282,8 @@ def main():
 
     # test with best
     model.load_state_dict(torch.load(os.path.join(args.model_dir, "best.pt"), map_location=device))
-    r, n = evaluate(model, test_df, make_user_pos(train_df), k=args.k_eval, device=device)
-    out = pd.DataFrame([{"Recall@K": r, "NDCG@K": n, "K": args.k_eval}])
+    r, n, p = evaluate(model, test_df, make_user_pos(train_df), k=args.k_eval, device=device)
+    out = pd.DataFrame([{"Recall@K": r, "NDCG@K": n, "Precision@K": p, "K": args.k_eval}])
     out.to_csv(os.path.join(args.model_dir, "metrics.csv"), index=False)
     print("Saved metrics to", os.path.join(args.model_dir, "metrics.csv"))
 
