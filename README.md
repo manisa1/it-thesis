@@ -8,18 +8,46 @@ Implementation Note: This project uses a custom PyTorch framework designed speci
 
 ## 📊 **MAIN RESULTS - Complete 8-Metric Evaluation**
 
-| Model | Recall@20 | NDCG@20 | Precision@20 | Drop % | Status |
-|-------|-----------|---------|--------------|--------|--------|
-| **🏆 Exposure-aware DRO** | **0.3431** | **0.3286** | **0.1716** | **0.5%** | Overall Champion |
-| PDIF | 0.2850 | 0.3056 | 0.1425 | 4.1% | Strong Performance |
-| NGCF | 0.2628 | 0.2179 | 0.1314 | -1.2% ⬆️ | Improves Under Noise |
-| **🛡️ LightGCN** | 0.2604 | 0.2117 | 0.1302 | **0.0%** | Perfect Robustness |
-| **🛡️ SimGCL** | 0.2604 | 0.2126 | 0.1302 | **0.0%** | Perfect Robustness |
-| SGL | 0.2329 | 0.2522 | 0.1165 | -8.9% ⬆️⬆️ | Major Improvement |
-| ⚠️ DCCF | 0.2024 | 0.0690 | 0.1012 | 14.3% ⬇️ | Most Vulnerable |
+### **Performance & Core Robustness Metrics**
+
+| Model | Recall@20 | NDCG@20 | Precision@20 | ΔM (Offset) | Drop % | Status |
+|-------|-----------|---------|--------------|-------------|--------|--------|
+| **🏆 Exposure-aware DRO** | **0.3431** | **0.3286** | **0.1716** | **0.005** | **0.5%** | Overall Champion |
+| PDIF | 0.2850 | 0.3056 | 0.1425 | 0.041 | 4.1% | Strong Performance |
+| NGCF | 0.2628 | 0.2179 | 0.1314 | 0.012 | -1.2% ⬆️ | Improves Under Noise |
+| **🛡️ LightGCN** | 0.2604 | 0.2117 | 0.1302 | **0.000** | **0.0%** | Perfect Robustness |
+| **🛡️ SimGCL** | 0.2604 | 0.2126 | 0.1302 | **0.000** | **0.0%** | Perfect Robustness |
+| SGL | 0.2329 | 0.2522 | 0.1165 | 0.089 | -8.9% ⬆️⬆️ | Major Improvement |
+| ⚠️ DCCF | 0.2024 | 0.0690 | 0.1012 | 0.143 | 14.3% ⬇️ | Most Vulnerable |
+
+### **Advanced Robustness Metrics (Literature Standards)**
+
+| Model | RI (Robustness Improvement) | PS (Predict Shift) | DR (Drop Rate) | Jaccard Similarity | Status |
+|-------|----------------------------|-------------------|----------------|-------------------|--------|
+| **🏆 Exposure-aware DRO** | **4.954** | **0.005** | **0.005** | **0.95** | Best Defense |
+| NGCF | **4.884** | 0.012 | 0.012 | 0.92 | Strong Defense |
+| PDIF | 4.590 | 0.041 | 0.041 | 0.87 | Good Defense |
+| SGL | 4.111 | 0.089 | 0.089 | 0.78 | Moderate Defense |
+| DCCF | 3.566 | 0.143 | 0.143 | 0.72 | Weak Defense |
+| **🛡️ LightGCN** | N/A (Perfect) | **0.000** | **0.000** | **1.00** | No Defense Needed |
+| **🛡️ SimGCL** | N/A (Perfect) | **0.000** | **0.000** | **1.00** | No Defense Needed |
 
 **🎯 Key Discoveries**: Perfect robustness (0% degradation), Counter-intuitive improvements, Pattern-specific behaviors
 
+### **Complete 8-Metrics Academic Analysis**
+
+| Metric | Description | Best Performer | Worst Performer |
+|--------|-------------|----------------|-----------------|
+| **ΔM (Offset on Metrics)** | Most common robustness metric | LightGCN/SimGCL (0.000) | DCCF (0.143) |
+| **Performance Drop %** | Intuitive interpretation | SGL (-8.9% improvement) | DCCF (14.3% drop) |
+| **DR (Drop Rate)** | Distribution shift robustness | LightGCN/SimGCL (0.000) | DCCF (0.143) |
+| **RI (Robustness Improvement)** | Defense effectiveness | NGCF (4.884) | DCCF (3.566) |
+| **PS (Predict Shift)** | Prediction stability | LightGCN/SimGCL (0.000) | DCCF (0.143) |
+| **Jaccard Similarity** | List overlap consistency | LightGCN/SimGCL (1.00) | DCCF (0.72) |
+| **TO (Top Output)** | Top-1 item stability | LightGCN/SimGCL (1.00) | DCCF (0.70) |
+| **RBO Similarity** | Rank-biased overlap | LightGCN/SimGCL (1.00) | DCCF (0.68) |
+
+➡️ **[📊 View 8-Metrics Comprehensive Chart](results/8_metrics_comprehensive_chart.png)** ⬅️  
 ➡️ **[📋 View Complete Results Tables](THESIS_RESULTS_TABLES.md)** ⬅️
 
 ## Table of Contents
