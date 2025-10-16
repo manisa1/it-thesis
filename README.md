@@ -6,6 +6,22 @@ This thesis presents a comprehensive comparative study of recommendation system 
 
 Implementation Note: This project uses a custom PyTorch framework designed specifically for this comparative robustness study, providing full control over the experimental design and transparent implementation of all baseline models without relying on external frameworks.
 
+## 📊 **MAIN RESULTS - Complete 8-Metric Evaluation**
+
+| Model | Recall@20 | NDCG@20 | Precision@20 | Drop % | Status |
+|-------|-----------|---------|--------------|--------|--------|
+| **🏆 Exposure-aware DRO** | **0.3431** | **0.3286** | **0.1716** | **0.5%** | Overall Champion |
+| PDIF | 0.2850 | 0.3056 | 0.1425 | 4.1% | Strong Performance |
+| NGCF | 0.2628 | 0.2179 | 0.1314 | -1.2% ⬆️ | Improves Under Noise |
+| **🛡️ LightGCN** | 0.2604 | 0.2117 | 0.1302 | **0.0%** | Perfect Robustness |
+| **🛡️ SimGCL** | 0.2604 | 0.2126 | 0.1302 | **0.0%** | Perfect Robustness |
+| SGL | 0.2329 | 0.2522 | 0.1165 | -8.9% ⬆️⬆️ | Major Improvement |
+| ⚠️ DCCF | 0.2024 | 0.0690 | 0.1012 | 14.3% ⬇️ | Most Vulnerable |
+
+**🎯 Key Discoveries**: Perfect robustness (0% degradation), Counter-intuitive improvements, Pattern-specific behaviors
+
+➡️ **[📋 View Complete Results Tables](THESIS_RESULTS_TABLES.md)** ⬅️
+
 ## Table of Contents
 
 - [Thesis Overview](#thesis-overview)
@@ -1781,42 +1797,3 @@ DCCF Performance by Noise Type:
 - Burst: 0.2068 (+2.4% resilient)
 - Shift: 0.2378 (+17.8% thrives)
 ```
-
-### **Key Statistics for Poster Highlights:**
-
-- **42 Total Experiments** (most comprehensive study to date)
-- **7 Models Compared** (2019-2025 timeline coverage)
-- **4 Realistic Noise Patterns** (static, dynamic, burst, shift)
-- **0% Degradation** achieved by 2 models (perfect robustness discovery)
-- **17.8% Improvement** shown by DCCF under shift conditions
-- **34.3% Best Accuracy** achieved by Exposure-aware DRO
-
----
-
-## **Academic Achievement Summary**
-
-### **Thesis Completion Status:**
-- **Complete Baseline Comparison**: 7 models (2019-2025) across 4 noise conditions
-- **Comprehensive Experiments**: 42 successful experiments with perfect coverage
-- **8-Metric Evaluation Framework**: Core performance + academic robustness metrics
-- **Thesis-Ready Results**: LaTeX tables, visualizations, and comprehensive analysis
-- **Reproducible Framework**: Full code documentation with fixed evaluation
-- **Groundbreaking Discoveries**: Perfect robustness, pattern-specific behaviors, noise benefits
-
-### **Key Contributions:**
-1. **First comprehensive comparative study** of recommendation system robustness under realistic noise
-2. **Discovery of perfect robustness**: LightGCN & SimGCL show 0% degradation across all conditions
-3. **Pattern-specific behavior analysis**: DCCF thrives on shifts but struggles with gradual changes
-4. **Counter-intuitive findings**: Multiple models benefit from certain noise types
-5. **Complete experimental methodology** with 42 experiments and systematic evaluation
-
-### **Ready for Defense:**
-- **Performance tables**
-- **Statistical analysis**
-- **Visual presentations**
-- **Code reproducibility**
-- **Literature positioning**
-
----
-
-Academic Disclaimer: This is a thesis research project focused on identifying and addressing limitations in DCCF under dynamic noise conditions. Results are based on controlled experiments with synthetic data and comprehensive baseline comparisons spanning 2019-2025 recommendation methods.
