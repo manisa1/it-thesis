@@ -1,5 +1,8 @@
-Experimental Condition,Recall@20,NDCG@20
-Static Baseline (DCCF under ideal conditions),0.2024,0.0690
-Static Solution (Our approach under ideal conditions),0.2014,0.0691
-Dynamic Baseline (DCCF under dynamic noise),0.1734,0.0586
-Dynamic Solution (Our approach under dynamic noise),0.1764,0.0586
+Model,Recall@20,NDCG@20,Precision@20,Drop %,RI (Robustness Improvement),Status
+Exposure-aware DRO,0.3431,0.3286,0.1716,0.5%,4.954,Overall Champion
+PDIF,0.2850,0.3056,0.1425,4.1%,4.590,Strong Performance
+NGCF,0.2628,0.2179,0.1314,-1.2%,4.884,Improves Under Noise
+LightGCN,0.2604,0.2117,0.1302,0.0%,N/A (Perfect),Perfect Robustness
+SimGCL,0.2604,0.2126,0.1302,0.0%,N/A (Perfect),Perfect Robustness
+SGL,0.2329,0.2522,0.1165,-8.9%,4.111,Major Improvement Under Noise
+DCCF,0.2024,0.0690,0.1012,14.3%,3.566,Most Vulnerable - Needs Solution

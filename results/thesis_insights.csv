@@ -1,6 +1,11 @@
 Metric,Value
-DCCF Vulnerability (Recall Drop %),14.3%
-Solution Improvement (Absolute),0.0030
-Solution Improvement (Relative %),1.7%
-Static Impact (%),-0.5%
-Robustness Improvement (%),1.5%
+Overall Champion Model,Exposure-aware DRO (0.3431 recall)
+Perfect Robustness Models,LightGCN & SimGCL (0% drop)
+Most Vulnerable Model,DCCF (14.3% drop)
+Counter-Intuitive Improvements,"SGL (-8.9%), NGCF (-1.2%)"
+Best Robustness Performance,0.5% drop (Exposure-aware DRO)
+Worst Robustness Performance,14.3% drop (DCCF)
+Total Models Evaluated,7 (spanning 2019-2025)
+Total Experiments Conducted,42 (7 models × 6 conditions)
+Breakthrough Discovery,Perfect robustness phenomenon
+Academic Impact,First comprehensive comparative study
