@@ -252,7 +252,7 @@ def create_dataset_configs():
 
 def main():
  """Main preparation function."""
- print("📊 Dataset Preparation for DCCF Robustness Study")
+ print("📊 Dataset Preparation for Recommendation System Robustness Study")
  print("=" * 60)
  print("Preparing 3 benchmark datasets as mentioned in interim report:")
  print("- Gowalla (location-based check-ins)")

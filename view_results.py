@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Results Viewer for DCCF Robustness Study
+Results Viewer for Recommendation System Robustness Study
 
 This script provides an easy way to view and analyze experimental results
 for thesis presentation and defense.
@@ -178,7 +178,7 @@ def generate_thesis_summary():
 def main():
     """Main function to display all results."""
     
-    print(" DCCF Robustness Study - Results Viewer")
+    print("Recommendation System Robustness Study - Results Viewer")
     print("=" * 60)
     print()
     

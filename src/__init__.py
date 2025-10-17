@@ -1,10 +1,10 @@
 """
-DCCF Robustness Study - IT Thesis
-A Study on Robust Recommender System using Disentangled Contrastive Collaborative Filtering
+Recommendation System Robustness Study - IT Thesis
+A Comparative Study of Recommendation System Robustness Under Dynamic Noise Patterns and Exposure Bias
 
-This package contains the implementation for studying DCCF's robustness under dynamic noise conditions.
+This package contains the implementation for comprehensive robustness analysis across 7 state-of-the-art recommendation models.
 """
 
 __version__ = "1.0.0"
 __author__ = "Manisha Paudel"
-__description__ = "DCCF Robustness Study under Dynamic Noise Conditions"
+__description__ = "Comparative Robustness Study of Recommendation Systems under Dynamic Noise Patterns"

@@ -1,6 +1,6 @@
 # Experimental Results Directory
 
-This directory contains all experimental results from the DCCF Robustness Study.
+This directory contains all experimental results from the Recommendation System Robustness Study.
 
 ## Directory Structure
 
